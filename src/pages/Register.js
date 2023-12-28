@@ -69,7 +69,7 @@ export default function Register() {
   const handleSubmit = async (data, e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/signup/signup', data, {
+      const response = await axios.post('https://link-exchange-server.vercel.app/api/signup/signup', data, {
         headers: {
           'Content-Type': 'application/json',
         },
