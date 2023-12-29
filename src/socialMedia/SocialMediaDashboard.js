@@ -25,7 +25,7 @@ import Iconify from '../components/Iconify';
 
 // ----------------------------------------------------------------------
 
-export default function EcommerceShop() {
+export default function SocialMediaDashboard() {
   const [openFilter, setOpenFilter] = useState(false);
 
   const handleOpenFilter = () => {
@@ -37,7 +37,7 @@ export default function EcommerceShop() {
   };
 
   return (
-    <Page title="Dashboard: Products">
+    <Page title="SocialMediaDashboard">
       <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>

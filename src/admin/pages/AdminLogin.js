@@ -13,6 +13,7 @@ import Logo from '../components/Logo';
 // sections
 import { LoginForm } from '../sections/auth/login';
 import AuthSocial from '../sections/auth/AuthSocial';
+import AdminLoginForm from '../sections/auth/login/AdminLoginForm';
 
 // ----------------------------------------------------------------------
 
@@ -59,7 +60,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function Login() {
+export default function AdminLogin() {
   const navigate = useNavigate();
 
   const smUp = useResponsive('up', 'sm');
@@ -99,7 +100,7 @@ export default function Login() {
   const handleSubmit = async (data, e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://link-exchange-server.vercel.app/api/signup/login', data, {
+      const response = await axios.post('https://link-exchange-server.vercel.app/api/adminsignup/adminlogin', data, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -115,7 +116,7 @@ export default function Login() {
             error: 'Failed to log in',
           })
           .then(() => {
-            navigate('/user/mywebsite');
+            navigate('/admin/admindashboard');
           });
 
         const { token } = response.data;
@@ -144,7 +145,7 @@ export default function Login() {
 
   return (
     <>
-      <Page title="Login">
+      <Page title="Admin Login">
         <RootStyle>
           <HeaderStyle>
             <Box
@@ -156,35 +157,24 @@ export default function Login() {
             >
               <Logo sx={{ width: '100px', height: '50px' }} />
             </Box>
-
-            {smUp && (
-              <Typography variant="body2" sx={{ mt: { md: -2 } }}>
-                Don’t have an account? {''}
-                <Link variant="subtitle2" component={RouterLink} to="/register">
-                  Get started
-                </Link>
-              </Typography>
-            )}
           </HeaderStyle>
 
           {mdUp && (
-            <SectionStyle>
-              <Typography variant="h3" sx={{ px: 5, mt: 15, mb: 5 }}>
+            <SectionStyle sx={{ px: 5, mt: 15, mb: 5 }}>
+              {/* <Typography variant="h3" sx={{ px: 5, mt: 15, mb: 5 }}>
                 Hi, Welcome Back
-              </Typography>
-              <img src="/static/illustrations/illustration_login.png" alt="login" />
+              </Typography> */}
+              <img src="/static/illustrations/illustration_adminlogin.png" alt="login" />
             </SectionStyle>
           )}
 
           <Container maxWidth="sm">
             <ContentStyle>
-              <Typography variant="h4" gutterBottom>
-                Sign in to Link Exchange
+              <Typography variant="h4" align="center" sx={{ mb: 5 }} gutterBottom>
+                Admin Login
               </Typography>
 
-              <Typography sx={{ color: 'text.secondary', mb: 5 }}>Enter your details below.</Typography>
-
-              <LoginForm onSubmit={handleSubmit} />
+              <AdminLoginForm onSubmit={handleSubmit} />
 
               {!smUp && (
                 <Typography variant="body2" align="center" sx={{ mt: 3 }}>

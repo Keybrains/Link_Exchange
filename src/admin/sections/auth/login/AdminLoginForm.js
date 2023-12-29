@@ -13,7 +13,7 @@ import { FormProvider, RHFTextField, RHFCheckbox } from '../../../components/hoo
 
 // ----------------------------------------------------------------------
 
-export default function LoginForm({ onSubmit }) {
+export default function AdminLoginForm({ onSubmit }) {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -65,8 +65,8 @@ export default function LoginForm({ onSubmit }) {
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-        <RHFCheckbox name="remember" label="Remember me" />
-        <Link variant="subtitle2" underline="hover">
+        {/* <RHFCheckbox name="remember" label="Remember me" /> */}
+        <Link variant="subtitle2" underline="hover" align="center">
           Forgot password?
         </Link>
       </Stack>

@@ -6,20 +6,20 @@ import Iconify from '../../components/Iconify';
 const getIcon = (name) => <Iconify icon={name} width={22} height={22} />;
 
 const navConfig = [
-  // {
-  //   title: 'My Plateforms',
-  //   path: '/dashboard/app',
-  //   icon: getIcon('eva:pie-chart-2-fill'),
-  //   defaultOpen: true,
-  // },
   {
-    title: 'My Website',
-    path: '/user/mywebsite',
+    title: 'Dashboard',
+    path: '/admin/admindashboard',
+    icon: getIcon('eva:pie-chart-2-fill'),
+    // defaultOpen: true,
+  },
+  {
+    title: 'All Website',
+    path: '/admin/allwebsite',
     icon: getIcon('gg:website'),
   },
   {
-    title: 'My Social Media',
-    path: '/user/mysocialmedia',
+    title: 'All Social Media',
+    path: '/admin/allsocialmedia',
     icon: getIcon('ion:social-buffer'),
   },
 

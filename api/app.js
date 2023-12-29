@@ -1,4 +1,4 @@
-require("dotenv").config();
+require('dotenv').config();
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -12,7 +12,8 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
-const SignupRouter = require("./routes/Signup")
+const SignupRouter = require('./routes/Signup');
+const AdminSignupRouter = require('./routes/AdminSignup');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -28,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/signup', SignupRouter);
+app.use('/api/adminsignup', AdminSignupRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
