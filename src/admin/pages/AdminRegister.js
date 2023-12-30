@@ -55,7 +55,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
   justifyContent: 'center',
   flexDirection: 'column',
   padding: theme.spacing(8, 0),
-  overflow: 'hidden', // Apply overflow: hidden to the content
+  overflow: 'hidden', 
 }));
 
 // ----------------------------------------------------------------------
@@ -114,14 +114,13 @@ export default function AdminRegister() {
 
           {mdUp && (
             <SectionStyle>
-             
               <img alt="register" src="/static/illustrations/illustration_adminregister.png" />
             </SectionStyle>
           )}
 
           <Container sx={{ overflow: 'hidden' }}>
             <ContentStyle>
-              <Typography variant="h4" sx={{ mt: 5 , mb: 5 }} align="center"  gutterBottom>
+              <Typography variant="h4" sx={{ mt: 5, mb: 5 }} align="center" gutterBottom>
                 Admin Register
               </Typography>
 

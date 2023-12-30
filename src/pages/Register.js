@@ -72,7 +72,7 @@ export default function Register() {
       const response = await axios.post('https://link-exchange-server.vercel.app/api/signup/signup', data, {
         headers: {
           'Content-Type': 'application/json',
-        },
+        },  
       });
 
       if (response && response.data && response.data.success) {
