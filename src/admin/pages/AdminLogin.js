@@ -5,6 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Card, Link, Container, Typography, Box } from '@mui/material';
+import axiosInstance from '../config/AxiosInstanceAdmin';
 // hooks
 import useResponsive from '../hooks/useResponsive';
 // components
@@ -100,7 +101,7 @@ export default function AdminLogin() {
   const handleSubmit = async (data, e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://link-exchange-server.vercel.app/api/adminsignup/adminlogin', data, {
+      const response = await axiosInstance.post('/adminsignup/adminlogin', data, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -175,15 +176,6 @@ export default function AdminLogin() {
               </Typography>
 
               <AdminLoginForm onSubmit={handleSubmit} />
-
-              {!smUp && (
-                <Typography variant="body2" align="center" sx={{ mt: 3 }}>
-                  Don’t have an account?{' '}
-                  <Link variant="subtitle2" component={RouterLink} to="/register">
-                    Get started
-                  </Link>
-                </Typography>
-              )}
             </ContentStyle>
           </Container>
         </RootStyle>

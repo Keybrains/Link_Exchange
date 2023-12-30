@@ -5,6 +5,8 @@ import { jwtDecode } from 'jwt-decode';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Card, Link, Container, Typography, Box } from '@mui/material';
+import axiosInstance from '../config/AxiosInstance';
+
 // hooks
 import useResponsive from '../hooks/useResponsive';
 // components
@@ -99,7 +101,7 @@ export default function Login() {
   const handleSubmit = async (data, e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://link-exchange-server.vercel.app/api/signup/login', data, {
+      const response = await axiosInstance.post('/signup/login', data, {
         headers: {
           'Content-Type': 'application/json',
         },

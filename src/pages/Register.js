@@ -5,6 +5,9 @@ import axios from 'axios';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Card, Link, Container, Typography, Box } from '@mui/material';
+import axiosInstance from '../config/AxiosInstance';
+
+
 // hooks
 import useResponsive from '../hooks/useResponsive';
 // components
@@ -69,7 +72,7 @@ export default function Register() {
   const handleSubmit = async (data, e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://link-exchange-server.vercel.app/api/signup/signup', data, {
+      const response = await axiosInstance.post('/signup/signup', data, {
         headers: {
           'Content-Type': 'application/json',
         },  

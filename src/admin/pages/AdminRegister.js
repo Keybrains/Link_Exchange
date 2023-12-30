@@ -5,6 +5,7 @@ import axios from 'axios';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Card, Link, Container, Typography, Box } from '@mui/material';
+import axiosInstance from '../config/AxiosInstanceAdmin';
 // hooks
 import useResponsive from '../hooks/useResponsive';
 // components
@@ -70,7 +71,7 @@ export default function AdminRegister() {
   const handleSubmit = async (data, e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://link-exchange-server.vercel.app/api/adminsignup/adminsignup', data, {
+      const response = await axiosInstance.post('/adminsignup/adminsignup', data, {
         headers: {
           'Content-Type': 'application/json',
         },
