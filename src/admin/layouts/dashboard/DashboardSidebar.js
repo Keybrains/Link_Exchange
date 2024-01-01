@@ -87,7 +87,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         </Link>
       </Box> */}
 
-      <NavSection navConfig={navConfig} />
+      <NavSection navConfig={navConfig}  />
 
       <Box sx={{ flexGrow: 1 }} />
     </Scrollbar>
@@ -114,7 +114,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
           PaperProps={{
             sx: {
               width: DRAWER_WIDTH,
-              bgcolor: 'background.default',
+              backgroundColor: '#C3E0E5',
               borderRightStyle: 'dashed',
             },
           }}

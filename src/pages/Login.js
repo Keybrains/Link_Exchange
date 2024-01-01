@@ -1,12 +1,24 @@
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 // @mui
 import { styled } from '@mui/material/styles';
-import { Card, Link, Container, Typography, Box } from '@mui/material';
+import {
+  Card,
+  Link,
+  Container,
+  Typography,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  CardContent,
+} from '@mui/material';
 import axiosInstance from '../config/AxiosInstance';
-
 // hooks
 import useResponsive from '../hooks/useResponsive';
 // components
@@ -63,6 +75,22 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 export default function Login() {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [userType, setUserType] = useState('');
+
+  const handleUserTypeSelection = (selectedType) => {
+    setUserType(selectedType);
+    setOpen(false);
+    handleRedirect(selectedType);
+  };
+
+  const handleRedirect = (selectedType) => {
+    if (selectedType === 'buyer') {
+      navigate('/buyer');
+    } else if (selectedType === 'publisher') {
+      navigate('/user');
+    }
+  };
 
   const smUp = useResponsive('up', 'sm');
 
@@ -86,15 +114,11 @@ export default function Login() {
       console.log('User ID:', decodedToken.id.client_id);
       toast.success('Token Decoded Successfully');
 
-      // Store the decoded token in localStorage
       localStorage.setItem('decodedToken', JSON.stringify(decodedToken));
       localStorage.setItem('authToken', token);
-
-      // Perform any further actions with the decoded token if needed
     } catch (error) {
       console.error('Token decoding error:', error);
       toast.error('Failed to decode token');
-      // Handle the error or perform additional actions as needed
     }
   };
 
@@ -110,15 +134,12 @@ export default function Login() {
       console.log('Response:', response);
 
       if (response && response.data && response.data.success) {
-        await toast
-          .promise(Promise.resolve(response.data.message), {
-            loading: 'Logging in...',
-            success: 'User Login Successful',
-            error: 'Failed to log in',
-          })
-          .then(() => {
-            navigate('/user/mywebsite');
-          });
+        await toast.promise(Promise.resolve(response.data.message), {
+          loading: 'Logging in...',
+          success: 'User Login Successful',
+          error: 'Failed to log in',
+        });
+        navigate('/user/mywebsite');
 
         const { token } = response.data;
         handleTokenDecoding(token);
@@ -201,6 +222,46 @@ export default function Login() {
         </RootStyle>
       </Page>
       <Toaster />
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        BackdropProps={{
+          sx: { backdropFilter: 'blur(15px)' },
+        }}
+        PaperProps={{
+          style: { backgroundColor: 'transparent', boxShadow: 'none' },
+        }}
+      >
+        <DialogContent sx={{ width: '500px' }}>
+          <Card sx={{ backgroundColor: 'rgba(255, 255, 255, 0.9)' }}>
+            {' '}
+            <DialogTitle sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              Select User Type
+            </DialogTitle>
+            <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div sx={{ display: 'flex', justifyContent: 'center' }}>
+                <Button
+                  variant="contained"
+                  onClick={() => handleUserTypeSelection('buyer')}
+                  sx={{ width: '120px', height: '40px', marginRight: 1 }}
+                >
+                  Buyer
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => handleUserTypeSelection('publisher')}
+                  sx={{ width: '120px', height: '40px', marginLeft: 1 }}
+                >
+                  Publisher
+                </Button>
+              </div>
+            </CardContent>
+            <DialogActions>
+              <Button onClick={() => setOpen(false)}>Cancel</Button>
+            </DialogActions>
+          </Card>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

@@ -127,9 +127,10 @@ function NavItem({ item, active }) {
       sx={{
         ...(isActiveRoot && activeRootStyle),
       }}
+      
     >
-      <ListItemIconStyle>{icon && icon}</ListItemIconStyle>
-      <ListItemText disableTypography primary={title} />
+      <ListItemIconStyle style={{color:"black"}}>{icon && icon}</ListItemIconStyle>
+      <ListItemText disableTypography primary={title} style={{color:"black"}} />
       {info && info}
     </ListItemStyle>
   );
@@ -148,7 +149,7 @@ export default function NavSection({ navConfig, ...other }) {
     <Box {...other}>
       <List disablePadding sx={{ p: 1 }}>
         {navConfig.map((item) => (
-          <NavItem key={item.title} item={item} active={match} />
+          <NavItem key={item.title} item={item} active={match} style={{ color: 'white' }} />
         ))}
       </List>
     </Box>
