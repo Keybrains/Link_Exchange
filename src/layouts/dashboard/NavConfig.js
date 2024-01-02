@@ -13,13 +13,13 @@ const navConfig = [
   //   defaultOpen: true,
   // },
   {
-    title: 'My Website',
+    title: 'Add Website',
     path: '/user/mywebsite',
     icon: getIcon('gg:website'),
   },
   {
-    title: 'My Social Media',
-    path: '/user/mysocialmedia',
+    title: 'Approved Website',
+    path: '/user/approvedwebsite',
     icon: getIcon('ion:social-buffer'),
   },
 

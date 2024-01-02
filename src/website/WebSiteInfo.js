@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Typography,
   Card,
@@ -13,13 +13,16 @@ import {
   Container,
   Grid,
 } from '@mui/material';
+import axiosInstance from '../config/AxiosInstance';
 
 import Page from '../admin/components/Page';
 
 export default function WebSiteInfo() {
   const navigate = useNavigate();
-
+  const location = useLocation();
   const [formData, setFormData] = useState({
+    user_id: '',
+    url: '',
     monthlyVisits: '',
     DA: '',
     spamScore: '',
@@ -35,13 +38,39 @@ export default function WebSiteInfo() {
     isPaid: false,
   });
 
+  useEffect(() => {
+    // Check if the decodedToken exists in localStorage
+    const decodedToken = localStorage.getItem('decodedToken');
+
+    // Parse the decodedToken to get user_id
+    if (decodedToken) {
+      const parsedToken = JSON.parse(decodedToken);
+      const userId = parsedToken.userId?.user_id; // Extracting user_id from decodedToken
+
+      // Update formData with the user_id
+      setFormData((prevData) => ({ ...prevData, user_id: userId }));
+    }
+
+    const queryParams = new URLSearchParams(location.search);
+    const urlParam = queryParams.get('url');
+
+    if (urlParam) {
+      setFormData((prevData) => ({ ...prevData, url: urlParam }));
+    }
+  }, [location.search]);
+
   const handleChange = (prop) => (event) => {
     setFormData({ ...formData, [prop]: event.target.value });
   };
 
-  const handleSubmit = () => {
-    console.log(formData);
-    navigate('/user/mywebsite');
+  const handleSubmit = async () => {
+    try {
+      const response = await axiosInstance.post('/website/website', formData); // Replace with your backend endpoint
+      console.log('Response:', response.data);
+      navigate('/user/mywebsite');
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   const handlePayment = () => {

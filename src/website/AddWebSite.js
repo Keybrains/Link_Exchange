@@ -1,8 +1,10 @@
+// AddWebSite.js
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Typography, Box, Button, TextField } from '@mui/material';
-import axios from 'axios';
-import axiosInstance from '../config/AxiosInstance';
+import { toast, Toaster } from 'react-hot-toast';
+
+import Page from '../admin/components/Page';
 
 export default function AddWebSite() {
   const navigate = useNavigate();
@@ -12,56 +14,41 @@ export default function AddWebSite() {
     setWebsiteUrl(event.target.value);
   };
 
-  const handleSubmit = async () => {
-    try {
-      // Simulating example form data
-      const formData = {
-        monthlyVisits: 10000,
-        DA: 40,
-        spamScore: 5,
-        categories: ['Category1', 'Category2'],
-        linkType: 'DoFollow',
-        country: 'USA',
-        language: 'English',
-        surfaceInGoogleNews: true,
-        backlinksAllowed: 3,
-        costOfAddingBacklink: 'Paid',
-        charges: 50,
-        linkTime: 'Forever',
-        isPaid: true,
-      };
+  const handleSubmit = () => {
+    const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
 
-      const response = await axiosInstance.post('/website/website', {
-        url: websiteUrl,
-        formData,
-      });
-
-      console.log('Response:', response.data);
-      navigate('/user/websiteinfo');
-    } catch (error) {
-      console.error('Error:', error);
-      // Handle error state
+    if (!urlRegex.test(websiteUrl)) {
+      // URL is not valid, show toast notification
+      toast.error('Please enter a valid URL', { position: 'top-center' });
+    } else {
+      // URL is valid, proceed with navigation
+      console.log('Submitted URL:', websiteUrl);
+      navigate(`/user/websiteinfo?url=${encodeURIComponent(websiteUrl)}`);
     }
   };
 
   return (
     <>
-      <Typography variant="h4" gutterBottom>
-        Add Website's
-      </Typography>
-      <Box display="flex" alignItems="center">
-        <TextField
-          required
-          label="URL"
-          variant="outlined"
-          value={websiteUrl}
-          onChange={handleInputChange}
-          sx={{ marginRight: '15px', flex: 1 }}
-        />
-        <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ flex: 'none' }}>
-          Submit
-        </Button>
-      </Box>
+      <Page title="Add Web Site" sx={{ padding: '25px', overflow: 'hidden' }}>
+        <Typography variant="h4" gutterBottom>
+          Add Website's
+        </Typography>
+        <Box display="flex" alignItems="center">
+          <TextField
+            required
+            label="URL"
+            variant="outlined"
+            value={websiteUrl}
+            onChange={handleInputChange}
+            sx={{ marginRight: '15px', flex: 1 }}
+          />
+          <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ flex: 'none' }}>
+            Submit
+          </Button>
+          <Toaster position="top-center" />
+        </Box>
+      </Page>
+      <Toaster />
     </>
   );
 }

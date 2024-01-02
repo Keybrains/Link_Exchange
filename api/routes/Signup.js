@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const moment = require('moment');
 const Signup = require('../models/Signup');
-const { hashPassword, hashCompare ,createToken } = require('../utils/authhelper');
+const { hashPassword, hashCompare, createToken } = require('../utils/authhelper');
 
 router.post('/signup', async (req, res) => {
   try {
@@ -81,5 +81,32 @@ router.post('/login', async (req, res) => {
     });
   }
 });
+
+router.get('/users', async (req, res) => {
+  try {
+    // Fetch all users from the database
+    const users = await Signup.find();
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No users found',
+      });
+    }
+
+    res.json({
+      success: true,
+      data: users,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+});
+
+
 
 module.exports = router;

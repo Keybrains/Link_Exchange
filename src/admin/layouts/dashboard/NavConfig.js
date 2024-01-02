@@ -13,15 +13,21 @@ const navConfig = [
     // defaultOpen: true,
   },
   {
+    title: 'All User',
+    path: '/admin/alluser',
+    icon: getIcon('mdi:user'),
+    // defaultOpen: true,
+  },
+  {
     title: 'All Website',
     path: '/admin/allwebsite',
     icon: getIcon('gg:website'),
   },
-  {
-    title: 'All Social Media',
-    path: '/admin/allsocialmedia',
-    icon: getIcon('ion:social-buffer'),
-  },
+  // {
+  //   title: 'All Social Media',
+  //   path: '/admin/allsocialmedia',
+  //   icon: getIcon('ion:social-buffer'),
+  // },
 
   // {
   //   title: 'blog',

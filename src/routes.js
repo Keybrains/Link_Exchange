@@ -26,6 +26,8 @@ import OwnerOrContributor from './website/OwnerOrContributor';
 import Owner from './website/Owner';
 import Contributor from './website/Contributor';
 import WebSiteInfo from './website/WebSiteInfo';
+import User from './admin/user/User';
+import ApprovedWebsite from './website/ApprovedWebsite';
 
 const isAuthenticated = () => {
   const authToken = localStorage.getItem('authToken');
@@ -50,6 +52,7 @@ const Router = () => {
         { path: 'contributor', element: isAuthenticated() ? <Contributor /> : <Navigate to="/login" /> },
         { path: 'ownerorcontributor', element: isAuthenticated() ? <OwnerOrContributor /> : <Navigate to="/login" /> },
         { path: 'websiteinfo', element: isAuthenticated() ? <WebSiteInfo /> : <Navigate to="/login" /> },
+        { path: 'approvedwebsite', element: isAuthenticated() ? <ApprovedWebsite /> : <Navigate to="/login" /> },
       ],
     },
     {
@@ -102,6 +105,7 @@ const Router = () => {
         { path: 'admindashboard', element: isAuthenticated() ? <AdminDashboard /> : <Navigate to="/adminlogin" /> },
         { path: 'allwebsite', element: isAuthenticated() ? <AllWebsite /> : <Navigate to="/adminlogin" /> },
         { path: 'allsocialmedia', element: isAuthenticated() ? <AllSociaMedia /> : <Navigate to="/adminlogin" /> },
+        { path: 'alluser', element: isAuthenticated() ? <User /> : <Navigate to="/adminlogin" /> },
         // Other routes for Admin Panel 1
       ],
     },

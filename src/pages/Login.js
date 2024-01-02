@@ -110,12 +110,11 @@ export default function Login() {
     localStorage.setItem('authToken', token);
     try {
       const decodedToken = decodeToken(token);
-      console.log('Decoded Token:', decodedToken);
-      console.log('User ID:', decodedToken.id.client_id);
       toast.success('Token Decoded Successfully');
 
-      localStorage.setItem('decodedToken', JSON.stringify(decodedToken));
-      localStorage.setItem('authToken', token);
+      // Convert decodedToken to a string before storing it
+      const decodedTokenString = JSON.stringify(decodedToken);
+      localStorage.setItem('decodedToken', decodedTokenString);
     } catch (error) {
       console.error('Token decoding error:', error);
       toast.error('Failed to decode token');
