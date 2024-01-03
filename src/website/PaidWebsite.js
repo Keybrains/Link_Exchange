@@ -25,7 +25,7 @@ const cardStyle = {
 const contentStyle = {
   padding: '20px',
 };
-export default function ApprovedWebsite() {
+export default function PaidWebsite() {
   const [approvedWebsites, setApprovedWebsites] = useState([]);
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function ApprovedWebsite() {
           // Update formData with the user_id
           //   setFormData((prevData) => ({ ...prevData, user_id: userId }));
 
-          const response = await axiosInstance.get(`/website/approved-websites/${userId}`);
+          const response = await axiosInstance.get(`/website/websites/paid/${userId}`);
           if (response.status === 200) {
             setApprovedWebsites(response.data.data);
           } else {
@@ -62,7 +62,7 @@ export default function ApprovedWebsite() {
   return (
     <Page title="Approved Website" sx={{ padding: '25px', overflow: 'hidden' }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
-        Approved Website
+        Paid Website
       </Typography>
       {approvedWebsites.length > 0 ? (
         approvedWebsites.map((website) => (
@@ -81,7 +81,7 @@ export default function ApprovedWebsite() {
                     {website.url}
                   </Typography>
 
-                  <Typography style={{ color: 'red', paddingTop: '10px' }}>Cost: $0</Typography>
+                  <Typography style={{ color: 'red', paddingTop: '10px' }}>Cost: ${website.charges || 0}</Typography>
                 </Grid>
                 <Grid container spacing={2} sx={{ marginTop: '10px' }}>
                   <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
@@ -127,7 +127,6 @@ export default function ApprovedWebsite() {
                       {website.surfaceInGoogleNews ? 'Yes' : 'No'}
                     </Typography>
                   </Grid>
-
                   <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
                     <div style={{ margin: '15px' }}>
                       <Button variant="contained" color="primary" sx={{ marginRight: '10px' }}>
@@ -144,7 +143,7 @@ export default function ApprovedWebsite() {
           </Card>
         ))
       ) : (
-        <Typography>No Approved Websites</Typography>
+        <Typography>No Paid Websites</Typography>
       )}
     </Page>
   );

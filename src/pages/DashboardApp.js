@@ -1,7 +1,10 @@
+import { useEffect, useState } from 'react';
 import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
+import axiosInstance from '../config/AxiosInstance';
+
 // components
 import Page from '../components/Page';
 import Iconify from '../components/Iconify';
@@ -22,7 +25,23 @@ import {
 
 export default function DashboardApp() {
   const theme = useTheme();
-
+  const [websiteCounts, setWebsiteCounts] = useState({});
+  const fetchWebsiteCounts = async () => {
+    try {
+      const response = await axiosInstance.get('website/website-count');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching website counts:', error);
+      return { error: 'Failed to fetch website counts' };
+    }
+  };
+  useEffect(() => {
+    const fetchData = async () => {
+      const counts = await fetchWebsiteCounts();
+      setWebsiteCounts(counts);
+    };
+    fetchData();
+  }, []);
   return (
     <Page title="Dashboard">
       <Container maxWidth="xl">
@@ -32,22 +51,41 @@ export default function DashboardApp() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Weekly Sales" total={714000} icon={'teenyicons:layers-intersect-solid'} />
+            <AppWidgetSummary
+              title="Total Website"
+              total={websiteCounts.totalCount}
+              icon={'teenyicons:layers-intersect-solid'}
+            />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="New Users" total={1352831} color="info" icon={'teenyicons:adjust-vertical-solid'} />
+            <AppWidgetSummary
+              title="Paid Website"
+              total={websiteCounts.paidCount}
+              color="info"
+              icon={'teenyicons:adjust-vertical-solid'}
+            />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Item Orders" total={1723315} color="success" icon={'teenyicons:bag-alt-solid'} />
+            <AppWidgetSummary
+              title="Free Website"
+              total={websiteCounts.freeCount}
+              color="success"
+              icon={'teenyicons:bag-alt-solid'}
+            />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
+            <AppWidgetSummary
+              title="Reported Website"
+              total={websiteCounts.reportedCount}
+              color="error"
+              icon={'ant-design:bug-filled'}
+            />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={8}>
+          {/* <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
               title="Website Visits"
               subheader="(+47%) than last year"
@@ -207,7 +245,7 @@ export default function DashboardApp() {
                 { id: '5', label: 'Sprint Showcase' },
               ]}
             />
-          </Grid>
+          </Grid> */}
         </Grid>
       </Container>
     </Page>

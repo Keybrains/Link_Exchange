@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper ,Button } from '@mui/material';
+import {
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+} from '@mui/material';
 import axiosInstance from '../config/AxiosInstanceAdmin';
 
 import Page from '../../components/Page';
@@ -48,48 +58,57 @@ export default function AllWebsite() {
     }
   };
 
-
   return (
     <Page title="All Websites" sx={{ padding: '25px', overflow: 'hidden' }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
-        All Websites
+        Approve Request
       </Typography>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>URL</TableCell>
-              <TableCell>User</TableCell>
-              <TableCell>Country</TableCell>
-              <TableCell>Language</TableCell>
-              <TableCell>Cost of Adding Backlink</TableCell>
-              <TableCell>Is Paid</TableCell>
-              <TableCell>Approved</TableCell>
-              {/* <TableCell>Action</TableCell> */}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {websites.map((website) => (
-              <TableRow key={website.website_id}>
-                <TableCell>{website.url}</TableCell>
-                <TableCell>{website.users?.firstname} {website.users?.lastname}</TableCell>
-                <TableCell>{website.country}</TableCell>
-                <TableCell>{website.language}</TableCell>
-                <TableCell>{website.costOfAddingBacklink}</TableCell>
-                <TableCell>{website.isPaid ? 'Yes' : 'No'}</TableCell>
-                <TableCell>{website.approved ? 'Yes' : 'No'}</TableCell>
-                <TableCell>
-                  {!website.approved && (
-                    <Button variant="contained" color="primary" onClick={() => handleApprove(website.website_id)}>
-                      Approve
-                    </Button>
-                  )}
-                </TableCell>
+      {websites.length > 0 ? (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead sx={{ backgroundColor: '#C3E0E5' }}>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 'bold' }}>URL</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>User</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Country</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Language</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Cost</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Is Paid</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Approved</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Action</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {websites.map((website) => (
+                <TableRow key={website.website_id}>
+                  <TableCell>{website.url}</TableCell>
+                  <TableCell>{`${website.users?.firstname} ${website.users?.lastname}`}</TableCell>
+                  <TableCell>{website.country}</TableCell>
+                  <TableCell>{website.language}</TableCell>
+                  <TableCell>
+                    {website.costOfAddingBacklink} (${website.charges || 0})
+                  </TableCell>
+                  <TableCell>{website.isPaid ? 'Yes' : 'No'}</TableCell>
+                  <TableCell>{website.approved ? 'Yes' : 'No'}</TableCell>
+                  <TableCell>
+                    {!website.approved && (
+                      <Button
+                        variant="outlined"
+                        onClick={() => handleApprove(website.website_id)}
+                        // sx={{ backgroundColor: '#38AEEC', color: 'white' }} // Set the background color using sx prop
+                      >
+                        Approve
+                      </Button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <Typography>No Approve Request</Typography>
+      )}
     </Page>
   );
 }

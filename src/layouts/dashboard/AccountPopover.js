@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import { Link as RouterLink ,useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 // @mui
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton } from '@mui/material';
@@ -53,10 +53,26 @@ export default function AccountPopover() {
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('decodedToken');
-    navigate('/login'); 
+    navigate('/login');
 
     handleClose();
   };
+  const [userInfo, setUserInfo] = useState({});
+  useEffect(() => {
+    // Retrieve decodedToken from localStorage
+    const decodedToken = localStorage.getItem('decodedToken');
+    if (decodedToken) {
+      const parsedToken = JSON.parse(decodedToken);
+      const { userId } = parsedToken;
+
+      // Extracting firstname, lastname, and email from userId in decodedToken
+      setUserInfo({
+        firstname: userId.firstname,
+        lastname: userId.lastname,
+        email: userId.email,
+      });
+    }
+  }, []);
 
   return (
     <>
@@ -78,7 +94,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src={account.photoURL} alt="photoURL" />
+       <Avatar src={account.photoURL} alt="photoURL" />
       </IconButton>
 
       <MenuPopover
@@ -97,10 +113,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.displayName}
+            {userInfo.firstname} {userInfo.lastname}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {userInfo.email}
           </Typography>
         </Box>
 

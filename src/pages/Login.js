@@ -138,7 +138,7 @@ export default function Login() {
           success: 'User Login Successful',
           error: 'Failed to log in',
         });
-        navigate('/user/mywebsite');
+        navigate('/user/dashboard');
 
         const { token } = response.data;
         handleTokenDecoding(token);

@@ -48,15 +48,46 @@ router.post('/website', async (req, res) => {
   }
 });
 
+//get website all in admin
+// router.get('/websites', async (req, res) => {
+//   try {
+//     const data = await Website.aggregate([
+//       { $match: {} }, // This stage will match all documents in the collection
+//     ]);
 
+//     const count = await Website.countDocuments();
 
-router.get("/websites", async (req, res) => {
+//     for (let i = 0; i < data.length; i++) {
+//       const userId = data[i].user_id;
+
+//       const users = await Signup.findOne({ user_id: userId });
+
+//       data[i].users = users;
+//     }
+
+//     data.reverse(); // Reverse the order of the data array
+
+//     res.json({
+//       statusCode: 200,
+//       data: data,
+//       count: count,
+//       message: 'Read All Request',
+//     });
+//   } catch (error) {
+//     res.json({
+//       statusCode: 500,
+//       message: error.message,
+//     });
+//   }
+// });
+
+router.get('/websites', async (req, res) => {
   try {
     const data = await Website.aggregate([
-      { $match: {} } // This stage will match all documents in the collection
+      { $match: { approved: false } }, // Match documents with approved: false
     ]);
 
-    const count = await Website.countDocuments();
+    const count = await Website.countDocuments({ approved: false });
 
     for (let i = 0; i < data.length; i++) {
       const userId = data[i].user_id;
@@ -72,7 +103,7 @@ router.get("/websites", async (req, res) => {
       statusCode: 200,
       data: data,
       count: count,
-      message: "Read All Request",
+      message: 'Read Unapproved Websites Request',
     });
   } catch (error) {
     res.json({
@@ -82,8 +113,71 @@ router.get("/websites", async (req, res) => {
   }
 });
 
+//get website free in admin
+router.get('/websites/free', async (req, res) => {
+  try {
+    const freeWebsites = await Website.aggregate([
+      { $match: { costOfAddingBacklink: 'Free' } }, // Match documents with costOfAddingBacklink as 'Free'
+    ]);
 
+    const count = await Website.countDocuments({ costOfAddingBacklink: 'Free' });
 
+    for (let i = 0; i < freeWebsites.length; i++) {
+      const userId = freeWebsites[i].user_id;
+
+      const users = await Signup.findOne({ user_id: userId });
+
+      freeWebsites[i].users = users;
+    }
+
+    freeWebsites.reverse(); // Reverse the order of the free websites array
+
+    res.json({
+      statusCode: 200,
+      data: freeWebsites,
+      count: count,
+      message: 'Free websites retrieved successfully',
+    });
+  } catch (error) {
+    res.json({
+      statusCode: 500,
+      message: error.message,
+    });
+  }
+});
+
+//get website paid in admin
+router.get('/websites/paid', async (req, res) => {
+  try {
+    const paidWebsites = await Website.aggregate([
+      { $match: { costOfAddingBacklink: 'Paid' } }, // Match documents with costOfAddingBacklink as 'Paid'
+    ]);
+
+    const count = await Website.countDocuments({ costOfAddingBacklink: 'Paid' });
+
+    for (let i = 0; i < paidWebsites.length; i++) {
+      const userId = paidWebsites[i].user_id;
+
+      const users = await Signup.findOne({ user_id: userId });
+
+      paidWebsites[i].users = users;
+    }
+
+    paidWebsites.reverse(); // Reverse the order of the paid websites array
+
+    res.json({
+      statusCode: 200,
+      data: paidWebsites,
+      count: count,
+      message: 'Paid websites retrieved successfully',
+    });
+  } catch (error) {
+    res.json({
+      statusCode: 500,
+      message: error.message,
+    });
+  }
+});
 
 // Get all websites
 // router.get('/websites', async (req, res) => {
@@ -112,6 +206,7 @@ router.get("/websites", async (req, res) => {
 //   }
 // });
 
+//put approve website in admin
 router.put('/approve/:websiteId', async (req, res) => {
   try {
     const websiteId = req.params.websiteId;
@@ -142,30 +237,231 @@ router.put('/approve/:websiteId', async (req, res) => {
   }
 });
 
-router.get('/approved-websites/:userId', async (req, res) => {
+// router.get('/approved-websites/:userId', async (req, res) => {
+//   try {
+//     const userId = req.params.userId;
+//     const approvedWebsites = await Website.find({ user_id: userId, approved: true });
+
+//     if (!approvedWebsites || approvedWebsites.length === 0) {
+//       return res.status(404).json({
+//         success: false,
+//         message: 'No approved websites found for the user',
+//       });
+//     }
+
+//     const reversedApprovedWebsites = approvedWebsites.reverse(); // Reverse the order of approvedWebsites
+
+//     return res.status(200).json({
+//       success: true,
+//       message: 'Approved websites retrieved successfully for the user',
+//       data: reversedApprovedWebsites, // Send the reversed array
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       success: false,
+//       message: 'Internal Server Error',
+//     });
+//   }
+// });
+
+//get website all paid in user
+router.get('/websites/paid/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
-    const approvedWebsites = await Website.find({ user_id: userId, approved: true });
+    const paidWebsites = await Website.find({ user_id: userId, costOfAddingBacklink: 'Paid' });
 
-    if (!approvedWebsites || approvedWebsites.length === 0) {
+    if (!paidWebsites || paidWebsites.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'No approved websites found for the user',
+        message: 'No paid websites found for the user',
       });
     }
 
-    const reversedApprovedWebsites = approvedWebsites.reverse(); // Reverse the order of approvedWebsites
+    const reversedPaidWebsites = paidWebsites.reverse();
 
     return res.status(200).json({
       success: true,
-      message: 'Approved websites retrieved successfully for the user',
-      data: reversedApprovedWebsites, // Send the reversed array
+      message: 'Paid websites retrieved successfully for the user',
+      data: reversedPaidWebsites,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       success: false,
       message: 'Internal Server Error',
+    });
+  }
+});
+
+//get website all free in user
+router.get('/websites/free/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const freeWebsites = await Website.find({ user_id: userId, costOfAddingBacklink: 'Free' });
+
+    if (!freeWebsites || freeWebsites.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No free websites found for the user',
+      });
+    }
+
+    const reversedFreeWebsites = freeWebsites.reverse(); // Reverse the order of freeWebsites
+
+    return res.status(200).json({
+      success: true,
+      message: 'Free websites retrieved successfully for the user',
+      data: reversedFreeWebsites,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+});
+
+//get count
+router.get('/website-count', async (req, res) => {
+  try {
+    const totalCount = await Website.countDocuments();
+
+    const paidCount = await Website.countDocuments({ costOfAddingBacklink: 'Paid' });
+    const freeCount = await Website.countDocuments({ costOfAddingBacklink: 'Free' });
+    const reportedCount = await Website.countDocuments({ reported: true });
+
+    res.json({
+      statusCode: 200,
+      totalCount,
+      paidCount,
+      freeCount,
+      reportedCount,
+      message: 'Website Counts',
+    });
+  } catch (error) {
+    res.json({
+      statusCode: 500,
+      message: error.message,
+    });
+  }
+});
+
+//delete api for free and paid website
+
+// Delete free websites by ID
+router.delete('/websites/free/:id', async (req, res) => {
+  try {
+    const websiteId = req.params.id;
+    const deletedWebsite = await Website.findByIdAndDelete(websiteId);
+
+    if (!deletedWebsite) {
+      return res.status(404).json({
+        success: false,
+        message: 'Free website not found for deletion',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Free website deleted successfully',
+      data: deletedWebsite,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+});
+
+// Delete paid websites by ID
+router.delete('/websites/paid/:id', async (req, res) => {
+  try {
+    const websiteId = req.params.id;
+    const deletedWebsite = await Website.findByIdAndDelete(websiteId);
+
+    if (!deletedWebsite) {
+      return res.status(404).json({
+        success: false,
+        message: 'Paid website not found for deletion',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Paid website deleted successfully',
+      data: deletedWebsite,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+});
+
+// update free api data
+
+// Update a free or paid website by ID
+router.put('/websites/:id', async (req, res) => {
+  try {
+    const websiteId = req.params.id;
+    const updatedWebsiteData = req.body;
+
+    // Assuming the 'isPaid' property in the website schema determines whether it's a paid website or not
+    const isPaidWebsite = updatedWebsiteData.isPaid;
+
+    const updatedWebsite = await Website.findByIdAndUpdate(websiteId, updatedWebsiteData, { new: true });
+
+    if (!updatedWebsite) {
+      return res.status(404).json({
+        success: false,
+        message: 'Website not found for update',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Website updated successfully',
+      data: updatedWebsite,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+      error: error.message,
+    });
+  }
+});
+
+// Get a particular website data by ID
+router.get('/websites/:id', async (req, res) => {
+  try {
+    const websiteId = req.params.id;
+
+    // Fetch website data by ID from the database
+    const website = await Website.findById(websiteId);
+
+    if (!website) {
+      return res.status(404).json({
+        success: false,
+        message: 'Website not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: website,
+      message: 'Website retrieved successfully',
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+      error: error.message,
     });
   }
 });

@@ -19,9 +19,30 @@ const navConfig = [
     // defaultOpen: true,
   },
   {
-    title: 'All Website',
+    title: 'Approve Request',
     path: '/admin/allwebsite',
     icon: getIcon('gg:website'),
+  },
+
+  {
+    title: 'Free Website',
+    path: '/admin/freewebsite',
+    icon: getIcon('ion:social-buffer'),
+  },
+  {
+    title: 'Paid Website',
+    path: '/admin/paidwebsite',
+    icon: getIcon('material-symbols:paid-outline'),
+  },
+  {
+    title: 'Contact Users',
+    path: '/admin/Discussions',
+    icon: getIcon('material-symbols:chat'),
+  },
+  {
+    title: 'Reported Website',
+    path: '/admin/reportedwebsite',
+    icon: getIcon('material-symbols:report'),
   },
   // {
   //   title: 'All Social Media',

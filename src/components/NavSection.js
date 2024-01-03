@@ -67,7 +67,7 @@ function NavItem({ item, active }) {
             ...(isActiveRoot && activeRootStyle),
           }}
         >
-          <ListItemIconStyle>{icon && icon}</ListItemIconStyle>
+          <ListItemIconStyle >{icon && icon}</ListItemIconStyle>
           <ListItemText disableTypography primary={title} />
           {info && info}
           <Iconify
@@ -128,8 +128,8 @@ function NavItem({ item, active }) {
         ...(isActiveRoot && activeRootStyle),
       }}
     >
-      <ListItemIconStyle>{icon && icon}</ListItemIconStyle>
-      <ListItemText disableTypography primary={title} />
+      <ListItemIconStyle style={{color:"black"}}>{icon && icon}</ListItemIconStyle>
+      <ListItemText disableTypography primary={title} style={{color:"black"}} />
       {info && info}
     </ListItemStyle>
   );

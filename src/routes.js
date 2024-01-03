@@ -27,7 +27,18 @@ import Owner from './website/Owner';
 import Contributor from './website/Contributor';
 import WebSiteInfo from './website/WebSiteInfo';
 import User from './admin/user/User';
-import ApprovedWebsite from './website/ApprovedWebsite';
+
+import DashboardApp from './pages/DashboardApp';
+import FreeWebsite from './website/FreeWebsite';
+import PaidWebsite from './website/PaidWebsite';
+import ReportedWebsite from './website/ReportedWebsite';
+import Discussions from './website/Discussions';
+
+import AdminDiscussions from './admin/website/Discussions';
+import AdminFreeWebsite from './admin/website/FreeWebsite';
+import AdminPaidWebsite from './admin/website/PaidWebsite';
+import AdminReportedWebsite from './admin/website/ReportedWebsite';
+import UpdateWebSiteInfo from './admin/website/UpdateWebSiteInfo';
 
 const isAuthenticated = () => {
   const authToken = localStorage.getItem('authToken');
@@ -44,6 +55,7 @@ const Router = () => {
       path: '/user',
       element: isAuthenticated() ? <DashboardLayout /> : <Navigate to="/login" />,
       children: [
+        { path: 'dashboard', element: isAuthenticated() ? <DashboardApp /> : <Navigate to="/login" /> },
         { path: 'mywebsite', element: isAuthenticated() ? <WebsiteDashboard /> : <Navigate to="/login" /> },
         { path: 'mysocialmedia', element: isAuthenticated() ? <SocialMediaDashboard /> : <Navigate to="/login" /> },
         { path: 'terms', element: isAuthenticated() ? <Terms /> : <Navigate to="/login" /> },
@@ -52,7 +64,10 @@ const Router = () => {
         { path: 'contributor', element: isAuthenticated() ? <Contributor /> : <Navigate to="/login" /> },
         { path: 'ownerorcontributor', element: isAuthenticated() ? <OwnerOrContributor /> : <Navigate to="/login" /> },
         { path: 'websiteinfo', element: isAuthenticated() ? <WebSiteInfo /> : <Navigate to="/login" /> },
-        { path: 'approvedwebsite', element: isAuthenticated() ? <ApprovedWebsite /> : <Navigate to="/login" /> },
+        { path: 'freewebsite', element: isAuthenticated() ? <FreeWebsite /> : <Navigate to="/login" /> },
+        { path: 'paidwebsite', element: isAuthenticated() ? <PaidWebsite /> : <Navigate to="/login" /> },
+        { path: 'reportedwebsite', element: isAuthenticated() ? <ReportedWebsite /> : <Navigate to="/login" /> },
+        { path: 'Discussions', element: isAuthenticated() ? <Discussions /> : <Navigate to="/login" /> },
       ],
     },
     {
@@ -106,6 +121,11 @@ const Router = () => {
         { path: 'allwebsite', element: isAuthenticated() ? <AllWebsite /> : <Navigate to="/adminlogin" /> },
         { path: 'allsocialmedia', element: isAuthenticated() ? <AllSociaMedia /> : <Navigate to="/adminlogin" /> },
         { path: 'alluser', element: isAuthenticated() ? <User /> : <Navigate to="/adminlogin" /> },
+        { path: 'freewebsite', element: isAuthenticated() ? <AdminFreeWebsite /> : <Navigate to="/login" /> },
+        { path: 'paidwebsite', element: isAuthenticated() ? <AdminPaidWebsite /> : <Navigate to="/login" /> },
+        { path: 'reportedwebsite', element: isAuthenticated() ? <AdminReportedWebsite /> : <Navigate to="/login" /> },
+        { path: 'Discussions', element: isAuthenticated() ? <AdminDiscussions /> : <Navigate to="/login" /> },
+        { path: 'updatesite/:websiteId', element: isAuthenticated() ? <UpdateWebSiteInfo /> : <Navigate to="/login" /> },
         // Other routes for Admin Panel 1
       ],
     },

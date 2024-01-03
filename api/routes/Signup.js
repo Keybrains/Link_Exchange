@@ -107,6 +107,33 @@ router.get('/users', async (req, res) => {
   }
 });
 
+//delete user
+router.delete('/users/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
 
+    // Find the user by user_id and delete it
+    const deletedUser = await Signup.findOneAndDelete({ user_id: userId });
+
+    if (!deletedUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'User deleted successfully',
+      deletedUser,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+});
 
 module.exports = router;
