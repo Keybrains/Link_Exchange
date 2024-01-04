@@ -212,7 +212,7 @@ router.put('/approve/:websiteId', async (req, res) => {
     const websiteId = req.params.websiteId;
     const updatedWebsite = await Website.findOneAndUpdate(
       { website_id: websiteId },
-      { $set: { approved: true } },
+      { $set: { approved: true, status: 'activate' } },
       { new: true }
     );
 
@@ -227,6 +227,38 @@ router.put('/approve/:websiteId', async (req, res) => {
       success: true,
       message: 'Website approved successfully',
       data: updatedWebsite,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+});
+
+// Update website status to activate or deactivate
+router.put('/toggle-status/:websiteId', async (req, res) => {
+  try {
+    const websiteId = req.params.websiteId;
+    const website = await Website.findById(websiteId);
+
+    if (!website) {
+      return res.status(404).json({
+        success: false,
+        message: 'Website not found',
+      });
+    }
+
+    // Toggle status between 'activate' and 'deactivate'
+    const newStatus = website.status === 'activate' ? 'deactivate' : 'activate';
+    website.status = newStatus;
+    await website.save();
+
+    res.status(200).json({
+      success: true,
+      message: `Website status updated to ${newStatus}`,
+      data: website,
     });
   } catch (error) {
     console.error(error);
@@ -463,6 +495,27 @@ router.get('/websites/:id', async (req, res) => {
       message: 'Internal Server Error',
       error: error.message,
     });
+  }
+});
+
+//reprt website status update
+router.put('/updateReportedStatus/:websiteId', async (req, res) => {
+  const { websiteId } = req.params; 
+
+  try {
+    const updatedWebsite = await Website.findOneAndUpdate(
+      { website_id: websiteId }, 
+      { $set: { reported: true } }, 
+      { new: true }
+    );
+
+    if (!updatedWebsite) {
+      return res.status(404).json({ success: false, message: 'Website not found' });
+    }
+
+    res.status(200).json({ success: true, data: updatedWebsite });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to update reported status' });
   }
 });
 

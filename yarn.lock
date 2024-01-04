@@ -1027,7 +1027,7 @@
     "core-js-pure" "^3.20.2"
     "regenerator-runtime" "^0.13.4"
 
-"@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.10", "@babel/runtime@^7.15.4", "@babel/runtime@^7.16.3", "@babel/runtime@^7.17.2", "@babel/runtime@^7.18.3", "@babel/runtime@^7.21.0", "@babel/runtime@^7.22.5", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
+"@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.10", "@babel/runtime@^7.15.4", "@babel/runtime@^7.16.3", "@babel/runtime@^7.17.2", "@babel/runtime@^7.18.3", "@babel/runtime@^7.21.0", "@babel/runtime@^7.22.5", "@babel/runtime@^7.23.6", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
   "integrity" "sha512-w06OXVOFso7LcbzMiDGt+3X7Rh7Ho8MmgPoWU3rarH+8upf+wSU/grlGbWzQyr3DkdN6ZeuMFjpdwW0Q+HxobA=="
   "resolved" "https://registry.npmjs.org/@babel/runtime/-/runtime-7.23.7.tgz"
   "version" "7.23.7"
@@ -1679,6 +1679,13 @@
     "clsx" "^1.1.1"
     "prop-types" "^15.8.1"
     "react-is" "^17.0.2"
+
+"@mui/icons-material@^5.15.3":
+  "integrity" "sha512-7LEs8AnO2Se/XYH+CcJndRsGAE+M8KAExiiQHf0V11poqmPVGcbbY82Ry2IUYf9+rOilCVnWI18ErghZ625BPQ=="
+  "resolved" "https://registry.npmjs.org/@mui/icons-material/-/icons-material-5.15.3.tgz"
+  "version" "5.15.3"
+  dependencies:
+    "@babel/runtime" "^7.23.6"
 
 "@mui/lab@^5.0.0-alpha.88":
   "integrity" "sha512-YS2NPw0D0CHG9z9Y6Wjocl3g2LNzdXdkvORPoyc05ea9Xm+m8buddvMeTuL/r/e3S7yLK8HOMN2uHE0rwD/oVQ=="

@@ -61,6 +61,10 @@ const WebsiteSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  status: {
+    type: String,
+    default: 'pending',
+  },
   reported: {
     type: Boolean,
     default: false,

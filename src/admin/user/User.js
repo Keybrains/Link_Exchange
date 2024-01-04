@@ -14,6 +14,8 @@ import {
   DialogContent,
   DialogTitle,
 } from '@mui/material';
+import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axiosInstance from '../config/AxiosInstanceAdmin';
 import Page from '../../components/Page';
 
@@ -91,19 +93,21 @@ export default function User() {
                     <TableCell>{user.lastname}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.phonenumber}</TableCell>
-                    <TableCell>
-                      {/* <Button
-                        variant="contained"
-                      
-                        onClick={() => setDeleteUserId(user.user_id)}
-                        sx={{ backgroundColor: '#38AEEC', color: 'white' }}
-                      >
-                        Delete
-                      </Button> */}
 
-                      <Button variant="outlined" onClick={() => setDeleteUserId(user.user_id)} color="error">
-                        Delete
-                      </Button>
+                    <TableCell>
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => setDeleteUserId(user.user_id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            setDeleteUserId(user.user_id);
+                          }
+                        }}
+                        style={{ cursor: 'pointer', fontSize: '15px' }}
+                      >
+                        <FontAwesomeIcon icon={faTrashAlt} />
+                      </span>
                     </TableCell>
                   </TableRow>
                 ))}

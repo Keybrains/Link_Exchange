@@ -8,23 +8,12 @@ import {
   // ...other imports
 } from '@mui/material';
 import axios from 'axios';
+import { faDotCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axiosInstance from '../config/AxiosInstance';
 
 import Page from '../admin/components/Page';
 
-const cardStyle = {
-  marginBottom: '15px',
-  boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
-  transition: '0.3s',
-  borderRadius: '10px',
-  '&:hover': {
-    boxShadow: '0 8px 16px 0 rgba(0,0,0,0.2)',
-  },
-};
-
-const contentStyle = {
-  padding: '20px',
-};
 export default function PaidWebsite() {
   const [approvedWebsites, setApprovedWebsites] = useState([]);
 
@@ -76,12 +65,26 @@ export default function PaidWebsite() {
             >
               <Grid>
                 <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                  <Typography style={{ paddingBottom: '10px' }}>
+                    <FontAwesomeIcon
+                      icon={faDotCircle}
+                      style={{
+                        color: website.status === 'activate' ? 'green' : 'red',
+                        fontSize: '0.9em', // Adjust the size as needed
+                        marginRight: '5px',
+                      }}
+                    />
+                    <span style={{ color: website.status === 'activate' ? 'green' : 'red' }}>
+                      {website.status === 'activate' ? 'Active' : 'Inactive'}
+                    </span>
+                  </Typography>
                   <Typography style={{ fontSize: '1.2em' }}>
                     <span style={{ fontWeight: 'bold' }}>URL: </span>
                     {website.url}
                   </Typography>
-
-                  <Typography style={{ color: 'red', paddingTop: '10px' }}>Cost: ${website.charges || 0}</Typography>
+                  <Typography style={{ color: '#0E86D4', paddingTop: '10px' }}>
+                    Cost: ${website.charges || 0}
+                  </Typography>
                 </Grid>
                 <Grid container spacing={2} sx={{ marginTop: '10px' }}>
                   <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>

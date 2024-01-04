@@ -15,6 +15,7 @@ var app = express();
 const SignupRouter = require('./routes/Signup');
 const AdminSignupRouter = require('./routes/AdminSignup');
 const WebSiteRouter = require('./routes/Website');
+const ReportedWebSiteRouter = require('./routes/ReportedWebsite');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -31,6 +32,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/signup', SignupRouter);
 app.use('/api/adminsignup', AdminSignupRouter);
 app.use('/api/website', WebSiteRouter);
+app.use('/api/reportedwebsite', ReportedWebSiteRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
