@@ -131,81 +131,89 @@ export default function FreeWebsite() {
               </TableHead>
               <TableBody>
                 {freeWebsites.map((website) => (
-                  <TableRow key={website._id}>
-                    <TableCell>{website.url}</TableCell>
-                    <TableCell>
-                      {website.users?.firstname} {website.users?.lastname}
-                    </TableCell>
-                    <TableCell>{website.country}</TableCell>
-                    <TableCell>{website.language}</TableCell>
-                    <TableCell>{website.costOfAddingBacklink}</TableCell>
-                    <TableCell>{website.approved ? 'Yes' : 'No'}</TableCell>
-                    <TableCell>
-                      {(() => {
-                        switch (website.status) {
-                          case 'deactivate':
-                            return (
-                              <Tooltip title="To Activate URL - Click Here">
-                                <Button
-                                  variant="outlined"
-                                  onClick={() => handleToggleStatus(website._id, 'activate')}
-                                  color="error"
-                                >
-                                  Deactivate
-                                </Button>
-                              </Tooltip>
-                            );
-                          case 'activate':
-                            return (
-                              <Tooltip title="To Deactivate URL - Click Here">
-                                <Button
-                                  variant="outlined"
-                                  onClick={() => handleToggleStatus(website._id, 'deactivate')}
-                                  style={{ color: 'green', borderColor: 'green' }}
-                                >
-                                  Activate
-                                </Button>
-                              </Tooltip>
-                            );
-                          default:
-                            return (
-                              <Tooltip title="This URL is not approved by admin">
-                                <Button style={{ color: 'gray' }}>Pending</Button>
-                              </Tooltip>
-                            );
-                        }
-                      })()}
-                    </TableCell>
+                  <>
+                    <TableRow key={website._id}>
+                      <TableCell>{website.url}</TableCell>
+                      <TableCell>
+                        {website.users?.firstname} {website.users?.lastname}
+                      </TableCell>
+                      <TableCell>{website.country}</TableCell>
+                      <TableCell>{website.language}</TableCell>
+                      <TableCell>{website.costOfAddingBacklink}</TableCell>
+                      <TableCell>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span style={{ marginBottom: '5px' }}>{website.approved ? 'Yes' : 'No'}</span>
+                          {website.reported && <span style={{ color: 'red' }}>Reported</span>}
+                        </div>
+                      </TableCell>
 
-                    <TableCell>
-                      <span
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => handleUpdate(website._id)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            handleUpdate(website._id);
+                      <TableCell>
+                        {(() => {
+                          switch (website.status) {
+                            case 'deactivate':
+                              return (
+                                <Tooltip title="To Activate URL - Click Here">
+                                  <Button
+                                    variant="outlined"
+                                    onClick={() => handleToggleStatus(website._id, 'activate')}
+                                    color="error"
+                                  >
+                                    Deactivate
+                                  </Button>
+                                </Tooltip>
+                              );
+                            case 'activate':
+                              return (
+                                <Tooltip title="To Deactivate URL - Click Here">
+                                  <Button
+                                    variant="outlined"
+                                    onClick={() => handleToggleStatus(website._id, 'deactivate')}
+                                    style={{ color: 'green', borderColor: 'green' }}
+                                  >
+                                    Activate
+                                  </Button>
+                                </Tooltip>
+                              );
+                            default:
+                              return (
+                                <Tooltip title="This URL is not approved by admin">
+                                  <Button style={{ color: 'gray' }}>Pending</Button>
+                                </Tooltip>
+                              );
                           }
-                        }}
-                        style={{ cursor: 'pointer', marginRight: '10px', fontSize: '15px' }}
-                      >
-                        <FontAwesomeIcon icon={faPencilAlt} />
-                      </span>
-                      <span
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => handleOpenDialog(website)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            handleOpenDialog(website);
-                          }
-                        }}
-                        style={{ cursor: 'pointer', fontSize: '15px' }}
-                      >
-                        <FontAwesomeIcon icon={faTrashAlt} />
-                      </span>
-                    </TableCell>
-                  </TableRow>
+                        })()}
+                      </TableCell>
+
+                      <TableCell>
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => handleUpdate(website._id)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              handleUpdate(website._id);
+                            }
+                          }}
+                          style={{ cursor: 'pointer', marginRight: '10px', fontSize: '15px' }}
+                        >
+                          <FontAwesomeIcon icon={faPencilAlt} />
+                        </span>
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => handleOpenDialog(website)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              handleOpenDialog(website);
+                            }
+                          }}
+                          style={{ cursor: 'pointer', fontSize: '15px' }}
+                        >
+                          <FontAwesomeIcon icon={faTrashAlt} />
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  </>
                 ))}
               </TableBody>
             </Table>
@@ -242,8 +250,7 @@ export default function FreeWebsite() {
             <DialogTitle>{actionType === 'activate' ? 'Activate Website' : 'Deactivate Website'}</DialogTitle>
             <DialogContent>
               <DialogContentText>
-              {`Are you sure you want to ${actionType === 'activate' ? 'activate' : 'deactivate'} this website?`}
-
+                {`Are you sure you want to ${actionType === 'activate' ? 'activate' : 'deactivate'} this website?`}
               </DialogContentText>
             </DialogContent>
             <DialogActions>

@@ -1,9 +1,11 @@
+import { AsYouType, getCountries, getCountryCallingCode } from 'libphonenumber-js';
+import { Dropdown } from 'bootstrap';
 import * as Yup from 'yup';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Stack, IconButton, InputAdornment } from '@mui/material';
+import { Stack, IconButton, InputAdornment, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import Iconify from '../../../components/Iconify';
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
@@ -42,7 +44,20 @@ export default function RegisterForm({ onSubmit }) {
     resolver: yupResolver(RegisterSchema),
     defaultValues,
   });
+  const [countryCodes, setCountryCodes] = useState([]);
+  const [selectedCountryCode, setSelectedCountryCode] = useState('');
 
+  useEffect(() => {
+    const countries = getCountries();
+    const codes = countries.map((country) => ({
+      name: country,
+      dialCode: `+${getCountryCallingCode(country)}`,
+    }));
+    setCountryCodes(codes);
+  }, []);
+
+  // Display the list of country codes and their phone number codes
+  console.log(countryCodes);
   return (
     <FormProvider methods={methods} onSubmit={methods.handleSubmit(onSubmit)}>
       <Stack spacing={1.5}>
@@ -53,7 +68,33 @@ export default function RegisterForm({ onSubmit }) {
 
         <RHFTextField name="companyname" label="Company Name (Optional)" />
         <RHFTextField name="email" label="Email Address" />
-        <RHFTextField name="phonenumber" label="Phone Number" />
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+          {/* <Select
+            labelId="countryCode"
+            id="countryCode"
+            onChange={(e) => setSelectedCountryCode(e.target.value)}
+            value={selectedCountryCode}
+            displayEmpty
+          >
+            <MenuItem value="" disabled>
+              Code
+            </MenuItem>
+            {countryCodes.map((country, index) => (
+              <MenuItem key={index} value={country.dialCode}>
+                {`${country.name} (${country.dialCode})`}
+              </MenuItem>
+            ))}
+          </Select> */}
+
+          <RHFTextField
+            name="phonenumber"
+            id="phonenumber"
+            label="Phone Number"
+            register={methods.register}
+            error={!!methods.formState.errors.phonenumber}
+            helperText={methods.formState.errors.phonenumber?.message || ''}
+          />
+        </Stack>
         <RHFTextField name="username" label="User Name" />
 
         <RHFTextField

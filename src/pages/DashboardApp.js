@@ -26,21 +26,37 @@ import {
 export default function DashboardApp() {
   const theme = useTheme();
   const [websiteCounts, setWebsiteCounts] = useState({});
-  const fetchWebsiteCounts = async () => {
-    try {
-      const response = await axiosInstance.get('website/website-count');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching website counts:', error);
-      return { error: 'Failed to fetch website counts' };
-    }
-  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      const counts = await fetchWebsiteCounts();
-      setWebsiteCounts(counts);
-    };
-    fetchData();
+    async function fetchFreeWebsites() {
+      try {
+        // Retrieve the decodedToken from localStorage
+        const decodedToken = localStorage.getItem('decodedToken');
+
+        if (decodedToken) {
+          const parsedToken = JSON.parse(decodedToken);
+          const userId = parsedToken.userId?.user_id; // Extracting user_id from decodedToken
+
+          // Update formData with the user_id
+          //   setFormData((prevData) => ({ ...prevData, user_id: userId }));
+
+          const response = await axiosInstance.get(`/website/websites/count/${userId}`);
+          if (response.status === 200) {
+            setWebsiteCounts(response.data.data);
+            console.log('response.data.data', response.data.data);
+          } else {
+            throw new Error('Failed to fetch approved websites');
+          }
+        } else {
+          throw new Error('User ID not found in decoded token');
+        }
+      } catch (error) {
+        console.error(error);
+        // Handle error state if needed
+      }
+    }
+
+    fetchFreeWebsites();
   }, []);
   return (
     <Page title="Dashboard">
@@ -53,7 +69,7 @@ export default function DashboardApp() {
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary
               title="Total Website"
-              total={websiteCounts.totalCount}
+              total={websiteCounts.countTotalWebsites}
               icon={'teenyicons:layers-intersect-solid'}
             />
           </Grid>
@@ -61,7 +77,7 @@ export default function DashboardApp() {
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary
               title="Paid Website"
-              total={websiteCounts.paidCount}
+              total={websiteCounts.countPaidWebsites}
               color="info"
               icon={'teenyicons:adjust-vertical-solid'}
             />
@@ -70,7 +86,7 @@ export default function DashboardApp() {
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary
               title="Free Website"
-              total={websiteCounts.freeCount}
+              total={websiteCounts.countFreeWebsites}
               color="success"
               icon={'teenyicons:bag-alt-solid'}
             />
@@ -78,8 +94,16 @@ export default function DashboardApp() {
 
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary
+              title="Pending Website"
+              total={websiteCounts.countPendingWebsites}
+              color="secondary"
+              icon={'mdi:lan-pending'}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <AppWidgetSummary
               title="Reported Website"
-              total={websiteCounts.reportedCount}
+              total={websiteCounts.countReportedWebsites}
               color="error"
               icon={'ant-design:bug-filled'}
             />

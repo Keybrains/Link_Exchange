@@ -67,7 +67,7 @@ export default function WebSiteInfo() {
     try {
       const response = await axiosInstance.post('/website/website', formData); // Replace with your backend endpoint
       console.log('Response:', response.data);
-      navigate('/user/mywebsite');
+      navigate('/user/pendingapproval');
     } catch (error) {
       console.error('Error:', error);
     }

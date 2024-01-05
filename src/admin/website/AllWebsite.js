@@ -18,22 +18,22 @@ import Page from '../../components/Page';
 export default function AllWebsite() {
   const [websites, setWebsites] = useState([]);
 
-  useEffect(() => {
-    async function fetchWebsites() {
-      try {
-        const response = await axiosInstance.get('/website/websites');
-        if (response.status === 200) {
-          setWebsites(response.data.data);
-          console.log(response.data.data); // Add this line for debugging
-        } else {
-          throw new Error('Failed to fetch websites');
-        }
-      } catch (error) {
-        console.error(error);
-        // Handle error state if needed
+  const fetchWebsites = async () => {
+    try {
+      const response = await axiosInstance.get('/website/websites');
+      if (response.status === 200) {
+        setWebsites(response.data.data);
+        console.log(response.data.data); // Add this line for debugging
+      } else {
+        throw new Error('Failed to fetch websites');
       }
+    } catch (error) {
+      console.error(error);
+      // Handle error state if needed
     }
+  };
 
+  useEffect(() => {
     fetchWebsites();
   }, []);
 
@@ -49,6 +49,9 @@ export default function AllWebsite() {
           return website;
         });
         setWebsites(updatedWebsites);
+
+        // Fetch websites again after approving
+        fetchWebsites();
       } else {
         throw new Error('Failed to approve website');
       }

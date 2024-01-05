@@ -39,6 +39,7 @@ import AdminFreeWebsite from './admin/website/FreeWebsite';
 import AdminPaidWebsite from './admin/website/PaidWebsite';
 import AdminReportedWebsite from './admin/website/ReportedWebsite';
 import UpdateWebSiteInfo from './admin/website/UpdateWebSiteInfo';
+import PendingApproval from './website/PendingApproval';
 
 const isAuthenticated = () => {
   const authToken = localStorage.getItem('authToken');
@@ -67,7 +68,8 @@ const Router = () => {
         { path: 'freewebsite', element: isAuthenticated() ? <FreeWebsite /> : <Navigate to="/login" /> },
         { path: 'paidwebsite', element: isAuthenticated() ? <PaidWebsite /> : <Navigate to="/login" /> },
         { path: 'reportedwebsite', element: isAuthenticated() ? <ReportedWebsite /> : <Navigate to="/login" /> },
-        { path: 'Discussions', element: isAuthenticated() ? <Discussions /> : <Navigate to="/login" /> },
+        { path: 'discussions', element: isAuthenticated() ? <Discussions /> : <Navigate to="/login" /> },
+        { path: 'pendingapproval', element: isAuthenticated() ? <PendingApproval /> : <Navigate to="/login" /> },
       ],
     },
     {
@@ -124,7 +126,7 @@ const Router = () => {
         { path: 'freewebsite', element: isAuthenticated() ? <AdminFreeWebsite /> : <Navigate to="/login" /> },
         { path: 'paidwebsite', element: isAuthenticated() ? <AdminPaidWebsite /> : <Navigate to="/login" /> },
         { path: 'reportedwebsite', element: isAuthenticated() ? <AdminReportedWebsite /> : <Navigate to="/login" /> },
-        { path: 'Discussions', element: isAuthenticated() ? <AdminDiscussions /> : <Navigate to="/login" /> },
+        { path: 'discussions', element: isAuthenticated() ? <AdminDiscussions /> : <Navigate to="/login" /> },
         { path: 'updatesite/:websiteId', element: isAuthenticated() ? <UpdateWebSiteInfo /> : <Navigate to="/login" /> },
         // Other routes for Admin Panel 1
       ],

@@ -18,6 +18,11 @@ const navConfig = [
     icon: getIcon('gg:website'),
   },
   {
+    title: 'Pending Approval',
+    path: '/user/pendingapproval',
+    icon: getIcon('material-symbols:upcoming-outline'),
+  },
+  {
     title: 'Free Website',
     path: '/user/freewebsite',
     icon: getIcon('ion:social-buffer'),
@@ -28,16 +33,15 @@ const navConfig = [
     icon: getIcon('material-symbols:paid-outline'),
   },
   {
-    title: 'Discussions',
-    path: '/user/Discussions',
-    icon: getIcon('material-symbols:chat'),
-  },
-  {
     title: 'Reported Website',
     path: '/user/reportedwebsite',
     icon: getIcon('material-symbols:report'),
   },
-
+  {
+    title: 'Discussions',
+    path: '/user/discussions',
+    icon: getIcon('material-symbols:chat'),
+  },
   // {
   //   title: 'register',
   //   path: '/register',

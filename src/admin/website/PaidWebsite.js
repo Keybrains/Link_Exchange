@@ -139,29 +139,38 @@ export default function PaidWebsite() {
                     <TableCell>{website.country}</TableCell>
                     <TableCell>{website.language}</TableCell>
                     <TableCell>{website.costOfAddingBacklink}</TableCell>
-                    <TableCell>{website.approved ? 'Yes' : 'No'}</TableCell>
+                    <TableCell>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ marginBottom: '5px' }}>{website.approved ? 'Yes' : 'No'}</span>
+                        {website.reported && <span style={{ color: 'red' }}>Reported</span>}
+                      </div>
+                    </TableCell>
                     <TableCell>
                       {(() => {
                         switch (website.status) {
                           case 'deactivate':
                             return (
-                              <Button
-                                variant="outlined"
-                                onClick={() => handleToggleStatus(website._id, 'activate')}
-                                color="error"
-                              >
-                                Deactivate
-                              </Button>
+                              <Tooltip title="To Activate URL - Click Here">
+                                <Button
+                                  variant="outlined"
+                                  onClick={() => handleToggleStatus(website._id, 'activate')}
+                                  color="error"
+                                >
+                                  Deactivate
+                                </Button>
+                              </Tooltip>
                             );
                           case 'activate':
                             return (
-                              <Button
-                                variant="outlined"
-                                onClick={() => handleToggleStatus(website._id, 'deactivate')}
-                                color="secondary"
-                              >
-                                Activate
-                              </Button>
+                              <Tooltip title="To Deactivate URL - Click Here">
+                                <Button
+                                  variant="outlined"
+                                  onClick={() => handleToggleStatus(website._id, 'deactivate')}
+                                  color="secondary"
+                                >
+                                  Activate
+                                </Button>
+                              </Tooltip>
                             );
                           default:
                             return (

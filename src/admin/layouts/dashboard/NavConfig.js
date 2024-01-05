@@ -35,15 +35,16 @@ const navConfig = [
     icon: getIcon('material-symbols:paid-outline'),
   },
   {
-    title: 'Contact Users',
-    path: '/admin/Discussions',
-    icon: getIcon('material-symbols:chat'),
-  },
-  {
     title: 'Reported Website',
     path: '/admin/reportedwebsite',
     icon: getIcon('material-symbols:report'),
   },
+  {
+    title: 'Contact Users',
+    path: '/admin/discussions',
+    icon: getIcon('material-symbols:chat'),
+  },
+
   // {
   //   title: 'All Social Media',
   //   path: '/admin/allsocialmedia',

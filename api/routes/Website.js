@@ -81,6 +81,7 @@ router.post('/website', async (req, res) => {
 //   }
 // });
 
+//get unapproved website in admin
 router.get('/websites', async (req, res) => {
   try {
     const data = await Website.aggregate([
@@ -301,12 +302,19 @@ router.put('/toggle-status/:websiteId', async (req, res) => {
 router.get('/websites/paid/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
-    const paidWebsites = await Website.find({ user_id: userId, costOfAddingBacklink: 'Paid' });
+
+    // Find paid websites for the user based on the approved status
+    const paidWebsites = await Website.find({
+      user_id: userId,
+      costOfAddingBacklink: 'Paid',
+      approved: true, // Filter based on the approved status
+      reported: false,
+    });
 
     if (!paidWebsites || paidWebsites.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'No paid websites found for the user',
+        message: 'No approved paid websites found for the user',
       });
     }
 
@@ -314,7 +322,7 @@ router.get('/websites/paid/:userId', async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Paid websites retrieved successfully for the user',
+      message: 'Approved paid websites retrieved successfully for the user',
       data: reversedPaidWebsites,
     });
   } catch (error) {
@@ -330,7 +338,12 @@ router.get('/websites/paid/:userId', async (req, res) => {
 router.get('/websites/free/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
-    const freeWebsites = await Website.find({ user_id: userId, costOfAddingBacklink: 'Free' });
+    const freeWebsites = await Website.find({
+      user_id: userId,
+      costOfAddingBacklink: 'Free',
+      approved: true,
+      reported: false,
+    });
 
     if (!freeWebsites || freeWebsites.length === 0) {
       return res.status(404).json({
@@ -379,7 +392,55 @@ router.get('/website-count', async (req, res) => {
     });
   }
 });
+//get count by user id
+router.get('/websites/count/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
 
+    // Count Free Websites
+    const countFreeWebsites = await Website.countDocuments({
+      user_id: userId,
+      costOfAddingBacklink: 'Free',
+      approved: true,
+      reported: false,
+    });
+
+    // Count Paid Websites
+    const countPaidWebsites = await Website.countDocuments({
+      user_id: userId,
+      costOfAddingBacklink: 'Paid',
+      approved: true,
+      reported: false,
+    });
+
+    // Count Total Websites
+    const countTotalWebsites = await Website.countDocuments({ user_id: userId });
+
+    // Count Pending Websites
+    const countPendingWebsites = await Website.countDocuments({ user_id: userId, status: 'pending' });
+
+    // Count Reported Websites
+    const countReportedWebsites = await Website.countDocuments({ user_id: userId, reported: true });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Website counts retrieved successfully',
+      data: {
+        countFreeWebsites,
+        countPaidWebsites,
+        countTotalWebsites,
+        countPendingWebsites,
+        countReportedWebsites,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+});
 //delete api for free and paid website
 
 // Delete free websites by ID
@@ -433,8 +494,6 @@ router.delete('/websites/paid/:id', async (req, res) => {
     });
   }
 });
-
-// update free api data
 
 // Update a free or paid website by ID
 router.put('/websites/:id', async (req, res) => {
@@ -500,12 +559,12 @@ router.get('/websites/:id', async (req, res) => {
 
 //reprt website status update
 router.put('/updateReportedStatus/:websiteId', async (req, res) => {
-  const { websiteId } = req.params; 
+  const { websiteId } = req.params;
 
   try {
     const updatedWebsite = await Website.findOneAndUpdate(
-      { website_id: websiteId }, 
-      { $set: { reported: true } }, 
+      { website_id: websiteId },
+      { $set: { reported: true } },
       { new: true }
     );
 
@@ -516,6 +575,24 @@ router.put('/updateReportedStatus/:websiteId', async (req, res) => {
     res.status(200).json({ success: true, data: updatedWebsite });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to update reported status' });
+  }
+});
+
+//unapproved website by userid
+router.get('/websites/not-approved/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    // Find websites where approved status is false and matches the user_id
+    const notApprovedWebsites = await Website.find({ user_id: userId, approved: false });
+
+    if (!notApprovedWebsites) {
+      return res.status(404).json({ success: false, message: 'No not approved websites found' });
+    }
+
+    res.status(200).json({ success: true, data: notApprovedWebsites });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to fetch not approved websites' });
   }
 });
 
