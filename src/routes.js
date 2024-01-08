@@ -40,6 +40,8 @@ import AdminPaidWebsite from './admin/website/PaidWebsite';
 import AdminReportedWebsite from './admin/website/ReportedWebsite';
 import UpdateWebSiteInfo from './admin/website/UpdateWebSiteInfo';
 import PendingApproval from './website/PendingApproval';
+import UserDetail from './admin/user/UserDetail';
+import WebsiteDetail from './admin/website/WebsiteDetail';
 
 const isAuthenticated = () => {
   const authToken = localStorage.getItem('authToken');
@@ -127,8 +129,12 @@ const Router = () => {
         { path: 'paidwebsite', element: isAuthenticated() ? <AdminPaidWebsite /> : <Navigate to="/login" /> },
         { path: 'reportedwebsite', element: isAuthenticated() ? <AdminReportedWebsite /> : <Navigate to="/login" /> },
         { path: 'discussions', element: isAuthenticated() ? <AdminDiscussions /> : <Navigate to="/login" /> },
-        { path: 'updatesite/:websiteId', element: isAuthenticated() ? <UpdateWebSiteInfo /> : <Navigate to="/login" /> },
-        // Other routes for Admin Panel 1
+        {
+          path: 'updatesite/:websiteId',
+          element: isAuthenticated() ? <UpdateWebSiteInfo /> : <Navigate to="/login" />,
+        },
+        { path: 'userdetail/:userId', element: isAuthenticated() ? <UserDetail /> : <Navigate to="/login" /> },
+        { path: 'websitedetail/:websiteId', element: isAuthenticated() ? <WebsiteDetail /> : <Navigate to="/login" /> },
       ],
     },
   ]);

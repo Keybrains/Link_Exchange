@@ -136,4 +136,72 @@ router.delete('/users/:userId', async (req, res) => {
   }
 });
 
+router.put('/users/:userId/updateStatus', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Find the user by user_id
+    const user = await Signup.findOne({ user_id: userId });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    // Toggle the status based on the current status
+    const updatedStatus = user.status === 'activate' ? 'deactivate' : 'activate';
+
+    // Update the user's status
+    const updatedUser = await Signup.findOneAndUpdate(
+      { user_id: userId },
+      { $set: { status: updatedStatus } },
+      { new: true }
+    );
+
+    res.json({
+      success: true,
+      message: `User status updated successfully to ${updatedStatus}`,
+      data: updatedUser,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+});
+
+//get one user details
+router.get('/users/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Find the user by user_id
+    const user = await Signup.findOne({ user_id: userId });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    res.json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+});
+
+
+
 module.exports = router;

@@ -70,13 +70,13 @@ export default function PendingApproval() {
                     <FontAwesomeIcon
                       icon={faDotCircle}
                       style={{
-                        color: website.status === 'pending' ? 'gray' : 'gray',
+                        color: website.status === 'pending' ? 'gray' : 'red',
                         fontSize: '0.9em', // Adjust the size as needed
                         marginRight: '5px',
                       }}
                     />
-                    <span style={{ color: website.status === 'pending' ? 'gray' : 'gray' }}>
-                      {website.status === 'pending' ? 'pending' : 'pending'}
+                    <span style={{ color: website.status === 'pending' ? 'gray' : 'red' }}>
+                      {website.status === 'pending' ? 'Pending' : 'Rejected'}
                     </span>
                   </Typography>
                   <Typography style={{ fontSize: '1.2em' }}>

@@ -58,8 +58,9 @@ export default function DashboardApp() {
 
     fetchFreeWebsites();
   }, []);
+  
   return (
-    <Page title="Dashboard">
+    <Page title="User Dashboard">
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
           Hi, Welcome back
@@ -92,14 +93,15 @@ export default function DashboardApp() {
             />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
+          {/* <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary
               title="Pending Website"
               total={websiteCounts.countPendingWebsites}
               color="secondary"
               icon={'mdi:lan-pending'}
             />
-          </Grid>
+          </Grid> */}
+
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary
               title="Reported Website"

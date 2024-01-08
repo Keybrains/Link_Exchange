@@ -17,11 +17,11 @@ const navConfig = [
     path: '/user/mywebsite',
     icon: getIcon('gg:website'),
   },
-  {
-    title: 'Pending Approval',
-    path: '/user/pendingapproval',
-    icon: getIcon('material-symbols:upcoming-outline'),
-  },
+  // {
+  //   title: 'Pending Approval',
+  //   path: '/user/pendingapproval',
+  //   icon: getIcon('material-symbols:upcoming-outline'),
+  // },
   {
     title: 'Free Website',
     path: '/user/freewebsite',

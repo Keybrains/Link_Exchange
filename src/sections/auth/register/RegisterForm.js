@@ -58,6 +58,23 @@ export default function RegisterForm({ onSubmit }) {
 
   // Display the list of country codes and their phone number codes
   console.log(countryCodes);
+
+  const [formattedPhoneNumber, setFormattedPhoneNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+
+  // Function to update the formatted phone number when the country code changes
+  const handleCountryCodeChange = (countryCode) => {
+    setSelectedCountryCode(countryCode);
+    setFormattedPhoneNumber(`${countryCode}`);
+  };
+
+  // Update formatted phone number when selectedCountryCode changes
+  useEffect(() => {
+    if (selectedCountryCode) {
+      setFormattedPhoneNumber(`${selectedCountryCode}`);
+    }
+  }, [selectedCountryCode]);
+
   return (
     <FormProvider methods={methods} onSubmit={methods.handleSubmit(onSubmit)}>
       <Stack spacing={1.5}>
@@ -65,17 +82,10 @@ export default function RegisterForm({ onSubmit }) {
           <RHFTextField name="firstname" label="First Name" />
           <RHFTextField name="lastname" label="Last Name" />
         </Stack>
-
         <RHFTextField name="companyname" label="Company Name (Optional)" />
         <RHFTextField name="email" label="Email Address" />
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-          {/* <Select
-            labelId="countryCode"
-            id="countryCode"
-            onChange={(e) => setSelectedCountryCode(e.target.value)}
-            value={selectedCountryCode}
-            displayEmpty
-          >
+          <Select onChange={(e) => handleCountryCodeChange(e.target.value)} value={selectedCountryCode} displayEmpty>
             <MenuItem value="" disabled>
               Code
             </MenuItem>
@@ -84,19 +94,26 @@ export default function RegisterForm({ onSubmit }) {
                 {`${country.name} (${country.dialCode})`}
               </MenuItem>
             ))}
-          </Select> */}
+          </Select>
 
           <RHFTextField
             name="phonenumber"
             id="phonenumber"
             label="Phone Number"
-            register={methods.register}
+            value={formattedPhoneNumber}
+            onChange={(e) => {
+              setFormattedPhoneNumber(e.target.value);
+              setPhoneNumber(e.target.value); // Store the actual phone number separately
+            }}
+            onBlur={() => {
+              // Set the actual phone number after the user exits the input
+              methods.setValue('phonenumber', phoneNumber, { shouldValidate: true });
+            }}
             error={!!methods.formState.errors.phonenumber}
             helperText={methods.formState.errors.phonenumber?.message || ''}
           />
-        </Stack>
+        </Stack>{' '}
         <RHFTextField name="username" label="User Name" />
-
         <RHFTextField
           name="password"
           label="Password"
@@ -111,7 +128,6 @@ export default function RegisterForm({ onSubmit }) {
             ),
           }}
         />
-
         <RHFTextField
           name="retypePassword"
           label="Retype Password"
@@ -126,7 +142,6 @@ export default function RegisterForm({ onSubmit }) {
             ),
           }}
         />
-
         <LoadingButton
           fullWidth
           size="large"

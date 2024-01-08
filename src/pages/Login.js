@@ -133,15 +133,19 @@ export default function Login() {
       console.log('Response:', response);
 
       if (response && response.data && response.data.success) {
-        await toast.promise(Promise.resolve(response.data.message), {
-          loading: 'Logging in...',
-          success: 'User Login Successful',
-          error: 'Failed to log in',
-        });
-        navigate('/user/dashboard');
+        if (response.data.data.status === 'deactivate') {
+          toast.error('Your account is deactivated');
+        } else {
+          await toast.promise(Promise.resolve(response.data.message), {
+            loading: 'Logging in...',
+            success: 'User Login Successful',
+            error: 'Failed to log in',
+          });
+          navigate('/user/dashboard');
 
-        const { token } = response.data;
-        handleTokenDecoding(token);
+          const { token } = response.data;
+          handleTokenDecoding(token);
+        }
       } else {
         toast.error('Failed to log in');
       }
@@ -152,9 +156,9 @@ export default function Login() {
         const statusCode = error.response.status;
 
         if (statusCode === 404) {
-          toast.error('User does not exist');
+          toast.error('Wrong email or password');
         } else if (statusCode === 422) {
-          toast.error('Wrong password');
+          toast.error('Wrong email or password');
         } else {
           toast.error('Failed to log in');
         }

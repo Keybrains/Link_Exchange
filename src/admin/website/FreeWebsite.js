@@ -109,7 +109,7 @@ export default function FreeWebsite() {
   };
 
   return (
-    <Page title="All Free Websites" sx={{ padding: '25px', overflow: 'hidden' }}>
+    <Page title="Free Websites" sx={{ padding: '25px', overflow: 'hidden' }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
         Free Websites
       </Typography>
@@ -125,6 +125,7 @@ export default function FreeWebsite() {
                   <TableCell sx={{ fontWeight: 'bold' }}>Language</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Cost</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Approved</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Reported</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
                 </TableRow>
@@ -143,7 +144,13 @@ export default function FreeWebsite() {
                       <TableCell>
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                           <span style={{ marginBottom: '5px' }}>{website.approved ? 'Yes' : 'No'}</span>
-                          {website.reported && <span style={{ color: 'red' }}>Reported</span>}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span style={{ marginBottom: '5px', color: website.reported ? 'red' : 'initial' }}>
+                            {website.reported ? 'Yes' : 'No'}
+                          </span>
                         </div>
                       </TableCell>
 
@@ -158,7 +165,7 @@ export default function FreeWebsite() {
                                     onClick={() => handleToggleStatus(website._id, 'activate')}
                                     color="error"
                                   >
-                                    Deactivate
+                                    Deactivated
                                   </Button>
                                 </Tooltip>
                               );
@@ -172,6 +179,12 @@ export default function FreeWebsite() {
                                   >
                                     Activate
                                   </Button>
+                                </Tooltip>
+                              );
+                            case 'rejected':
+                              return (
+                                <Tooltip title="This URL is rejected">
+                                  <Button style={{ color: 'red' }}>Rejected</Button>
                                 </Tooltip>
                               );
                             default:
@@ -194,23 +207,40 @@ export default function FreeWebsite() {
                               handleUpdate(website._id);
                             }
                           }}
-                          style={{ cursor: 'pointer', marginRight: '10px', fontSize: '15px' }}
-                        >
-                          <FontAwesomeIcon icon={faPencilAlt} />
-                        </span>
-                        <span
-                          role="button"
-                          tabIndex={0}
-                          onClick={() => handleOpenDialog(website)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              handleOpenDialog(website);
-                            }
+                          style={{
+                            cursor: website.status === 'rejected' ? 'not-allowed' : 'pointer',
+                            marginRight: '10px',
+                            fontSize: '15px',
+                            opacity: website.status === 'rejected' ? 0.5 : 1,
                           }}
-                          style={{ cursor: 'pointer', fontSize: '15px' }}
                         >
-                          <FontAwesomeIcon icon={faTrashAlt} />
+                          {website.status === 'rejected' ? (
+                            <Tooltip title="This website is rejected">
+                              <span>
+                                <FontAwesomeIcon icon={faPencilAlt} />
+                              </span>
+                            </Tooltip>
+                          ) : (
+                            <Tooltip title="Edit">
+                              <FontAwesomeIcon icon={faPencilAlt} />
+                            </Tooltip>
+                          )}
                         </span>
+                        <Tooltip title="Delete">
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => handleOpenDialog(website)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handleOpenDialog(website);
+                              }
+                            }}
+                            style={{ cursor: 'pointer', fontSize: '15px' }}
+                          >
+                            <FontAwesomeIcon icon={faTrashAlt} />
+                          </span>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   </>

@@ -116,13 +116,15 @@ export default function ReportedWebsite() {
                     <TableCell>{website.message}</TableCell>
                     <TableCell>
                       {!website.resolved && (
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => resolveReportedWebsite(website.website_id)}
-                        >
-                          Resolve
-                        </Button>
+                        <Tooltip title="To Resolve - Click Here">
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={() => resolveReportedWebsite(website.website_id)}
+                          >
+                            Resolve
+                          </Button>
+                        </Tooltip>
                       )}
                     </TableCell>
                   </TableRow>

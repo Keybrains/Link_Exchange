@@ -30,7 +30,7 @@ export default function WebsiteDashboard() {
   };
 
   return (
-    <Page title="WebsiteDashboard" sx={{ padding: '25px', overflow: 'hidden' }}>
+    <Page title="Add Web Site" sx={{ padding: '25px', overflow: 'hidden' }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
         My Platforms
       </Typography>

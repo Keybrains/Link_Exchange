@@ -1,5 +1,8 @@
+import * as yup from 'yup';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { countries } from 'countries-list'; // Importing the countries list from the package
+import iso6391 from 'iso-639-1'; // Importing the iso-639-1 package
 import {
   Typography,
   Card,
@@ -13,11 +16,16 @@ import {
   Container,
   Grid,
 } from '@mui/material';
+
 import axiosInstance from '../config/AxiosInstance';
 
 import Page from '../admin/components/Page';
 
 export default function WebSiteInfo() {
+  const countryCodes = Object.keys(countries);
+  const countryNames = countryCodes.map((code) => countries[code].name);
+  const languageCodes = iso6391.getAllCodes();
+  const languageNames = languageCodes.map((code) => iso6391.getName(code));
   const navigate = useNavigate();
   const location = useLocation();
   const [formData, setFormData] = useState({
@@ -38,16 +46,49 @@ export default function WebSiteInfo() {
     isPaid: false,
   });
 
+  const schema = yup.object().shape({
+    monthlyVisits: yup.string().required('Monthly organic visits is required'),
+    DA: yup.string().required('DA is required'),
+    spamScore: yup.string().required('Spam Score is required'),
+    backlinksAllowed: yup.string().required('Number of Backlinks Allowed is required'),
+    costOfAddingBacklink: yup.string().required('Cost of adding backlink is required'),
+    charges: yup.string().when('costOfAddingBacklink', {
+      is: 'Paid',
+      then: yup.string().required('Charges are required for paid backlinks'),
+    }),
+    categories: yup
+      .array()
+      .min(1, 'Please select at least one category')
+      .required('Please select at least one category'),
+
+    linkType: yup.string().required('Link Type is required'),
+    country: yup.string().required('Country is required'),
+    language: yup.string().required('Language is required'),
+    linkTime: yup.string().required('Link time is required'),
+  });
+
+  const [errors, setErrors] = useState({});
+
+  const validateForm = async () => {
+    try {
+      await schema.validate(formData, { abortEarly: false });
+      return true;
+    } catch (error) {
+      const validationErrors = {};
+      error.inner.forEach((e) => {
+        validationErrors[e.path] = e.message;
+      });
+      setErrors(validationErrors);
+      return false;
+    }
+  };
+
   useEffect(() => {
-    // Check if the decodedToken exists in localStorage
     const decodedToken = localStorage.getItem('decodedToken');
 
-    // Parse the decodedToken to get user_id
     if (decodedToken) {
       const parsedToken = JSON.parse(decodedToken);
-      const userId = parsedToken.userId?.user_id; // Extracting user_id from decodedToken
-
-      // Update formData with the user_id
+      const userId = parsedToken.userId?.user_id;
       setFormData((prevData) => ({ ...prevData, user_id: userId }));
     }
 
@@ -58,18 +99,38 @@ export default function WebSiteInfo() {
       setFormData((prevData) => ({ ...prevData, url: urlParam }));
     }
   }, [location.search]);
-
   const handleChange = (prop) => (event) => {
+    setErrors({ ...errors, [prop]: '' }); // Clear the error message for the field
     setFormData({ ...formData, [prop]: event.target.value });
   };
 
+  const getCountryFullName = (countryCode) => {
+    return countries[countryCode]?.name || '';
+  };
+
+  const getLanguageFullName = (languageCode) => {
+    return iso6391.getName(languageCode) || '';
+  };
+
   const handleSubmit = async () => {
-    try {
-      const response = await axiosInstance.post('/website/website', formData); // Replace with your backend endpoint
-      console.log('Response:', response.data);
-      navigate('/user/pendingapproval');
-    } catch (error) {
-      console.error('Error:', error);
+    const isValid = await validateForm();
+    if (isValid) {
+      try {
+        const fullCountryName = getCountryFullName(formData.country);
+        const fullLanguageName = getLanguageFullName(formData.language);
+
+        const dataToSend = {
+          ...formData,
+          country: fullCountryName,
+          language: fullLanguageName,
+        };
+
+        const response = await axiosInstance.post('/website/website', dataToSend);
+        console.log('Response:', response.data);
+        navigate('/user/dashboard');
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
   };
 
@@ -81,7 +142,7 @@ export default function WebSiteInfo() {
 
   return (
     <>
-      <Page title="Add Web Site" sx={{ padding: '25px', overflow: 'hidden' }}>
+      <Page title="Other Detail" sx={{ padding: '25px', overflow: 'hidden' }}>
         <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
           Add your website info
         </Typography>
@@ -98,37 +159,70 @@ export default function WebSiteInfo() {
                 <TextField
                   label="Monthly organic visits"
                   value={formData.monthlyVisits}
-                  onChange={handleChange('monthlyVisits')}
                   required
+                  onChange={handleChange('monthlyVisits')}
                   fullWidth
                   margin="normal"
+                  error={Boolean(errors?.monthlyVisits)}
+                  helperText={errors?.monthlyVisits || ''}
                 />
-                <TextField label="DA" value={formData.DA} onChange={handleChange('DA')} fullWidth margin="normal" />
+                <TextField
+                  label="DA"
+                  required
+                  value={formData.DA}
+                  onChange={handleChange('DA')}
+                  fullWidth
+                  margin="normal"
+                  error={Boolean(errors?.DA)}
+                  helperText={errors?.DA || ''}
+                />
                 <TextField
                   label="Spam Score"
+                  required
                   value={formData.spamScore}
                   onChange={handleChange('spamScore')}
                   fullWidth
                   margin="normal"
+                  error={Boolean(errors?.spamScore)}
+                  helperText={errors?.spamScore || ''}
                 />
                 <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
                   <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
                     Number of Backlinks Allowed*
                   </InputLabel>
-                  <Select value={formData.backlinksAllowed} onChange={handleChange('backlinksAllowed')}>
+                  <Select
+                    value={formData.backlinksAllowed}
+                    onChange={handleChange('backlinksAllowed')}
+                    error={Boolean(errors?.backlinksAllowed)} // Add error handling
+                  >
                     <MenuItem value="1">1</MenuItem>
                     <MenuItem value="2">2</MenuItem>
                     <MenuItem value="3">3</MenuItem>
                   </Select>
+                  {errors?.backlinksAllowed && ( // Display error message if present
+                    <Typography variant="caption" color="error">
+                      {errors.backlinksAllowed}
+                    </Typography>
+                  )}
                 </FormControl>
+
                 <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
                   <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
                     Cost of adding backlink*
                   </InputLabel>
-                  <Select value={formData.costOfAddingBacklink} onChange={handleChange('costOfAddingBacklink')}>
+                  <Select
+                    value={formData.costOfAddingBacklink}
+                    onChange={handleChange('costOfAddingBacklink')}
+                    error={Boolean(errors?.costOfAddingBacklink)} // Add error handling
+                  >
                     <MenuItem value="Free">Free</MenuItem>
                     <MenuItem value="Paid">Paid</MenuItem>
                   </Select>
+                  {errors?.costOfAddingBacklink && ( // Display error message if present
+                    <Typography variant="caption" color="error">
+                      {errors.costOfAddingBacklink}
+                    </Typography>
+                  )}
                 </FormControl>
                 {formData.costOfAddingBacklink === 'Paid' && (
                   <TextField
@@ -137,6 +231,8 @@ export default function WebSiteInfo() {
                     onChange={handleChange('charges')}
                     fullWidth
                     margin="normal"
+                    error={Boolean(errors?.charges)} // Add error handling
+                    helperText={errors?.charges || ''} // Display helper text for the error
                   />
                 )}
               </Grid>
@@ -145,50 +241,103 @@ export default function WebSiteInfo() {
                   <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
                     Category*
                   </InputLabel>
-                  <Select value={formData.categories} onChange={handleChange('categories')} multiple>
+                  <Select
+                    value={formData.categories}
+                    onChange={handleChange('categories')}
+                    multiple
+                    error={Boolean(errors?.categories)} // Add error handling for categories
+                  >
                     <MenuItem value="Category1">Category1</MenuItem>
                     <MenuItem value="Category2">Category2</MenuItem>
                     {/* Add more categories */}
                   </Select>
+                  {errors?.categories && ( // Display error message if present
+                    <Typography variant="caption" color="error">
+                      {errors.categories}
+                    </Typography>
+                  )}
                 </FormControl>
                 <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
                   <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
                     Link Type*
                   </InputLabel>
-                  <Select value={formData.linkType} onChange={handleChange('linkType')}>
+                  <Select
+                    value={formData.linkType}
+                    onChange={handleChange('linkType')}
+                    error={Boolean(errors?.linkType)} // Error handling for linkType
+                  >
                     <MenuItem value="DoFollow">Do Follow</MenuItem>
                     <MenuItem value="NoFollow">No Follow</MenuItem>
                   </Select>
+                  {errors?.linkType && ( // Display error message if present
+                    <Typography variant="caption" color="error">
+                      {errors.linkType}
+                    </Typography>
+                  )}
                 </FormControl>
                 <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
                   <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
                     Country*
                   </InputLabel>
-                  <Select value={formData.country} onChange={handleChange('country')}>
-                    <MenuItem value="USA">USA</MenuItem>
-                    <MenuItem value="UK">UK</MenuItem>
-                    {/* Add more countries */}
+                  <Select
+                    value={formData.country}
+                    onChange={handleChange('country')}
+                    error={Boolean(errors?.country)} // Error handling for country
+                  >
+                    {countryCodes.map((code, index) => (
+                      <MenuItem key={code} value={code}>
+                        {countryNames[index]}
+                      </MenuItem>
+                    ))}
                   </Select>
+                  {errors?.country && ( // Display error message if present
+                    <Typography variant="caption" color="error">
+                      {errors.country}
+                    </Typography>
+                  )}
                 </FormControl>
+
                 <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
                   <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
                     Language*
                   </InputLabel>
-                  <Select value={formData.language} onChange={handleChange('language')}>
-                    <MenuItem value="English">English</MenuItem>
-                    <MenuItem value="Spanish">Spanish</MenuItem>
-                    {/* Add more languages */}
+                  <Select
+                    value={formData.language}
+                    onChange={handleChange('language')}
+                    error={Boolean(errors?.language)} // Error handling for language
+                  >
+                    {languageCodes.map((code, index) => (
+                      <MenuItem key={code} value={code}>
+                        {languageNames[index]}
+                      </MenuItem>
+                    ))}
                   </Select>
+                  {errors?.language && ( // Display error message if present
+                    <Typography variant="caption" color="error">
+                      {errors.language}
+                    </Typography>
+                  )}
                 </FormControl>
+
                 <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
                   <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
                     Link time*
                   </InputLabel>
-                  <Select value={formData.linkTime} onChange={handleChange('linkTime')}>
+                  <Select
+                    value={formData.linkTime}
+                    onChange={handleChange('linkTime')}
+                    error={Boolean(errors?.linkTime)} // Error handling for linkTime
+                  >
                     <MenuItem value="Specific time in days">Specific time in days</MenuItem>
                     <MenuItem value="Forever">Forever</MenuItem>
                   </Select>
+                  {errors?.linkTime && ( // Display error message if present
+                    <Typography variant="caption" color="error">
+                      {errors.linkTime}
+                    </Typography>
+                  )}
                 </FormControl>
+
                 <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
                   <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
                     Does your website surface in Google News

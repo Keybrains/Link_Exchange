@@ -10,13 +10,23 @@ import {
   TableRow,
   Paper,
   Button,
+  Tooltip,
+  DialogActions,
+  DialogContentText,
+  DialogContent,
+  DialogTitle,
+  Dialog,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../config/AxiosInstanceAdmin';
-
 import Page from '../../components/Page';
 
 export default function AllWebsite() {
   const [websites, setWebsites] = useState([]);
+  const [selectedWebsite, setSelectedWebsite] = useState(null);
+  const [approveDialogOpen, setApproveDialogOpen] = useState(false);
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const navigate = useNavigate();
 
   const fetchWebsites = async () => {
     try {
@@ -37,20 +47,30 @@ export default function AllWebsite() {
     fetchWebsites();
   }, []);
 
-  const handleApprove = async (websiteId) => {
+  const handleApprove = (websiteId) => {
+    const selected = websites.find((website) => website.website_id === websiteId);
+    setSelectedWebsite(selected);
+    setApproveDialogOpen(true);
+  };
+
+  const handleReject = (websiteId) => {
+    const selected = websites.find((website) => website.website_id === websiteId);
+    setSelectedWebsite(selected);
+    setRejectDialogOpen(true);
+  };
+
+  const handleConfirmApprove = async () => {
     try {
-      const response = await axiosInstance.put(`/website/approve/${websiteId}`);
+      const response = await axiosInstance.put(`/website/approve/${selectedWebsite.website_id}`);
       if (response.status === 200) {
-        // Update the approved status locally if needed
         const updatedWebsites = websites.map((website) => {
-          if (website.website_id === websiteId) {
+          if (website.website_id === selectedWebsite.website_id) {
             return { ...website, approved: true };
           }
           return website;
         });
         setWebsites(updatedWebsites);
-
-        // Fetch websites again after approving
+        setApproveDialogOpen(false);
         fetchWebsites();
       } else {
         throw new Error('Failed to approve website');
@@ -61,8 +81,26 @@ export default function AllWebsite() {
     }
   };
 
+  const handleConfirmReject = async () => {
+    try {
+      const response = await axiosInstance.put(`/website/reject/${selectedWebsite.website_id}`);
+      if (response.status === 200) {
+        setRejectDialogOpen(false);
+        fetchWebsites();
+      } else {
+        throw new Error('Failed to reject website');
+      }
+    } catch (error) {
+      console.error(error);
+      // Handle error state if needed
+    }
+  };
+  const handleRowClick = (websiteId) => {
+    navigate(`/admin/websitedetail/${websiteId}`);
+  };
+
   return (
-    <Page title="All Websites" sx={{ padding: '25px', overflow: 'hidden' }}>
+    <Page title="Approve Request" sx={{ padding: '25px', overflow: 'hidden' }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
         Approve Request
       </Typography>
@@ -95,13 +133,22 @@ export default function AllWebsite() {
                   <TableCell>{website.approved ? 'Yes' : 'No'}</TableCell>
                   <TableCell>
                     {!website.approved && (
-                      <Button
-                        variant="outlined"
-                        onClick={() => handleApprove(website.website_id)}
-                        // sx={{ backgroundColor: '#38AEEC', color: 'white' }} // Set the background color using sx prop
-                      >
-                        Approve
-                      </Button>
+                      <>
+                        <Tooltip title="To Approve - Click Here">
+                          <Button
+                            variant="outlined"
+                            onClick={() => handleApprove(website.website_id)}
+                            style={{ marginRight: '10px' }}
+                          >
+                            Approve
+                          </Button>
+                        </Tooltip>
+                        <Tooltip title="To Reject - Click Here">
+                          <Button variant="outlined" color="error" onClick={() => handleReject(website.website_id)}>
+                            Reject
+                          </Button>
+                        </Tooltip>
+                      </>
                     )}
                   </TableCell>
                 </TableRow>
@@ -112,6 +159,46 @@ export default function AllWebsite() {
       ) : (
         <Typography>No Approve Request</Typography>
       )}
+      <Dialog
+        open={approveDialogOpen}
+        onClose={() => setApproveDialogOpen(false)}
+        aria-labelledby="approve-dialog-title"
+        aria-describedby="approve-dialog-description"
+      >
+        <DialogTitle id="approve-dialog-title">Confirm Approve</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="approve-dialog-description">
+            Are you sure you want to approve this website?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setApproveDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleConfirmApprove} color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Reject Dialog */}
+      <Dialog
+        open={rejectDialogOpen}
+        onClose={() => setRejectDialogOpen(false)}
+        aria-labelledby="reject-dialog-title"
+        aria-describedby="reject-dialog-description"
+      >
+        <DialogTitle id="reject-dialog-title">Confirm Reject</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="reject-dialog-description">
+            Are you sure you want to reject this website?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setRejectDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleConfirmReject} color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Page>
   );
 }

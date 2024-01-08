@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Typography,
   Table,
@@ -13,6 +14,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Tooltip,
 } from '@mui/material';
 import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -22,9 +24,11 @@ import Page from '../../components/Page';
 export default function User() {
   const [users, setUsers] = useState([]);
   const [deleteUserId, setDeleteUserId] = useState(null);
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleteUser, setDeleteUser] = useState(null);
-
+  const [activateUserId, setActivateUserId] = useState(null);
+  const [openActivateDialog, setOpenActivateDialog] = useState(false);
+  const navigate = useNavigate();
   useEffect(() => {
     async function fetchUsers() {
       try {
@@ -47,7 +51,7 @@ export default function User() {
     if (deleteUserId) {
       const userToDelete = users.find((user) => user.user_id === deleteUserId);
       setDeleteUser(userToDelete);
-      setOpenDialog(true);
+      setOpenDeleteDialog(true);
     }
   }, [deleteUserId, users]);
 
@@ -58,7 +62,7 @@ export default function User() {
         // Remove the deleted user from the users state
         setUsers(users.filter((user) => user.user_id !== deleteUserId));
         setDeleteUserId(null);
-        setOpenDialog(false);
+        setOpenDeleteDialog(false);
       } else {
         throw new Error('Failed to delete user');
       }
@@ -66,6 +70,35 @@ export default function User() {
       console.error(error);
       // Handle error state if needed
     }
+  };
+
+  // ... (previous code remains unchanged)
+
+  const handleStatusToggle = async (userId, newStatus) => {
+    try {
+      const response = await axiosInstance.put(`/signup/users/${userId}/updateStatus`, { status: newStatus });
+
+      if (response.status === 200) {
+        // Fetch the updated user data after status change
+        const updatedResponse = await axiosInstance.get(`/signup/users`);
+
+        if (updatedResponse.status === 200) {
+          // Update the local state with the fetched updated user data
+          setUsers(updatedResponse.data.data);
+        } else {
+          throw new Error('Failed to fetch updated user data');
+        }
+      } else {
+        throw new Error('Failed to update user status');
+      }
+    } catch (error) {
+      console.error(error);
+      // Handle error state if needed
+    }
+  };
+
+  const handleRowClick = (userId) => {
+    navigate(`/admin/userdetail/${userId}`);
   };
 
   return (
@@ -83,31 +116,71 @@ export default function User() {
                   <TableCell>Last Name</TableCell>
                   <TableCell>Email</TableCell>
                   <TableCell>Phone Number</TableCell>
+                  <TableCell>Status</TableCell>
                   <TableCell>Action</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {users.map((user) => (
-                  <TableRow key={user.user_id}>
+                  <TableRow
+                    key={user.user_id}
+                    onClick={() => handleRowClick(user.user_id)}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <TableCell>{user.firstname}</TableCell>
                     <TableCell>{user.lastname}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.phonenumber}</TableCell>
-
                     <TableCell>
-                      <span
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => setDeleteUserId(user.user_id)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
+                      {user.status === 'deactivate' ? (
+                        <Tooltip title="To Activate - Click Here">
+                          <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActivateUserId(user.user_id);
+                              setOpenActivateDialog(true);
+                            }}
+                          >
+                            Deactivate
+                          </Button>
+                        </Tooltip>
+                      ) : (
+                        <Tooltip title="To Deactivate - Click Here">
+                          <Button
+                            variant="outlined"
+                            style={{ color: 'green', borderColor: 'green' }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActivateUserId(user.user_id);
+                              setOpenActivateDialog(true);
+                            }}
+                          >
+                            Activate
+                          </Button>
+                        </Tooltip>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip title="Delete">
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setDeleteUserId(user.user_id);
-                          }
-                        }}
-                        style={{ cursor: 'pointer', fontSize: '15px' }}
-                      >
-                        <FontAwesomeIcon icon={faTrashAlt} />
-                      </span>
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              setDeleteUserId(user.user_id);
+                            }
+                          }}
+                          style={{ cursor: 'pointer', fontSize: '15px' }}
+                        >
+                          <FontAwesomeIcon icon={faTrashAlt} />
+                        </span>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -115,8 +188,8 @@ export default function User() {
             </Table>
           </TableContainer>
           <Dialog
-            open={openDialog}
-            onClose={() => setOpenDialog(false)}
+            open={openDeleteDialog}
+            onClose={() => setOpenDeleteDialog(false)}
             BackdropProps={{
               invisible: true,
               sx: { backdropFilter: 'blur(4px)' },
@@ -130,11 +203,47 @@ export default function User() {
               </Typography>
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => setOpenDialog(false)} color="primary">
+              <Button onClick={() => setOpenDeleteDialog(false)} color="primary">
                 Cancel
               </Button>
               <Button onClick={handleDeleteUser} color="secondary">
                 Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog
+            open={openActivateDialog}
+            onClose={() => setOpenActivateDialog(false)}
+            BackdropProps={{
+              invisible: true,
+              sx: { backdropFilter: 'blur(4px)' },
+            }}
+          >
+            {/* Content for activate/deactivate dialog */}
+            <DialogTitle>Confirm Status Change</DialogTitle>
+            <DialogContent>
+              <Typography>
+                {activateUserId &&
+                  `Are you sure you want to ${
+                    users.find((user) => user.user_id === activateUserId)?.status === 'activate'
+                      ? 'deactivate'
+                      : 'activate'
+                  } this user?`}
+              </Typography>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setOpenActivateDialog(false)} color="primary">
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  handleStatusToggle(activateUserId, users.find((user) => user.user_id === activateUserId)?.status);
+                  setOpenActivateDialog(false);
+                }}
+                color="secondary"
+              >
+                Confirm
               </Button>
             </DialogActions>
           </Dialog>

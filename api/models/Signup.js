@@ -22,7 +22,7 @@ const UserSchema = new mongoose.Schema({
     lowercase: true,
   },
   phonenumber: {
-    type: Number,
+    type: String,
   },
   username: {
     type: String,
@@ -35,6 +35,10 @@ const UserSchema = new mongoose.Schema({
   },
   updateAt: {
     type: String,
+  },
+  status: {
+    type: String,
+    default: 'activate',
   },
 });
 

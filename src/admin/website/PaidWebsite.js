@@ -109,9 +109,9 @@ export default function PaidWebsite() {
   };
 
   return (
-    <Page title="All Free Websites" sx={{ padding: '25px', overflow: 'hidden' }}>
+    <Page title="Paid Websites" sx={{ padding: '25px', overflow: 'hidden' }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
-        Free Websites
+        Paid Websites
       </Typography>
       {paidWebsites.length > 0 ? (
         <>
@@ -156,7 +156,7 @@ export default function PaidWebsite() {
                                   onClick={() => handleToggleStatus(website._id, 'activate')}
                                   color="error"
                                 >
-                                  Deactivate
+                                  Deactivated
                                 </Button>
                               </Tooltip>
                             );
@@ -166,22 +166,27 @@ export default function PaidWebsite() {
                                 <Button
                                   variant="outlined"
                                   onClick={() => handleToggleStatus(website._id, 'deactivate')}
-                                  color="secondary"
+                                  style={{ color: 'green', borderColor: 'green' }}
                                 >
                                   Activate
                                 </Button>
                               </Tooltip>
                             );
+                          case 'rejected':
+                            return (
+                              <Tooltip title="This URL is rejected">
+                                <Button style={{ color: 'red' }}>Rejected</Button>
+                              </Tooltip>
+                            );
                           default:
                             return (
                               <Tooltip title="This URL is not approved by admin">
-                                <Button color="primary">Pending</Button>
+                                <Button style={{ color: 'gray' }}>Pending</Button>
                               </Tooltip>
                             );
                         }
                       })()}
                     </TableCell>
-
                     <TableCell>
                       <span
                         role="button"
@@ -192,23 +197,40 @@ export default function PaidWebsite() {
                             handleUpdate(website._id);
                           }
                         }}
-                        style={{ cursor: 'pointer', marginRight: '10px', fontSize: '15px' }}
-                      >
-                        <FontAwesomeIcon icon={faPencilAlt} />
-                      </span>
-                      <span
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => handleOpenDialog(website)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            handleOpenDialog(website);
-                          }
+                        style={{
+                          cursor: website.status === 'rejected' ? 'not-allowed' : 'pointer',
+                          marginRight: '10px',
+                          fontSize: '15px',
+                          opacity: website.status === 'rejected' ? 0.5 : 1,
                         }}
-                        style={{ cursor: 'pointer', fontSize: '15px' }}
                       >
-                        <FontAwesomeIcon icon={faTrashAlt} />
+                        {website.status === 'rejected' ? (
+                          <Tooltip title="This website is rejected">
+                            <span>
+                              <FontAwesomeIcon icon={faPencilAlt} />
+                            </span>
+                          </Tooltip>
+                        ) : (
+                          <Tooltip title="Edit">
+                            <FontAwesomeIcon icon={faPencilAlt} />
+                          </Tooltip>
+                        )}
                       </span>
+                      <Tooltip title="Delete">
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => handleOpenDialog(website)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              handleOpenDialog(website);
+                            }
+                          }}
+                          style={{ cursor: 'pointer', fontSize: '15px' }}
+                        >
+                          <FontAwesomeIcon icon={faTrashAlt} />
+                        </span>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -259,7 +281,7 @@ export default function PaidWebsite() {
           </Dialog>
         </>
       ) : (
-        <Typography>No Free Website</Typography>
+        <Typography>No Paid Website</Typography>
       )}
     </Page>
   );

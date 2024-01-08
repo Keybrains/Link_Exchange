@@ -85,7 +85,7 @@ router.post('/website', async (req, res) => {
 router.get('/websites', async (req, res) => {
   try {
     const data = await Website.aggregate([
-      { $match: { approved: false } }, // Match documents with approved: false
+      { $match: { approved: false, status: 'pending' } }, // Match documents with approved: false
     ]);
 
     const count = await Website.countDocuments({ approved: false });
@@ -417,7 +417,10 @@ router.get('/websites/count/:userId', async (req, res) => {
     const countTotalWebsites = await Website.countDocuments({ user_id: userId });
 
     // Count Pending Websites
-    const countPendingWebsites = await Website.countDocuments({ user_id: userId, status: 'pending' });
+    const countPendingWebsites = await Website.countDocuments({
+      user_id: userId,
+      status: { $in: ['pending', 'rejected'] },
+    });
 
     // Count Reported Websites
     const countReportedWebsites = await Website.countDocuments({ user_id: userId, reported: true });
@@ -583,16 +586,70 @@ router.get('/websites/not-approved/:userId', async (req, res) => {
   const { userId } = req.params;
 
   try {
-    // Find websites where approved status is false and matches the user_id
-    const notApprovedWebsites = await Website.find({ user_id: userId, approved: false });
+    // Find websites where approved status is false or status is 'rejected' and matches the user_id
+    const notApprovedWebsites = await Website.find({
+      user_id: userId,
+      $or: [{ approved: false }, { status: 'rejected' }],
+    });
 
-    if (!notApprovedWebsites) {
-      return res.status(404).json({ success: false, message: 'No not approved websites found' });
+    if (!notApprovedWebsites || notApprovedWebsites.length === 0) {
+      return res.status(404).json({ success: false, message: 'No not approved or rejected websites found' });
     }
 
     res.status(200).json({ success: true, data: notApprovedWebsites });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Failed to fetch not approved websites' });
+    res.status(500).json({ success: false, message: 'Failed to fetch not approved or rejected websites' });
+  }
+});
+
+//reject website
+router.put('/reject/:websiteId', async (req, res) => {
+  const { websiteId } = req.params;
+
+  try {
+    // Assuming 'Website' is your Mongoose model representing websites in your database
+    const updatedWebsite = await Website.findOneAndUpdate(
+      { website_id: websiteId },
+      { $set: { status: 'rejected' } }, // Update 'status' to 'rejected'
+      { new: true }
+    );
+
+    if (!updatedWebsite) {
+      return res.status(404).json({ success: false, message: 'Website not found' });
+    }
+
+    res.status(200).json({ success: true, data: updatedWebsite });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to update status to rejected' });
+  }
+});
+
+// Get website details by ID
+router.get('/websites/:websiteId', async (req, res) => {
+  try {
+    const websiteId = req.params.websiteId;
+
+    // Fetch website data by website_id from the database
+    const website = await Website.find({ website_id: websiteId });
+
+    if (!website) {
+      return res.status(404).json({
+        success: false,
+        message: 'Website not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: website,
+      message: 'Website retrieved successfully',
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+      error: error.message,
+    });
   }
 });
 
