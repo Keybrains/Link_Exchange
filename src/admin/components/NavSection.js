@@ -127,10 +127,9 @@ function NavItem({ item, active }) {
       sx={{
         ...(isActiveRoot && activeRootStyle),
       }}
-      
     >
-      <ListItemIconStyle style={{color:"black"}}>{icon && icon}</ListItemIconStyle>
-      <ListItemText disableTypography primary={title} style={{color:"black"}} />
+      <ListItemIconStyle style={{ color: 'black' }}>{icon && icon}</ListItemIconStyle>
+      <ListItemText disableTypography primary={title} style={{ color: 'black' }} />
       {info && info}
     </ListItemStyle>
   );

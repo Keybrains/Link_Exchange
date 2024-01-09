@@ -131,7 +131,7 @@ export default function UserDetail() {
         <section className="">
           <MDBContainer className="py-5 h-100">
             <MDBRow className="justify-content-center align-items-center h-100">
-              <MDBCol lg="7" className="mb-2 mb-lg-0">
+              <MDBCol lg="9" className="mb-2 mb-lg-0">
                 <MDBCard className="mb-3" style={{ borderRadius: '.5rem' }}>
                   <MDBRow className="g-0">
                     <MDBCol

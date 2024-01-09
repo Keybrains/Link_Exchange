@@ -27,7 +27,7 @@ export default function ReportedWebsite() {
   const [reportedWebsites, setreportedWebsites] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedWebsiteId, setSelectedWebsiteId] = useState(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     async function fetchWebsites() {
       try {
@@ -89,6 +89,10 @@ export default function ReportedWebsite() {
     setOpenDialog(false);
   };
 
+  const handleRowClick = (websiteId) => {
+    navigate(`/admin/websitedetail/${websiteId}`);
+  };
+
   return (
     <Page title="Reported Website" sx={{ padding: '25px', overflow: 'hidden' }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
@@ -102,25 +106,32 @@ export default function ReportedWebsite() {
                 <TableRow>
                   <TableCell sx={{ fontWeight: 'bold' }}>URL</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>User</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Message</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Action</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {reportedWebsites.map((website) => (
-                  <TableRow key={website._id}>
+                  <TableRow
+                    key={website._id}
+                    onClick={() => handleRowClick(website.website_id)}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <TableCell>{website.url}</TableCell>
                     <TableCell>
                       {website.user?.firstname} {website.user?.lastname}
                     </TableCell>
-                    <TableCell>{website.message}</TableCell>
+                    <TableCell>{new Date(website.createAt).toLocaleDateString()}</TableCell>
                     <TableCell>
                       {!website.resolved && (
                         <Tooltip title="To Resolve - Click Here">
                           <Button
                             variant="outlined"
                             color="primary"
-                            onClick={() => resolveReportedWebsite(website.website_id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              resolveReportedWebsite(website.website_id);
+                            }}
                           >
                             Resolve
                           </Button>

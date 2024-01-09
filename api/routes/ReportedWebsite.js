@@ -3,17 +3,22 @@ const router = express.Router();
 const ReportedWebsite = require('../models/ReportedWebsite');
 const Website = require('../models/WebSite');
 const Signup = require('../models/Signup');
+const moment = require('moment');
 
 // Endpoint to handle saving reported websites
 router.post('/reportedwerbsites', async (req, res) => {
   try {
     const { url, message, website_id, user_id } = req.body;
+    const createTime = moment().format('YYYY-MM-DD HH:mm:ss');
+    const updateTime = moment().format('YYYY-MM-DD HH:mm:ss');
 
     const reportedWebsite = new ReportedWebsite({
       url,
       message,
       website_id,
       user_id,
+      createAt: createTime,
+      updateAt: updateTime,
     });
 
     await reportedWebsite.save();

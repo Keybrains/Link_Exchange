@@ -50,6 +50,7 @@ export default function UpdateWebSiteInfo() {
         const response = await axiosInstance.get(`website/websites/${websiteId}`);
         if (response.status === 200) {
           setFormData(response.data.data);
+          console.log(response.data.data, 'response.data.data');
         } else {
           throw new Error('Failed to fetch website data');
         }
@@ -211,7 +212,7 @@ export default function UpdateWebSiteInfo() {
             justifyContent: 'end',
           }}
         >
-          <Button onClick={handleCancel} style={{ marginRight: '20px' ,color:"black" }} >
+          <Button onClick={handleCancel} style={{ marginRight: '20px', color: 'black' }}>
             Cancel
           </Button>
           <Button

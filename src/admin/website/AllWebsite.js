@@ -121,7 +121,11 @@ export default function AllWebsite() {
             </TableHead>
             <TableBody>
               {websites.map((website) => (
-                <TableRow key={website.website_id}>
+                <TableRow
+                  key={website.website_id}
+                  onClick={() => handleRowClick(website.website_id)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <TableCell>{website.url}</TableCell>
                   <TableCell>{`${website.users?.firstname} ${website.users?.lastname}`}</TableCell>
                   <TableCell>{website.country}</TableCell>
@@ -137,14 +141,24 @@ export default function AllWebsite() {
                         <Tooltip title="To Approve - Click Here">
                           <Button
                             variant="outlined"
-                            onClick={() => handleApprove(website.website_id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleApprove(website.website_id);
+                            }}
                             style={{ marginRight: '10px' }}
                           >
                             Approve
                           </Button>
                         </Tooltip>
                         <Tooltip title="To Reject - Click Here">
-                          <Button variant="outlined" color="error" onClick={() => handleReject(website.website_id)}>
+                          <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleReject(website.website_id);
+                            }}
+                          >
                             Reject
                           </Button>
                         </Tooltip>

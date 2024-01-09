@@ -108,6 +108,10 @@ export default function PaidWebsite() {
     }
   };
 
+  const handleRowClick = (websiteId) => {
+    navigate(`/admin/websitedetail/${websiteId}`);
+  };
+
   return (
     <Page title="Paid Websites" sx={{ padding: '25px', overflow: 'hidden' }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
@@ -131,7 +135,11 @@ export default function PaidWebsite() {
               </TableHead>
               <TableBody>
                 {paidWebsites.map((website) => (
-                  <TableRow key={website._id}>
+                  <TableRow
+                    key={website._id}
+                    onClick={() => handleRowClick(website.website_id)}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <TableCell>{website.url}</TableCell>
                     <TableCell>
                       {website.users?.firstname} {website.users?.lastname}
@@ -153,7 +161,10 @@ export default function PaidWebsite() {
                               <Tooltip title="To Activate URL - Click Here">
                                 <Button
                                   variant="outlined"
-                                  onClick={() => handleToggleStatus(website._id, 'activate')}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleToggleStatus(website._id, 'activate');
+                                  }}
                                   color="error"
                                 >
                                   Deactivated
@@ -165,7 +176,10 @@ export default function PaidWebsite() {
                               <Tooltip title="To Deactivate URL - Click Here">
                                 <Button
                                   variant="outlined"
-                                  onClick={() => handleToggleStatus(website._id, 'deactivate')}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleToggleStatus(website._id, 'deactivate');
+                                  }}
                                   style={{ color: 'green', borderColor: 'green' }}
                                 >
                                   Activate
@@ -175,13 +189,27 @@ export default function PaidWebsite() {
                           case 'rejected':
                             return (
                               <Tooltip title="This URL is rejected">
-                                <Button style={{ color: 'red' }}>Rejected</Button>
+                                <Button
+                                  style={{ color: 'red' }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  Rejected
+                                </Button>
                               </Tooltip>
                             );
                           default:
                             return (
                               <Tooltip title="This URL is not approved by admin">
-                                <Button style={{ color: 'gray' }}>Pending</Button>
+                                <Button
+                                  style={{ color: 'gray' }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  Pending
+                                </Button>
                               </Tooltip>
                             );
                         }
@@ -191,7 +219,10 @@ export default function PaidWebsite() {
                       <span
                         role="button"
                         tabIndex={0}
-                        onClick={() => handleUpdate(website._id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUpdate(website._id);
+                        }}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') {
                             handleUpdate(website._id);
@@ -220,7 +251,10 @@ export default function PaidWebsite() {
                         <span
                           role="button"
                           tabIndex={0}
-                          onClick={() => handleOpenDialog(website)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenDialog(website);
+                          }}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                               handleOpenDialog(website);

@@ -3,6 +3,7 @@ const router = express.Router();
 const Website = require('../models/WebSite');
 const Signup = require('../models/Signup');
 const moment = require('moment');
+const ReportedWebsite = require('../models/ReportedWebsite');
 
 //post all website
 router.post('/website', async (req, res) => {
@@ -625,13 +626,14 @@ router.put('/reject/:websiteId', async (req, res) => {
 });
 
 // Get website details by ID
-router.get('/websites/:websiteId', async (req, res) => {
+router.get('/websitesdetail', async (req, res) => {
   try {
-    const websiteId = req.params.websiteId;
+    const websiteId = req.query.website_id;
 
     // Fetch website data by website_id from the database
-    const website = await Website.find({ website_id: websiteId });
+    const website = await Website.findOne({ website_id: websiteId });
 
+    // Check if the website is not found
     if (!website) {
       return res.status(404).json({
         success: false,
@@ -639,10 +641,26 @@ router.get('/websites/:websiteId', async (req, res) => {
       });
     }
 
+    const userId = website.user_id;
+
+    // Fetch user details using the user_id from the website
+    const user = await Signup.findOne({ user_id: userId });
+
+    const reportedwebsiteId = website.website_id;
+
+    const reportedWebsites = await ReportedWebsite.findOne({ website_id: reportedwebsiteId });
+
+    // Combine website and user data into one response object
+    const responseData = {
+      website: website,
+      user: user,
+      reportedWebsites: reportedWebsites,
+    };
+
     res.status(200).json({
       success: true,
-      data: website,
-      message: 'Website retrieved successfully',
+      data: responseData,
+      message: 'Website and User details retrieved successfully',
     });
   } catch (error) {
     res.status(500).json({

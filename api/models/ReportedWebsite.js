@@ -13,6 +13,12 @@ const ReportedWebsiteSchema = new mongoose.Schema({
   message: {
     type: String,
   },
+  createAt: {
+    type: String,
+  },
+  updateAt: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model('ReportedWebsite', ReportedWebsiteSchema);
