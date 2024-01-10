@@ -15,6 +15,10 @@ import {
   MenuItem,
   Container,
   Grid,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Dialog,
 } from '@mui/material';
 
 import axiosInstance from '../config/AxiosInstance';
@@ -99,10 +103,10 @@ export default function WebSiteInfo() {
       setFormData((prevData) => ({ ...prevData, url: urlParam }));
     }
   }, [location.search]);
-  const handleChange = (prop) => (event) => {
-    setErrors({ ...errors, [prop]: '' }); // Clear the error message for the field
-    setFormData({ ...formData, [prop]: event.target.value });
-  };
+  // const handleChange = (prop) => (event) => {
+  //   setErrors({ ...errors, [prop]: '' }); // Clear the error message for the field
+  //   setFormData({ ...formData, [prop]: event.target.value });
+  // };
 
   const getCountryFullName = (countryCode) => {
     return countries[countryCode]?.name || '';
@@ -127,7 +131,7 @@ export default function WebSiteInfo() {
 
         const response = await axiosInstance.post('/website/website', dataToSend);
         console.log('Response:', response.data);
-        navigate('/user/dashboard');
+        navigate('/user/pendingapproval');
       } catch (error) {
         console.error('Error:', error);
       }
@@ -138,6 +142,41 @@ export default function WebSiteInfo() {
     // Handle payment process (e.g., integrate PayPal)
     // Redirect to payment gateway or show payment modal
     console.log('Redirecting to payment gateway...');
+  };
+  const handleCountryChange = (event) => {
+    const selectedCountry = event.target.value;
+    setErrors({ ...errors, country: '' });
+    setFormData({ ...formData, country: selectedCountry });
+  };
+
+  //--------------------------
+  const [openDialog, setOpenDialog] = useState(false);
+  const [daysInput, setDaysInput] = useState('');
+
+  const handleChange = (prop) => (event) => {
+    setFormData({ ...formData, [prop]: event.target.value });
+    setErrors({ ...errors, [prop]: '' });
+
+    if (event.target.value === 'Specific time in days') {
+      setOpenDialog(true);
+    } else {
+      setOpenDialog(false);
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleDaysInputChange = (event) => {
+    setDaysInput(event.target.value);
+  };
+
+  const handleDaysInputConfirm = () => {
+    setOpenDialog(false);
+    const specificTimeInDays = daysInput !== '' ? `${daysInput} days` : 'Forever';
+    setFormData({ ...formData, linkTime: specificTimeInDays });
+    setDaysInput('');
   };
 
   return (
@@ -281,16 +320,38 @@ export default function WebSiteInfo() {
                   </InputLabel>
                   <Select
                     value={formData.country}
-                    onChange={handleChange('country')}
+                    onChange={handleCountryChange}
                     error={Boolean(errors?.country)} // Error handling for country
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: '200px', // Set your desired height
+                          width: '150px', // Set your desired width
+                        },
+                      },
+                      anchorOrigin: {
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                      },
+                      transformOrigin: {
+                        vertical: 'top',
+                        horizontal: 'left',
+                      },
+                      getContentAnchorEl: null,
+                    }}
                   >
-                    {countryCodes.map((code, index) => (
-                      <MenuItem key={code} value={code}>
-                        {countryNames[index]}
-                      </MenuItem>
-                    ))}
+                    <MenuItem value="IN">India</MenuItem>
+                    <MenuItem value="" aria-label="None" />
+
+                    {countryCodes
+                      .filter((code) => code !== 'IN') // Exclude India from the list
+                      .map((code, index) => (
+                        <MenuItem key={code} value={code}>
+                          {countryNames[index]}
+                        </MenuItem>
+                      ))}
                   </Select>
-                  {errors?.country && ( // Display error message if present
+                  {errors?.country && (
                     <Typography variant="caption" color="error">
                       {errors.country}
                     </Typography>
@@ -305,6 +366,23 @@ export default function WebSiteInfo() {
                     value={formData.language}
                     onChange={handleChange('language')}
                     error={Boolean(errors?.language)} // Error handling for language
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: '200px', // Set your desired height
+                          width: '150px', // Set your desired width
+                        },
+                      },
+                      anchorOrigin: {
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                      },
+                      transformOrigin: {
+                        vertical: 'top',
+                        horizontal: 'left',
+                      },
+                      getContentAnchorEl: null,
+                    }}
                   >
                     {languageCodes.map((code, index) => (
                       <MenuItem key={code} value={code}>
@@ -326,17 +404,40 @@ export default function WebSiteInfo() {
                   <Select
                     value={formData.linkTime}
                     onChange={handleChange('linkTime')}
-                    error={Boolean(errors?.linkTime)} // Error handling for linkTime
+                    error={Boolean(errors?.linkTime)}
                   >
                     <MenuItem value="Specific time in days">Specific time in days</MenuItem>
                     <MenuItem value="Forever">Forever</MenuItem>
+                    {formData.linkTime !== 'Forever' && formData.linkTime !== 'Specific time in days' && (
+                      <MenuItem value={formData.linkTime}>{formData.linkTime}</MenuItem>
+                    )}
                   </Select>
-                  {errors?.linkTime && ( // Display error message if present
+
+                  {errors?.linkTime && (
                     <Typography variant="caption" color="error">
                       {errors.linkTime}
                     </Typography>
                   )}
                 </FormControl>
+
+                <Dialog open={openDialog} onClose={handleCloseDialog}>
+                  <DialogTitle>Enter Number of Days</DialogTitle>
+                  <DialogContent>
+                    <TextField
+                      autoFocus
+                      margin="dense"
+                      label="Days"
+                      type="number"
+                      fullWidth
+                      value={daysInput}
+                      onChange={handleDaysInputChange}
+                    />
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleCloseDialog}>Cancel</Button>
+                    <Button onClick={handleDaysInputConfirm}>Confirm</Button>
+                  </DialogActions>
+                </Dialog>
 
                 <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
                   <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>

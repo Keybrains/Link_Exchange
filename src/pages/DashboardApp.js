@@ -67,23 +67,23 @@ export default function DashboardApp() {
         </Typography>
 
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={3}>
+          {/* <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary
               title="Total Website"
               total={websiteCounts.countTotalWebsites}
               icon={'teenyicons:layers-intersect-solid'}
             />
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} sm={6} md={3}>
+          {/* <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary
               title="Paid Website"
               total={websiteCounts.countPaidWebsites}
               color="info"
               icon={'teenyicons:adjust-vertical-solid'}
             />
-          </Grid>
-
+          </Grid> */}
+{/* 
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary
               title="Free Website"
@@ -91,7 +91,7 @@ export default function DashboardApp() {
               color="success"
               icon={'teenyicons:bag-alt-solid'}
             />
-          </Grid>
+          </Grid> */}
 
           {/* <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary
@@ -102,14 +102,14 @@ export default function DashboardApp() {
             />
           </Grid> */}
 
-          <Grid item xs={12} sm={6} md={3}>
+          {/* <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary
               title="Reported Website"
               total={websiteCounts.countReportedWebsites}
               color="error"
               icon={'ant-design:bug-filled'}
             />
-          </Grid>
+          </Grid> */}
 
           {/* <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits

@@ -30,6 +30,9 @@ const WebsiteSchema = new mongoose.Schema({
   country: {
     type: String,
   },
+  reason: {
+    type: String,
+  },
   language: {
     type: String,
   },

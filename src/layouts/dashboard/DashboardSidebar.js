@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 // material
 import { styled } from '@mui/material/styles';
@@ -53,6 +53,17 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(true);
+
+  useEffect(() => {
+    setIsDropdownOpen(true); // Set dropdown to open initially
+  }, []);
+
+  useEffect(() => {
+    // Close dropdown on page change
+    setIsDropdownOpen(false);
+  }, [pathname]);
+
   const renderContent = (
     <Scrollbar
       sx={{
@@ -65,7 +76,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
           px: 2.5,
           py: 3,
           display: 'flex',
-          justifyContent:"center"
+          justifyContent: 'center',
         }}
       >
         <Logo sx={{ width: '100px', height: '50px' }} />
@@ -87,7 +98,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         </Link>
       </Box> */}
 
-      <NavSection navConfig={navConfig} />
+      <NavSection navConfig={navConfig} isOpen={isDropdownOpen} />
 
       <Box sx={{ flexGrow: 1 }} />
     </Scrollbar>

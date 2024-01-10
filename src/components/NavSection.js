@@ -27,8 +27,6 @@ const ListItemIconStyle = styled(ListItemIcon)({
   justifyContent: 'center',
 });
 
-// ----------------------------------------------------------------------
-
 NavItem.propTypes = {
   item: PropTypes.object,
   active: PropTypes.func,
@@ -36,12 +34,11 @@ NavItem.propTypes = {
 
 function NavItem({ item, active }) {
   const theme = useTheme();
-
   const isActiveRoot = active(item.path);
 
   const { title, path, icon, info, children } = item;
 
-  const [open, setOpen] = useState(isActiveRoot);
+  const [open, setOpen] = useState(true); // Set the dropdown to always be open
 
   const handleOpen = () => {
     setOpen((prev) => !prev);
@@ -58,17 +55,18 @@ function NavItem({ item, active }) {
     fontWeight: 'fontWeightMedium',
   };
 
+  // Rest of your component remains unchanged
+  // ...
+
+  // The rendering logic for the dropdown and its items
   if (children) {
     return (
       <>
-        <ListItemStyle
+         <ListItemStyle
           onClick={handleOpen}
-          sx={{
-            ...(isActiveRoot && activeRootStyle),
-          }}
         >
-          <ListItemIconStyle >{icon && icon}</ListItemIconStyle>
-          <ListItemText disableTypography primary={title} />
+          <ListItemIconStyle style={{ color: 'black' }}>{icon && icon}</ListItemIconStyle>
+          <ListItemText disableTypography primary={title} style={{ color: 'black' }} />
           {info && info}
           <Iconify
             icon={open ? 'eva:arrow-ios-downward-fill' : 'eva:arrow-ios-forward-fill'}
@@ -78,42 +76,37 @@ function NavItem({ item, active }) {
 
         <Collapse in={open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            {children.map((item) => {
-              const { title, path } = item;
-              const isActiveSub = active(path);
-
-              return (
-                <ListItemStyle
-                  key={title}
-                  component={RouterLink}
-                  to={path}
-                  sx={{
-                    ...(isActiveSub && activeSubStyle),
-                  }}
-                >
-                  <ListItemIconStyle>
-                    <Box
-                      component="span"
-                      sx={{
-                        width: 4,
-                        height: 4,
-                        display: 'flex',
-                        borderRadius: '50%',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        bgcolor: 'text.disabled',
-                        transition: (theme) => theme.transitions.create('transform'),
-                        ...(isActiveSub && {
-                          transform: 'scale(2)',
-                          bgcolor: 'primary.main',
-                        }),
-                      }}
-                    />
-                  </ListItemIconStyle>
-                  <ListItemText disableTypography primary={title} />
-                </ListItemStyle>
-              );
-            })}
+            {children.map((item) => (
+              <ListItemStyle
+                key={item.title}
+                component={RouterLink}
+                to={item.path}
+                sx={{
+                  color: 'black',
+                }}
+              >
+                <ListItemIconStyle style={{ color: 'black' }}>
+                  <Box
+                    component="span"
+                    sx={{
+                      width: 4,
+                      height: 4,
+                      display: 'flex',
+                      borderRadius: '50%',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      bgcolor: 'text.disabled',
+                      transition: (theme) => theme.transitions.create('transform'),
+                      ...(active(item.path) && {
+                        transform: 'scale(2)',
+                        bgcolor: 'primary.main',
+                      }),
+                    }}
+                  />
+                </ListItemIconStyle>
+                <ListItemText disableTypography primary={item.title} sx={{ color: 'black' }} />
+              </ListItemStyle>
+            ))}
           </List>
         </Collapse>
       </>
@@ -125,11 +118,11 @@ function NavItem({ item, active }) {
       component={RouterLink}
       to={path}
       sx={{
-        ...(isActiveRoot && activeRootStyle),
+        color: 'black',
       }}
     >
-      <ListItemIconStyle style={{color:"black"}}>{icon && icon}</ListItemIconStyle>
-      <ListItemText disableTypography primary={title} style={{color:"black"}} />
+      <ListItemIconStyle style={{ color: 'black' }}>{icon && icon}</ListItemIconStyle>
+      <ListItemText disableTypography primary={title} style={{ color: 'black' }} />
       {info && info}
     </ListItemStyle>
   );

@@ -1,7 +1,10 @@
+import { useEffect, useState } from 'react';
 import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
+import axiosInstance from '../config/AxiosInstanceAdmin';
+
 // components
 import Page from '../components/Page';
 import Iconify from '../components/Iconify';
@@ -20,34 +23,91 @@ import {
 
 // ----------------------------------------------------------------------
 
-export default function AdminDashboard() {
+export default function DashboardApp() {
   const theme = useTheme();
+  const [websiteCounts, setWebsiteCounts] = useState({});
+
+  useEffect(() => {
+    async function fetchWebsiteCounts() {
+      try {
+        const response = await axiosInstance.get('/website/websites/website-count');
+        if (response.status === 200) {
+          setWebsiteCounts(response.data); // Update to set the entire response data
+          console.log('response.data', response.data); // Log the entire response
+        } else {
+          throw new Error('Failed to fetch website counts');
+        }
+      } catch (error) {
+        console.error(error);
+        // Handle error state if needed
+      }
+    }
+
+    fetchWebsiteCounts();
+  }, []);
 
   return (
-    <Page title="Admin Dashboard">
+    <Page title="User Dashboard">
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
           Hi, Welcome back
         </Typography>
 
         <Grid container spacing={3}>
-          {/* <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Weekly Sales" total={714000} icon={'teenyicons:layers-intersect-solid'} />
+          <Grid item xs={12} sm={6} md={3}>
+            <AppWidgetSummary
+              title="Total Website"
+              total={websiteCounts?.totalCount}
+              icon={'teenyicons:layers-intersect-solid'}
+            />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="New Users" total={1352831} color="info" icon={'teenyicons:adjust-vertical-solid'} />
+            <AppWidgetSummary
+              title="Paid Website"
+              total={websiteCounts?.paidCount}
+              color="info"
+              icon={'teenyicons:adjust-vertical-solid'}
+            />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Item Orders" total={1723315} color="success" icon={'teenyicons:bag-alt-solid'} />
+            <AppWidgetSummary
+              title="Free Website"
+              total={websiteCounts?.freeCount}
+              color="success"
+              icon={'teenyicons:bag-alt-solid'}
+            />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
-          </Grid> */}
+            <AppWidgetSummary
+              title="Pending Website"
+              total={websiteCounts?.pendingCount}
+              color="secondary"
+              icon={'mdi:lan-pending'}
+            />
+          </Grid>
 
-          <Grid item xs={12} md={6} lg={8}>
+          <Grid item xs={12} sm={6} md={3}>
+            <AppWidgetSummary
+              title="Rejected Website"
+              total={websiteCounts?.rejectedCount}
+              color="warning"
+              icon={'icon-park-outline:reject'}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <AppWidgetSummary
+              title="Reported Website"
+              total={websiteCounts?.reportedCount}
+              color="error"
+              icon={'ant-design:bug-filled'}
+            />
+          </Grid>
+
+          {/* <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
               title="Website Visits"
               subheader="(+47%) than last year"
@@ -104,7 +164,7 @@ export default function AdminDashboard() {
               ]}
             />
           </Grid>
-{/* 
+
           <Grid item xs={12} md={6} lg={8}>
             <AppConversionRates
               title="Conversion Rates"

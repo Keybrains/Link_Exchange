@@ -16,6 +16,7 @@ import {
   DialogContent,
   DialogTitle,
   Dialog,
+  TextField,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../config/AxiosInstanceAdmin';
@@ -81,11 +82,17 @@ export default function AllWebsite() {
     }
   };
 
+  const [rejectReason, setRejectReason] = useState('');
+  console.log('rejectReason', rejectReason)
+
   const handleConfirmReject = async () => {
     try {
-      const response = await axiosInstance.put(`/website/reject/${selectedWebsite.website_id}`);
+      const response = await axiosInstance.put(`/website/reject/${selectedWebsite.website_id}`, {
+        reason: rejectReason, // Pass the reject reason in the API request body
+      });
       if (response.status === 200) {
         setRejectDialogOpen(false);
+        setRejectReason(''); // Reset reject reason after successful rejection
         fetchWebsites();
       } else {
         throw new Error('Failed to reject website');
@@ -205,6 +212,14 @@ export default function AllWebsite() {
           <DialogContentText id="reject-dialog-description">
             Are you sure you want to reject this website?
           </DialogContentText>
+          <TextField
+            label="Reason for rejection"
+            variant="outlined"
+            fullWidth
+            value={rejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
+            margin="normal"
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setRejectDialogOpen(false)}>Cancel</Button>

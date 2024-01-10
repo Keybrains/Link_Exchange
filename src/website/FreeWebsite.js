@@ -127,7 +127,7 @@ export default function FreeWebsite() {
   return (
     <Page title="Free Website" sx={{ padding: '25px', overflow: 'hidden' }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
-        Free Website
+        My Free Website
       </Typography>
       {FreeWebsites.length > 0 ? (
         FreeWebsites.map((website) => (
@@ -207,7 +207,7 @@ export default function FreeWebsite() {
                     </Typography>
                   </Grid>
 
-                  <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
+                  {/* <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
                     <div style={{ margin: '15px' }}>
                       <Button variant="contained" color="primary" sx={{ marginRight: '10px' }}>
                         Contact
@@ -221,7 +221,7 @@ export default function FreeWebsite() {
                         Report
                       </Button>
                     </div>
-                  </Grid>
+                  </Grid> */}
                 </Grid>
               </Grid>
             </CardContent>

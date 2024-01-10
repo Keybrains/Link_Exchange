@@ -52,7 +52,7 @@ export default function PendingApproval() {
   return (
     <Page title="Pending Approval" sx={{ padding: '25px', overflow: 'hidden' }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
-        Pending Approval
+        My Pending Approval
       </Typography>
       {PendingApproval.length > 0 ? (
         PendingApproval.map((website) => (
@@ -73,11 +73,18 @@ export default function PendingApproval() {
                         color: website.status === 'pending' ? 'gray' : 'red',
                         fontSize: '0.9em', // Adjust the size as needed
                         marginRight: '5px',
+                        
                       }}
                     />
                     <span style={{ color: website.status === 'pending' ? 'gray' : 'red' }}>
                       {website.status === 'pending' ? 'Pending' : 'Rejected'}
                     </span>
+                    {website.status === 'rejected' && website.reason && (
+                    <Typography style={{ marginBottom: '10px',marginTop: '15px' }}>
+                      <span style={{ fontWeight: 'bold' }}>Rejection Reason: </span>
+                      {website.reason}
+                    </Typography>
+                  )}
                   </Typography>
                   <Typography style={{ fontSize: '1.2em' }}>
                     <span style={{ fontWeight: 'bold' }}>URL: </span>

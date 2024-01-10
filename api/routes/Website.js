@@ -370,22 +370,54 @@ router.get('/websites/free/:userId', async (req, res) => {
 });
 
 //get count
-router.get('/website-count', async (req, res) => {
+// router.get('/website-count', async (req, res) => {
+//   try {
+//     const totalCount = await Website.countDocuments();
+//     const paidCount = await Website.countDocuments({ costOfAddingBacklink: 'Paid' });
+//     const freeCount = await Website.countDocuments({ costOfAddingBacklink: 'Free' });
+//     const reportedCount = await Website.countDocuments({ reported: true });
+//     const pendingCount = await Website.countDocuments({ status: "pending" });
+//     const rejectedCount = await Website.countDocuments({ status: "rejected" });
+
+//     res.json({
+//       statusCode: 200,
+//       totalCount,
+//       paidCount,
+//       freeCount,
+//       reportedCount,
+//       pendingCount,
+//       rejectedCount,
+//       message: 'Website Counts',
+//     });
+//   } catch (error) {
+//     res.json({
+//       statusCode: 500,
+//       message: error.message,
+//     });
+//   }
+// });
+
+router.get('/websites/website-count', async (req, res) => {
   try {
     const totalCount = await Website.countDocuments();
-
     const paidCount = await Website.countDocuments({ costOfAddingBacklink: 'Paid' });
     const freeCount = await Website.countDocuments({ costOfAddingBacklink: 'Free' });
     const reportedCount = await Website.countDocuments({ reported: true });
+    const pendingCount = await Website.countDocuments({ status: 'pending' });
+    const rejectedCount = await Website.countDocuments({ status: 'rejected' });
 
-    res.json({
+    const responseData = {
       statusCode: 200,
       totalCount,
       paidCount,
       freeCount,
       reportedCount,
-      message: 'Website Counts',
-    });
+      pendingCount,
+      rejectedCount,
+    };
+
+    const message = 'Website Counts';
+    res.json({ ...responseData, message });
   } catch (error) {
     res.json({
       statusCode: 500,
@@ -393,6 +425,7 @@ router.get('/website-count', async (req, res) => {
     });
   }
 });
+
 //get count by user id
 router.get('/websites/count/:userId', async (req, res) => {
   try {
@@ -606,12 +639,12 @@ router.get('/websites/not-approved/:userId', async (req, res) => {
 //reject website
 router.put('/reject/:websiteId', async (req, res) => {
   const { websiteId } = req.params;
+  const { reason } = req.body; // Extract reason for rejection from the request body
 
   try {
-    // Assuming 'Website' is your Mongoose model representing websites in your database
     const updatedWebsite = await Website.findOneAndUpdate(
       { website_id: websiteId },
-      { $set: { status: 'rejected' } }, // Update 'status' to 'rejected'
+      { $set: { status: 'rejected', reason: reason } }, // Update 'status' to 'rejected' and store 'reason'
       { new: true }
     );
 
@@ -624,6 +657,8 @@ router.put('/reject/:websiteId', async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to update status to rejected' });
   }
 });
+
+
 
 // Get website details by ID
 router.get('/websitesdetail', async (req, res) => {

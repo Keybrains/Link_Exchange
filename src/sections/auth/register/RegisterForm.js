@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Stack, IconButton, InputAdornment, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+
 import { LoadingButton } from '@mui/lab';
 import Iconify from '../../../components/Iconify';
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
@@ -85,7 +86,28 @@ export default function RegisterForm({ onSubmit }) {
         <RHFTextField name="companyname" label="Company Name (Optional)" />
         <RHFTextField name="email" label="Email Address" />
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-          <Select onChange={(e) => handleCountryCodeChange(e.target.value)} value={selectedCountryCode} displayEmpty>
+          <Select
+            onChange={(e) => handleCountryCodeChange(e.target.value)}
+            value={selectedCountryCode}
+            displayEmpty
+            MenuProps={{
+              PaperProps: {
+                style: {
+                  maxHeight: '200px', // Set your desired height
+                  width: '150px', // Set your desired width
+                },
+              },
+              anchorOrigin: {
+                vertical: 'bottom',
+                horizontal: 'left',
+              },
+              transformOrigin: {
+                vertical: 'top',
+                horizontal: 'left',
+              },
+              getContentAnchorEl: null,
+            }}
+          >
             <MenuItem value="" disabled>
               Code
             </MenuItem>

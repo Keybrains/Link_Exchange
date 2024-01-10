@@ -52,7 +52,7 @@ export default function ReportedWebsite() {
   return (
     <Page title="Reported Website" sx={{ padding: '25px', overflow: 'hidden' }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
-        Reported Website
+        My Reported Website
       </Typography>
       {ReportedWebsite.length > 0 ? (
         ReportedWebsite.map((website) => (

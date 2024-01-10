@@ -19,11 +19,11 @@ import axiosInstance from '../config/AxiosInstance';
 
 import Page from '../admin/components/Page';
 
-export default function FreeWebsite() {
-  const [PaidWebsites, setPaidWebsites] = useState([]);
+export default function UsersPaidWebsite() {
+  const [FreeWebsites, setFreeWebsites] = useState([]);
 
   useEffect(() => {
-    async function fetchPaidWebsites() {
+    async function fetchFreeWebsites() {
       try {
         // Retrieve the decodedToken from localStorage
         const decodedToken = localStorage.getItem('decodedToken');
@@ -35,11 +35,11 @@ export default function FreeWebsite() {
           // Update formData with the user_id
           //   setFormData((prevData) => ({ ...prevData, user_id: userId }));
 
-          const response = await axiosInstance.get(`/website/websites/paid/${userId}`);
+          const response = await axiosInstance.get(`/otheruserwebsite/paid-websites-not-matching-user/${userId}`);
           if (response.status === 200) {
-            setPaidWebsites(response.data.data);
+            setFreeWebsites(response.data.data);
           } else {
-            throw new Error('Failed to fetch paid websites');
+            throw new Error('Failed to fetch approved websites');
           }
         } else {
           throw new Error('User ID not found in decoded token');
@@ -50,7 +50,7 @@ export default function FreeWebsite() {
       }
     }
 
-    fetchPaidWebsites();
+    fetchFreeWebsites();
   }, []);
 
   //--------------------------------------------------------------------
@@ -84,7 +84,7 @@ export default function FreeWebsite() {
       const userId = parsedToken.userId?.user_id;
 
       // Find the website with the given URL to extract its ID
-      const websiteToReport = PaidWebsites.find((website) => website.url === reportedURL);
+      const websiteToReport = FreeWebsites.find((website) => website.url === reportedURL);
 
       if (!websiteToReport) {
         throw new Error('Website not found for the reported URL');
@@ -103,9 +103,11 @@ export default function FreeWebsite() {
 
         // Update reported status for the reported URL using the PUT API
         await axiosInstance.put(`website/updateReportedStatus/${websiteToReport.website_id}`);
+        setFreeWebsites(prevWebsites =>
+          prevWebsites.filter(website => website.url !== reportedURL)
+        );
         // Refresh the approved websites after reporting
-        // fetchPaidWebsites();
-        setPaidWebsites((prevWebsites) => prevWebsites.filter((website) => website.url !== reportedURL));
+        // fetchFreeWebsites();
       } else {
         throw new Error('Failed to report website');
       }
@@ -123,12 +125,12 @@ export default function FreeWebsite() {
   };
 
   return (
-    <Page title="Paid Website" sx={{ padding: '25px', overflow: 'hidden' }}>
+    <Page title="Purches Paid Website" sx={{ padding: '25px', overflow: 'hidden' }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
-       My Paid Website
+        Purches Paid Website
       </Typography>
-      {PaidWebsites.length > 0 ? (
-        PaidWebsites.map((website) => (
+      {FreeWebsites.length > 0 ? (
+        FreeWebsites.map((website) => (
           <Card key={website._id} sx={{ marginBottom: '20px' }}>
             <CardContent
               sx={{
@@ -205,7 +207,7 @@ export default function FreeWebsite() {
                     </Typography>
                   </Grid>
 
-                  {/* <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
+                  <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
                     <div style={{ margin: '15px' }}>
                       <Button variant="contained" color="primary" sx={{ marginRight: '10px' }}>
                         Contact
@@ -219,7 +221,7 @@ export default function FreeWebsite() {
                         Report
                       </Button>
                     </div>
-                  </Grid> */}
+                  </Grid>
                 </Grid>
               </Grid>
             </CardContent>

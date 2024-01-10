@@ -42,6 +42,9 @@ import UpdateWebSiteInfo from './admin/website/UpdateWebSiteInfo';
 import PendingApproval from './website/PendingApproval';
 import UserDetail from './admin/user/UserDetail';
 import WebsiteDetail from './admin/website/WebsiteDetail';
+import UsersWebsite from './OtherUserWebsite/UsersWebsite';
+import UsersFreeWebsite from './OtherUserWebsite/UsersFreeWebsite';
+import UsersPaidWebsite from './OtherUserWebsite/UsersPaidWebsite';
 
 const isAuthenticated = () => {
   const authToken = localStorage.getItem('authToken');
@@ -72,6 +75,9 @@ const Router = () => {
         { path: 'reportedwebsite', element: isAuthenticated() ? <ReportedWebsite /> : <Navigate to="/login" /> },
         { path: 'discussions', element: isAuthenticated() ? <Discussions /> : <Navigate to="/login" /> },
         { path: 'pendingapproval', element: isAuthenticated() ? <PendingApproval /> : <Navigate to="/login" /> },
+        { path: 'alluserwebsite', element: isAuthenticated() ? <UsersWebsite /> : <Navigate to="/login" /> },
+        { path: 'freeuserwebsite', element: isAuthenticated() ? <UsersFreeWebsite /> : <Navigate to="/login" /> },
+        { path: 'paiduserwebsite', element: isAuthenticated() ? <UsersPaidWebsite /> : <Navigate to="/login" /> },
       ],
     },
     {

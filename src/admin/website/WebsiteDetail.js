@@ -41,7 +41,6 @@ import {
   MDBIcon,
 } from 'mdb-react-ui-kit';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Page from '../components/Page';
 import axiosInstance from '../config/AxiosInstanceAdmin';
 
