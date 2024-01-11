@@ -62,9 +62,7 @@ function NavItem({ item, active }) {
   if (children) {
     return (
       <>
-         <ListItemStyle
-          onClick={handleOpen}
-        >
+        <ListItemStyle onClick={handleOpen} sx={isActiveRoot ? activeRootStyle : {}}>
           <ListItemIconStyle style={{ color: 'black' }}>{icon && icon}</ListItemIconStyle>
           <ListItemText disableTypography primary={title} style={{ color: 'black' }} />
           {info && info}

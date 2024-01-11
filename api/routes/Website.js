@@ -630,11 +630,12 @@ router.get('/websites/not-approved/:userId', async (req, res) => {
       return res.status(404).json({ success: false, message: 'No not approved or rejected websites found' });
     }
 
-    res.status(200).json({ success: true, data: notApprovedWebsites });
+    res.status(200).json({ success: true, data: notApprovedWebsites.reverse() }); // Reverse the order of the array
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to fetch not approved or rejected websites' });
   }
 });
+
 
 //reject website
 router.put('/reject/:websiteId', async (req, res) => {
@@ -657,8 +658,6 @@ router.put('/reject/:websiteId', async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to update status to rejected' });
   }
 });
-
-
 
 // Get website details by ID
 router.get('/websitesdetail', async (req, res) => {

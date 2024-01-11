@@ -1,8 +1,8 @@
 import * as yup from 'yup';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { countries } from 'countries-list'; // Importing the countries list from the package
-import iso6391 from 'iso-639-1'; // Importing the iso-639-1 package
+import { countries } from 'countries-list';
+import iso6391 from 'iso-639-1';
 import {
   Typography,
   Card,
@@ -13,16 +13,15 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Container,
   Grid,
   DialogActions,
   DialogContent,
   DialogTitle,
   Dialog,
 } from '@mui/material';
-
+import axios from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
 import axiosInstance from '../config/AxiosInstance';
-
 import Page from '../admin/components/Page';
 
 export default function WebSiteInfo() {
@@ -32,6 +31,7 @@ export default function WebSiteInfo() {
   const languageNames = languageCodes.map((code) => iso6391.getName(code));
   const navigate = useNavigate();
   const location = useLocation();
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     user_id: '',
     url: '',
@@ -42,7 +42,7 @@ export default function WebSiteInfo() {
     linkType: '',
     country: '',
     language: '',
-    surfaceInGoogleNews: false,
+    surfaceInGoogleNews: '',
     backlinksAllowed: '',
     costOfAddingBacklink: '',
     charges: '',
@@ -52,8 +52,12 @@ export default function WebSiteInfo() {
 
   const schema = yup.object().shape({
     monthlyVisits: yup.string().required('Monthly organic visits is required'),
-    DA: yup.string().required('DA is required'),
-    spamScore: yup.string().required('Spam Score is required'),
+    DA: yup.number().required('DA is required').min(1, 'DA must be at least 1').max(100, 'DA must be at most 100'),
+    spamScore: yup
+      .number()
+      .required('Spam Score is required')
+      .min(1, 'Spam Score must be at least 1')
+      .max(100, 'Spam Score must be at most 100'),
     backlinksAllowed: yup.string().required('Number of Backlinks Allowed is required'),
     costOfAddingBacklink: yup.string().required('Cost of adding backlink is required'),
     charges: yup.string().when('costOfAddingBacklink', {
@@ -64,14 +68,11 @@ export default function WebSiteInfo() {
       .array()
       .min(1, 'Please select at least one category')
       .required('Please select at least one category'),
-
     linkType: yup.string().required('Link Type is required'),
     country: yup.string().required('Country is required'),
     language: yup.string().required('Language is required'),
     linkTime: yup.string().required('Link time is required'),
   });
-
-  const [errors, setErrors] = useState({});
 
   const validateForm = async () => {
     try {
@@ -103,10 +104,6 @@ export default function WebSiteInfo() {
       setFormData((prevData) => ({ ...prevData, url: urlParam }));
     }
   }, [location.search]);
-  // const handleChange = (prop) => (event) => {
-  //   setErrors({ ...errors, [prop]: '' }); // Clear the error message for the field
-  //   setFormData({ ...formData, [prop]: event.target.value });
-  // };
 
   const getCountryFullName = (countryCode) => {
     return countries[countryCode]?.name || '';
@@ -133,16 +130,20 @@ export default function WebSiteInfo() {
         console.log('Response:', response.data);
         navigate('/user/pendingapproval');
       } catch (error) {
-        console.error('Error:', error);
+        if (axios.isAxiosError(error) && error.response && error.response.status === 400) {
+          toast.error(`The URL is already exists`);
+        } else {
+          toast.error('Error occurred');
+          console.error('Error:', error);
+        }
       }
     }
   };
 
   const handlePayment = () => {
-    // Handle payment process (e.g., integrate PayPal)
-    // Redirect to payment gateway or show payment modal
     console.log('Redirecting to payment gateway...');
   };
+
   const handleCountryChange = (event) => {
     const selectedCountry = event.target.value;
     setErrors({ ...errors, country: '' });
@@ -232,13 +233,16 @@ export default function WebSiteInfo() {
                   <Select
                     value={formData.backlinksAllowed}
                     onChange={handleChange('backlinksAllowed')}
-                    error={Boolean(errors?.backlinksAllowed)} // Add error handling
+                    error={Boolean(errors?.backlinksAllowed)}
+                    labelId="backlinksAllowed"
+                    id="backlinksAllowed"
+                    label="backlinksAllowed"
                   >
                     <MenuItem value="1">1</MenuItem>
                     <MenuItem value="2">2</MenuItem>
                     <MenuItem value="3">3</MenuItem>
                   </Select>
-                  {errors?.backlinksAllowed && ( // Display error message if present
+                  {errors?.backlinksAllowed && (
                     <Typography variant="caption" color="error">
                       {errors.backlinksAllowed}
                     </Typography>
@@ -253,6 +257,9 @@ export default function WebSiteInfo() {
                     value={formData.costOfAddingBacklink}
                     onChange={handleChange('costOfAddingBacklink')}
                     error={Boolean(errors?.costOfAddingBacklink)} // Add error handling
+                    labelId="costOfAddingBacklink"
+                    id="costOfAddingBacklink"
+                    label="costOfAddingBacklink"
                   >
                     <MenuItem value="Free">Free</MenuItem>
                     <MenuItem value="Paid">Paid</MenuItem>
@@ -285,6 +292,9 @@ export default function WebSiteInfo() {
                     onChange={handleChange('categories')}
                     multiple
                     error={Boolean(errors?.categories)} // Add error handling for categories
+                    labelId="categories"
+                    id="categories"
+                    label="categories"
                   >
                     <MenuItem value="Category1">Category1</MenuItem>
                     <MenuItem value="Category2">Category2</MenuItem>
@@ -304,6 +314,9 @@ export default function WebSiteInfo() {
                     value={formData.linkType}
                     onChange={handleChange('linkType')}
                     error={Boolean(errors?.linkType)} // Error handling for linkType
+                    labelId="linkType"
+                    id="linkType"
+                    label="linkType"
                   >
                     <MenuItem value="DoFollow">Do Follow</MenuItem>
                     <MenuItem value="NoFollow">No Follow</MenuItem>
@@ -322,6 +335,9 @@ export default function WebSiteInfo() {
                     value={formData.country}
                     onChange={handleCountryChange}
                     error={Boolean(errors?.country)} // Error handling for country
+                    labelId="country"
+                    id="country"
+                    label="country"
                     MenuProps={{
                       PaperProps: {
                         style: {
@@ -366,6 +382,9 @@ export default function WebSiteInfo() {
                     value={formData.language}
                     onChange={handleChange('language')}
                     error={Boolean(errors?.language)} // Error handling for language
+                    labelId="language"
+                    id="language"
+                    label="language"
                     MenuProps={{
                       PaperProps: {
                         style: {
@@ -405,6 +424,9 @@ export default function WebSiteInfo() {
                     value={formData.linkTime}
                     onChange={handleChange('linkTime')}
                     error={Boolean(errors?.linkTime)}
+                    labelId="linkTime"
+                    id="linkTime"
+                    label="linkTime"
                   >
                     <MenuItem value="Specific time in days">Specific time in days</MenuItem>
                     <MenuItem value="Forever">Forever</MenuItem>
@@ -443,9 +465,15 @@ export default function WebSiteInfo() {
                   <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
                     Does your website surface in Google News
                   </InputLabel>
-                  <Select value={formData.surfaceInGoogleNews} onChange={handleChange('surfaceInGoogleNews')}>
-                    <MenuItem>Yes</MenuItem>
-                    <MenuItem value={false}>No</MenuItem>
+                  <Select
+                    value={formData.surfaceInGoogleNews}
+                    onChange={handleChange('surfaceInGoogleNews')}
+                    labelId="surfaceInGoogleNews"
+                    id="surfaceInGoogleNews"
+                    label="surfaceInGoogleNews"
+                  >
+                    <MenuItem value="Yes">Yes</MenuItem>
+                    <MenuItem value="No">No</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
@@ -479,6 +507,7 @@ export default function WebSiteInfo() {
           )}
         </Card>
       </Page>
+      <Toaster />
     </>
   );
 }

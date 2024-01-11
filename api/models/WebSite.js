@@ -37,7 +37,7 @@ const WebsiteSchema = new mongoose.Schema({
     type: String,
   },
   surfaceInGoogleNews: {
-    type: Boolean,
+    type: String,
   },
   backlinksAllowed: {
     type: Number,

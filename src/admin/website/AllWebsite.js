@@ -19,6 +19,8 @@ import {
   TextField,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
+
 import axiosInstance from '../config/AxiosInstanceAdmin';
 import Page from '../../components/Page';
 
@@ -28,6 +30,7 @@ export default function AllWebsite() {
   const [approveDialogOpen, setApproveDialogOpen] = useState(false);
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   const fetchWebsites = async () => {
     try {
@@ -35,12 +38,14 @@ export default function AllWebsite() {
       if (response.status === 200) {
         setWebsites(response.data.data);
         console.log(response.data.data); // Add this line for debugging
+        setLoading(false);
       } else {
         throw new Error('Failed to fetch websites');
       }
     } catch (error) {
       console.error(error);
       // Handle error state if needed
+      setLoading(false);
     }
   };
 
@@ -83,7 +88,7 @@ export default function AllWebsite() {
   };
 
   const [rejectReason, setRejectReason] = useState('');
-  console.log('rejectReason', rejectReason)
+  console.log('rejectReason', rejectReason);
 
   const handleConfirmReject = async () => {
     try {
@@ -108,6 +113,12 @@ export default function AllWebsite() {
 
   return (
     <Page title="Approve Request" sx={{ padding: '25px', overflow: 'hidden' }}>
+         {loading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+          <CircularProgress color="primary" />
+        </div>
+      ) : (
+        <>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
         Approve Request
       </Typography>
@@ -228,6 +239,8 @@ export default function AllWebsite() {
           </Button>
         </DialogActions>
       </Dialog>
+      </>
+      )}
     </Page>
   );
 }

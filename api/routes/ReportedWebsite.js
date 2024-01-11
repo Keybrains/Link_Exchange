@@ -107,7 +107,7 @@ router.get('/reportedwebsites', async (req, res) => {
 
     res.json({
       statusCode: 200,
-      data: updatedReportedWebsites,
+      data: updatedReportedWebsites.reverse(),
       message: 'Reported websites retrieved successfully with associated user information',
     });
   } catch (error) {

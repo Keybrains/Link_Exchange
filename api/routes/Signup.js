@@ -96,7 +96,7 @@ router.get('/users', async (req, res) => {
 
     res.json({
       success: true,
-      data: users,
+      data: users.reverse(), // Reverse the order of the array
     });
   } catch (error) {
     console.error(error);
@@ -106,6 +106,7 @@ router.get('/users', async (req, res) => {
     });
   }
 });
+
 
 //delete user
 router.delete('/users/:userId', async (req, res) => {

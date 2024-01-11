@@ -13,8 +13,7 @@ router.get('/websites-not-matching-user/:userId', async (req, res) => {
 
     res.json({
       success: true,
-
-      data: websites,
+      data: websites.reverse(), // Reverse the order of the array
       message: 'Websites retrieved successfully',
     });
   } catch (error) {
@@ -34,7 +33,7 @@ router.get('/paid-websites-not-matching-user/:userId', async (req, res) => {
 
     res.json({
       success: true,
-      data: paidWebsites,
+      data: paidWebsites.reverse(), // Reverse the order of the array
       message: 'Paid websites retrieved successfully',
     });
   } catch (error) {
@@ -54,7 +53,7 @@ router.get('/free-websites-not-matching-user/:userId', async (req, res) => {
 
     res.json({
       success: true,
-      data: freeWebsites,
+      data: freeWebsites.reverse(), // Reverse the order of the array
       message: 'Free websites retrieved successfully',
     });
   } catch (error) {

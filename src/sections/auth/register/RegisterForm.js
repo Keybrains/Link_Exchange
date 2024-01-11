@@ -86,38 +86,45 @@ export default function RegisterForm({ onSubmit }) {
         <RHFTextField name="companyname" label="Company Name (Optional)" />
         <RHFTextField name="email" label="Email Address" />
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-          <Select
-            onChange={(e) => handleCountryCodeChange(e.target.value)}
-            value={selectedCountryCode}
-            displayEmpty
-            MenuProps={{
-              PaperProps: {
-                style: {
-                  maxHeight: '200px', // Set your desired height
-                  width: '150px', // Set your desired width
+          <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '0px' } }}>
+            <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
+              Country Number Code*
+            </InputLabel>
+            <Select
+              onChange={(e) => handleCountryCodeChange(e.target.value)}
+              value={selectedCountryCode}
+              labelId="Code"
+              id="Code"
+              label="Code"
+              displayEmpty
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: '200px', // Set your desired height
+                    width: '150px', // Set your desired width
+                  },
                 },
-              },
-              anchorOrigin: {
-                vertical: 'bottom',
-                horizontal: 'left',
-              },
-              transformOrigin: {
-                vertical: 'top',
-                horizontal: 'left',
-              },
-              getContentAnchorEl: null,
-            }}
-          >
-            <MenuItem value="" disabled>
-              Code
-            </MenuItem>
-            {countryCodes.map((country, index) => (
-              <MenuItem key={index} value={country.dialCode}>
-                {`${country.name} (${country.dialCode})`}
-              </MenuItem>
-            ))}
-          </Select>
-
+                anchorOrigin: {
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                },
+                transformOrigin: {
+                  vertical: 'top',
+                  horizontal: 'left',
+                },
+                getContentAnchorEl: null,
+              }}
+            >
+              {/* <MenuItem value="" disabled>
+                Code
+              </MenuItem> */}
+              {countryCodes.map((country, index) => (
+                <MenuItem key={index} value={country.dialCode}>
+                  {`${country.name} (${country.dialCode})`}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <RHFTextField
             name="phonenumber"
             id="phonenumber"
@@ -131,10 +138,13 @@ export default function RegisterForm({ onSubmit }) {
               // Set the actual phone number after the user exits the input
               methods.setValue('phonenumber', phoneNumber, { shouldValidate: true });
             }}
+            style={{
+              marginTop: '15px',
+            }}
             error={!!methods.formState.errors.phonenumber}
             helperText={methods.formState.errors.phonenumber?.message || ''}
           />
-        </Stack>{' '}
+        </Stack>
         <RHFTextField name="username" label="User Name" />
         <RHFTextField
           name="password"
