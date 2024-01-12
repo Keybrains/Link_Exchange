@@ -9,7 +9,7 @@ router.get('/websites-not-matching-user/:userId', async (req, res) => {
   try {
     const { userId } = req.params; // Extract userId from route parameters
 
-    const websites = await Website.find({ user_id: { $ne: userId } });
+    const websites = await Website.find({ user_id: { $ne: userId }, status: 'activate' });
 
     res.json({
       success: true,
@@ -29,7 +29,11 @@ router.get('/paid-websites-not-matching-user/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const paidWebsites = await Website.find({ user_id: { $ne: userId }, costOfAddingBacklink: { $ne: 'Free' } });
+    const paidWebsites = await Website.find({
+      user_id: { $ne: userId },
+      costOfAddingBacklink: { $ne: 'Free' },
+      status: 'activate',
+    });
 
     res.json({
       success: true,
@@ -49,7 +53,11 @@ router.get('/free-websites-not-matching-user/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const freeWebsites = await Website.find({ user_id: { $ne: userId }, costOfAddingBacklink: 'Free' });
+    const freeWebsites = await Website.find({
+      user_id: { $ne: userId },
+      costOfAddingBacklink: 'Free',
+      status: 'activate',
+    });
 
     res.json({
       success: true,
