@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { faDotCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useNavigate } from 'react-router-dom';
 import {
   Typography,
   Card,
@@ -149,6 +150,10 @@ export default function UsersWebsite() {
     return difference <= 5;
   };
 
+  const navigate = useNavigate();
+
+
+
   return (
     <Page title="Purches Website" sx={{ padding: '25px', overflow: 'hidden' }}>
       {loading ? (
@@ -255,7 +260,13 @@ export default function UsersWebsite() {
 
                       <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
                         <div style={{ margin: '15px' }}>
-                          <Button variant="contained" color="primary" sx={{ marginRight: '10px' }}>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            sx={{ marginRight: '10px' }}
+                            onClick={() => navigate(`/user/chat/${website.user_id}`)}
+                            
+                          >
                             Contact
                           </Button>
                           <Button

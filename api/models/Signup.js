@@ -40,6 +40,9 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: 'activate',
   },
+  chateduser: {
+    type: [String],
+  },
 });
 
 module.exports = mongoose.model('Signup', UserSchema);

@@ -6571,10 +6571,10 @@
   dependencies:
     "tmpl" "1.0.5"
 
-"mdb-react-ui-kit@^7.0.0":
-  "integrity" "sha512-ke23u6Ux63nrmi3PFa7H1YlmQe76POT5rNpxuet0MB4+8OjCzw+WviL4EJtzDlNHXhnw9mfU9a5MF8q0swO+wA=="
-  "resolved" "https://registry.npmjs.org/mdb-react-ui-kit/-/mdb-react-ui-kit-7.0.0.tgz"
-  "version" "7.0.0"
+"mdb-react-ui-kit@^7.1.0":
+  "integrity" "sha512-PVx3jQJr4ykMSl5rlRkG8Ny4/XfN/100ra7JuROPL5ncZ7/v/TR+WGJxpErJueBJ2XvbEOZuKYTOhvJfg1OfaQ=="
+  "resolved" "https://registry.npmjs.org/mdb-react-ui-kit/-/mdb-react-ui-kit-7.1.0.tgz"
+  "version" "7.1.0"
   dependencies:
     "@popperjs/core" "2.11.5"
     "clsx" "1.1.1"

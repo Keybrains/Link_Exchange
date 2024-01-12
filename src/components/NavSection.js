@@ -116,7 +116,7 @@ function NavItem({ item, active }) {
       component={RouterLink}
       to={path}
       sx={{
-        color: 'black',
+        ...(isActiveRoot && activeRootStyle),
       }}
     >
       <ListItemIconStyle style={{ color: 'black' }}>{icon && icon}</ListItemIconStyle>

@@ -107,7 +107,6 @@ router.get('/users', async (req, res) => {
   }
 });
 
-
 //delete user
 router.delete('/users/:userId', async (req, res) => {
   try {
@@ -203,6 +202,64 @@ router.get('/users/:userId', async (req, res) => {
   }
 });
 
+router.put('/signup/users/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  const { receiver_id } = req.body;
 
+  try {
+    // Find the sender by userId and update the chateduser field
+    const updatedSender = await Signup.findOneAndUpdate(
+      { user_id: userId },
+      { $addToSet: { chateduser: receiver_id } },
+      { new: true }
+    );
+
+    if (!updatedSender) {
+      return res.status(404).json({ message: 'Sender not found' });
+    }
+
+    // Find the receiver by receiver_id and update the chateduser field
+    const updatedReceiver = await Signup.findOneAndUpdate(
+      { user_id: receiver_id },
+      { $addToSet: { chateduser: userId } },
+      { new: true }
+    );
+
+    if (!updatedReceiver) {
+      // If the receiver is not found, you may want to handle this case accordingly
+      return res.status(404).json({ message: 'Receiver not found' });
+    }
+
+    return res.json({
+      message: 'Users updated successfully',
+      sender: updatedSender,
+      receiver: updatedReceiver,
+    });
+  } catch (error) {
+    console.error('Error updating users:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+router.get('/signup/users/:userId/chatedusers', async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    // Find the user by userId and get the chateduser field
+    const user = await Signup.findOne({ user_id: userId });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Get the list of chated users
+    const chatedUsers = user.chateduser;
+
+    return res.json({ chatedUsers });
+  } catch (error) {
+    console.error('Error getting chated users:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
 
 module.exports = router;

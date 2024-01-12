@@ -61,9 +61,14 @@ const navConfig = [
     path: '/user/pendingapproval',
     icon: getIcon('material-symbols:upcoming-outline'),
   },
+  // {
+  //   title: 'Discussions',
+  //   path: '/user/discussions',
+  //   icon: getIcon('material-symbols:chat'),
+  // },
   {
-    title: 'Discussions',
-    path: '/user/discussions',
+    title: 'Chated User',
+    path: '/user/chateduser',
     icon: getIcon('material-symbols:chat'),
   },
   // {

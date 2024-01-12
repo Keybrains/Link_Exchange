@@ -32,7 +32,7 @@ import DashboardApp from './pages/DashboardApp';
 import FreeWebsite from './website/FreeWebsite';
 import PaidWebsite from './website/PaidWebsite';
 import ReportedWebsite from './website/ReportedWebsite';
-import Discussions from './website/Discussions';
+import Discussions from './Chat/Discussions';
 
 import AdminDiscussions from './admin/website/Discussions';
 import AdminFreeWebsite from './admin/website/FreeWebsite';
@@ -45,6 +45,8 @@ import WebsiteDetail from './admin/website/WebsiteDetail';
 import UsersWebsite from './OtherUserWebsite/UsersWebsite';
 import UsersFreeWebsite from './OtherUserWebsite/UsersFreeWebsite';
 import UsersPaidWebsite from './OtherUserWebsite/UsersPaidWebsite';
+import Chat from './Chat/Chat';
+import ChatedUser from './Chat/ChatedUser';
 
 const isAuthenticated = () => {
   const authToken = localStorage.getItem('authToken');
@@ -73,11 +75,16 @@ const Router = () => {
         { path: 'freewebsite', element: isAuthenticated() ? <FreeWebsite /> : <Navigate to="/login" /> },
         { path: 'paidwebsite', element: isAuthenticated() ? <PaidWebsite /> : <Navigate to="/login" /> },
         { path: 'reportedwebsite', element: isAuthenticated() ? <ReportedWebsite /> : <Navigate to="/login" /> },
-        { path: 'discussions', element: isAuthenticated() ? <Discussions /> : <Navigate to="/login" /> },
+        {
+          path: 'discussions',
+          element: isAuthenticated() ? <Discussions /> : <Navigate to="/login" />,
+        },
         { path: 'pendingapproval', element: isAuthenticated() ? <PendingApproval /> : <Navigate to="/login" /> },
         { path: 'alluserwebsite', element: isAuthenticated() ? <UsersWebsite /> : <Navigate to="/login" /> },
         { path: 'freeuserwebsite', element: isAuthenticated() ? <UsersFreeWebsite /> : <Navigate to="/login" /> },
         { path: 'paiduserwebsite', element: isAuthenticated() ? <UsersPaidWebsite /> : <Navigate to="/login" /> },
+        { path: 'chat/:userId', element: isAuthenticated() ? <Chat /> : <Navigate to="/login" /> },
+        { path: 'chateduser', element: isAuthenticated() ? <ChatedUser /> : <Navigate to="/login" /> },
       ],
     },
     {
