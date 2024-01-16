@@ -154,7 +154,7 @@ export default function UsersFreeWebsite() {
   };
 
   return (
-    <Page title="Purches Free Website" sx={{ padding: '25px', overflow: 'hidden' }}>
+    <Page title="Purchase Free Website" sx={{ padding: '25px', overflow: 'hidden' }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />
@@ -162,7 +162,7 @@ export default function UsersFreeWebsite() {
       ) : (
         <>
           <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
-            Purches Free Website
+            Purchase Free Website
           </Typography>
           {FreeWebsites.length > 0 ? (
             FreeWebsites.map((website) => (

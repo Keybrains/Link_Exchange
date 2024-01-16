@@ -179,7 +179,7 @@ export default function PaidWebsite() {
                                       }}
                                       color="error"
                                     >
-                                      Deactivated
+                                      Inactive
                                     </Button>
                                   </Tooltip>
                                 );
@@ -194,7 +194,7 @@ export default function PaidWebsite() {
                                       }}
                                       style={{ color: 'green', borderColor: 'green' }}
                                     >
-                                      Activate
+                                      Active
                                     </Button>
                                   </Tooltip>
                                 );

@@ -56,7 +56,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
   justifyContent: 'center',
   flexDirection: 'column',
   padding: theme.spacing(8, 0),
-  overflow: 'hidden', 
+  overflow: 'hidden',
 }));
 
 // ----------------------------------------------------------------------

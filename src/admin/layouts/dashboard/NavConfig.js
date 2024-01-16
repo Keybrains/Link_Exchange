@@ -44,6 +44,11 @@ const navConfig = [
     path: '/admin/discussions',
     icon: getIcon('material-symbols:chat'),
   },
+  {
+    title: 'Change Password',
+    path: '/admin/changepassword',
+    icon: getIcon('mdi:password-reset'),
+  },
 
   // {
   //   title: 'All Social Media',

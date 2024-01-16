@@ -19,12 +19,12 @@ export default function LoginForm({ onSubmit }) {
   const [showPassword, setShowPassword] = useState(false);
 
   const LoginSchema = Yup.object().shape({
-    email: Yup.string().email('Email must be a valid email address').required('Email is required'),
+    identifier: Yup.string().required('Email or Username is required'),
     password: Yup.string().required('Password is required'),
   });
 
   const defaultValues = {
-    email: '',
+    identifier: '',
     password: '',
     remember: true,
   };
@@ -46,7 +46,7 @@ export default function LoginForm({ onSubmit }) {
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
-        <RHFTextField name="email" label="Email address" />
+        <RHFTextField name="identifier" label="Email address or Username" />
 
         <RHFTextField
           name="password"

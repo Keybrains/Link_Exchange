@@ -153,7 +153,7 @@ export default function UsersPaidWebsite() {
   };
 
   return (
-    <Page title="Purches Paid Website" sx={{ padding: '25px', overflow: 'hidden' }}>
+    <Page title="Purchase Paid Website" sx={{ padding: '25px', overflow: 'hidden' }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />
@@ -161,7 +161,7 @@ export default function UsersPaidWebsite() {
       ) : (
         <>
           <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
-            Purches Paid Website
+            Purchase Paid Website
           </Typography>
           {PaidWebsites.length > 0 ? (
             PaidWebsites.map((website) => (

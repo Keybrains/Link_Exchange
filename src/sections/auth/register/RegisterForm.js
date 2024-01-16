@@ -24,7 +24,14 @@ export default function RegisterForm({ onSubmit }) {
     email: Yup.string().email('Email must be a valid email address').required('Email is required'),
     phonenumber: Yup.string().required('Phone number is required'),
     username: Yup.string().required('User name is required'),
-    password: Yup.string().required('Password is required'),
+    password: Yup.string()
+      .required('Password is required')
+      .min(8, 'Password must be at least 8 characters long')
+      .matches(
+        /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]+$/,
+        'Password must contain at least one number, one special character, one uppercase letter, and one lowercase letter'
+      ),
+
     retypePassword: Yup.string()
       .oneOf([Yup.ref('password'), null], 'Passwords must match')
       .required('Please confirm your password'),

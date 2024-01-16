@@ -113,133 +113,133 @@ export default function AllWebsite() {
 
   return (
     <Page title="Approve Request" sx={{ padding: '25px', overflow: 'hidden' }}>
-         {loading ? (
+      {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />
         </div>
       ) : (
         <>
-      <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
-        Approve Request
-      </Typography>
-      {websites.length > 0 ? (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead sx={{ backgroundColor: '#C3E0E5' }}>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 'bold' }}>URL</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>User</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Country</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Language</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Cost</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Is Paid</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Approved</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {websites.map((website) => (
-                <TableRow
-                  key={website.website_id}
-                  onClick={() => handleRowClick(website.website_id)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <TableCell>{website.url}</TableCell>
-                  <TableCell>{`${website.users?.firstname} ${website.users?.lastname}`}</TableCell>
-                  <TableCell>{website.country}</TableCell>
-                  <TableCell>{website.language}</TableCell>
-                  <TableCell>
-                    {website.costOfAddingBacklink} (${website.charges || 0})
-                  </TableCell>
-                  <TableCell>{website.isPaid ? 'Yes' : 'No'}</TableCell>
-                  <TableCell>{website.approved ? 'Yes' : 'No'}</TableCell>
-                  <TableCell>
-                    {!website.approved && (
-                      <>
-                        <Tooltip title="To Approve - Click Here">
-                          <Button
-                            variant="outlined"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleApprove(website.website_id);
-                            }}
-                            style={{ marginRight: '10px' }}
-                          >
-                            Approve
-                          </Button>
-                        </Tooltip>
-                        <Tooltip title="To Reject - Click Here">
-                          <Button
-                            variant="outlined"
-                            color="error"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleReject(website.website_id);
-                            }}
-                          >
-                            Reject
-                          </Button>
-                        </Tooltip>
-                      </>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      ) : (
-        <Typography>No Approve Request</Typography>
-      )}
-      <Dialog
-        open={approveDialogOpen}
-        onClose={() => setApproveDialogOpen(false)}
-        aria-labelledby="approve-dialog-title"
-        aria-describedby="approve-dialog-description"
-      >
-        <DialogTitle id="approve-dialog-title">Confirm Approve</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="approve-dialog-description">
-            Are you sure you want to approve this website?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setApproveDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleConfirmApprove} color="primary">
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
+            Approve Request
+          </Typography>
+          {websites.length > 0 ? (
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead sx={{ backgroundColor: '#C3E0E5' }}>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 'bold' }}>URL</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>User</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Country</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Language</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Cost</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Is Paid</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Approved</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Action</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {websites.map((website) => (
+                    <TableRow
+                      key={website.website_id}
+                      onClick={() => handleRowClick(website.website_id)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <TableCell>{website.url}</TableCell>
+                      <TableCell>{`${website.users?.firstname} ${website.users?.lastname}`}</TableCell>
+                      <TableCell>{website.country}</TableCell>
+                      <TableCell>{website.language}</TableCell>
+                      <TableCell>
+                        {website.costOfAddingBacklink} (${website.charges || 0})
+                      </TableCell>
+                      <TableCell>{website.isPaid ? 'Yes' : 'No'}</TableCell>
+                      <TableCell>{website.approved ? 'Yes' : 'No'}</TableCell>
+                      <TableCell>
+                        {!website.approved && (
+                          <>
+                            <Tooltip title="To Approve - Click Here">
+                              <Button
+                                variant="outlined"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleApprove(website.website_id);
+                                }}
+                                style={{ marginRight: '10px' }}
+                              >
+                                Approve
+                              </Button>
+                            </Tooltip>
+                            <Tooltip title="To Reject - Click Here">
+                              <Button
+                                variant="outlined"
+                                color="error"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleReject(website.website_id);
+                                }}
+                              >
+                                Reject
+                              </Button>
+                            </Tooltip>
+                          </>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Typography>No Approve Request</Typography>
+          )}
+          <Dialog
+            open={approveDialogOpen}
+            onClose={() => setApproveDialogOpen(false)}
+            aria-labelledby="approve-dialog-title"
+            aria-describedby="approve-dialog-description"
+          >
+            <DialogTitle id="approve-dialog-title">Confirm Approve</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="approve-dialog-description">
+                Are you sure you want to approve this website?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setApproveDialogOpen(false)}>Cancel</Button>
+              <Button onClick={handleConfirmApprove} color="primary">
+                Confirm
+              </Button>
+            </DialogActions>
+          </Dialog>
 
-      {/* Reject Dialog */}
-      <Dialog
-        open={rejectDialogOpen}
-        onClose={() => setRejectDialogOpen(false)}
-        aria-labelledby="reject-dialog-title"
-        aria-describedby="reject-dialog-description"
-      >
-        <DialogTitle id="reject-dialog-title">Confirm Reject</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="reject-dialog-description">
-            Are you sure you want to reject this website?
-          </DialogContentText>
-          <TextField
-            label="Reason for rejection"
-            variant="outlined"
-            fullWidth
-            value={rejectReason}
-            onChange={(e) => setRejectReason(e.target.value)}
-            margin="normal"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setRejectDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleConfirmReject} color="primary">
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
-      </>
+          {/* Reject Dialog */}
+          <Dialog
+            open={rejectDialogOpen}
+            onClose={() => setRejectDialogOpen(false)}
+            aria-labelledby="reject-dialog-title"
+            aria-describedby="reject-dialog-description"
+          >
+            <DialogTitle id="reject-dialog-title">Confirm Reject</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="reject-dialog-description">
+                Are you sure you want to reject this website?
+              </DialogContentText>
+              <TextField
+                label="Reason for rejection"
+                variant="outlined"
+                fullWidth
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                margin="normal"
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setRejectDialogOpen(false)}>Cancel</Button>
+              <Button onClick={handleConfirmReject} color="primary">
+                Confirm
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </>
       )}
     </Page>
   );

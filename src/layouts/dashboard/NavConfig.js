@@ -71,6 +71,7 @@ const navConfig = [
     path: '/user/chateduser',
     icon: getIcon('material-symbols:chat'),
   },
+
   // {
   //   title: 'register',
   //   path: '/register',

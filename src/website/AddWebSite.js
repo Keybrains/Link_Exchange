@@ -15,11 +15,12 @@ export default function AddWebSite() {
   };
 
   const handleSubmit = () => {
-    const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
+    // Regular expression to match valid main domain URLs (e.g., www.mydomain.com)
+    const urlRegex = /^(ftp|http|https):\/\/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     if (!urlRegex.test(websiteUrl)) {
       // URL is not valid, show toast notification
-      toast.error('Please enter a valid URL', { position: 'top-center' });
+      toast.error('Please enter a valid main domain URL (e.g., https://www.mydomain.com)', { position: 'top-center' });
     } else {
       // URL is valid, proceed with navigation
       console.log('Submitted URL:', websiteUrl);

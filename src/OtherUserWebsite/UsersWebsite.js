@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { faDotCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate ,Link } from 'react-router-dom';
 import {
   Typography,
   Card,
@@ -152,10 +152,8 @@ export default function UsersWebsite() {
 
   const navigate = useNavigate();
 
-
-
   return (
-    <Page title="Purches Website" sx={{ padding: '25px', overflow: 'hidden' }}>
+    <Page title="Purchase Website" sx={{ padding: '25px', overflow: 'hidden' }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />
@@ -163,7 +161,7 @@ export default function UsersWebsite() {
       ) : (
         <>
           <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
-            Purches Website
+            Purchase Website
           </Typography>
           {AllWebsites.length > 0 ? (
             AllWebsites.map((website) => (
@@ -261,11 +259,11 @@ export default function UsersWebsite() {
                       <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
                         <div style={{ margin: '15px' }}>
                           <Button
+                            component={Link}
+                            to={`/user/chat/${website.user_id}?url=${encodeURIComponent(website.url)}`}
                             variant="contained"
                             color="primary"
                             sx={{ marginRight: '10px' }}
-                            onClick={() => navigate(`/user/chat/${website.user_id}`)}
-                            
                           >
                             Contact
                           </Button>

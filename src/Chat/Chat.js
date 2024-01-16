@@ -1,24 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-  Card,
-  Button,
-  TextField,
-  DialogContent,
-  DialogTitle,
-  Dialog,
-} from '@mui/material';
+import { Typography, Button, TextField, DialogContent, DialogTitle, Dialog } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { styled } from '@mui/system';
-import { faUser, faEnvelope, faPhone, faBuilding, faUserCircle, faDotCircle } from '@fortawesome/free-solid-svg-icons';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 import {
   MDBCol,
   MDBContainer,
@@ -26,7 +11,6 @@ import {
   MDBCard,
   MDBCardText,
   MDBCardBody,
-  MDBCardImage,
   MDBTypography,
   MDBIcon,
 } from 'mdb-react-ui-kit';
@@ -35,9 +19,28 @@ import Page from '../admin/components/Page';
 
 import axiosInstance from '../config/AxiosInstance';
 
-const IconWrapper = styled('span')({
-  marginRight: '8px',
-  fontSize: '20px',
+// Styled Dialog component
+const StyledDialog = styled(Dialog)({
+  '& .MuiDialogTitle-root': {
+    backgroundColor: '#2196F3',
+    color: '#ffffff',
+    borderBottom: '1px solid #1565c0', // Add a border at the bottom of the title
+    paddingBottom: '8px', // Add some padding at the bottom of the title
+  },
+  '& .MuiDialogContent-root': {
+    padding: '16px',
+  },
+  '& .MuiTextField-root': {
+    marginBottom: '16px',
+  },
+  '& .MuiButton-root': {
+    marginRight: '8px',
+  },
+  '& .MuiDialog-paper': {
+    minWidth: '400px', // Set your desired width
+    minHeight: '300px', // Set your desired height
+    borderRadius: '10px', // Add some border radius
+  },
 });
 
 export default function Chat() {
@@ -46,6 +49,7 @@ export default function Chat() {
   const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [message, setMessage] = useState('');
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,8 +67,33 @@ export default function Chat() {
     fetchUserDetail();
   }, [userId]);
 
-  const handleSendMessage = () => {
-    setOpenDialog(true);
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const websiteName = urlParams.get('url');
+
+    if (websiteName) {
+      setMessage(`Hi, I want to discuss with you about (${websiteName}).`);
+    }
+  }, []);
+
+  const handleSendMessage = async () => {
+    try {
+      const decodedToken = localStorage.getItem('decodedToken');
+      const parsedToken = JSON.parse(decodedToken);
+      const loggedInUserId = parsedToken.userId?.user_id;
+
+      const checkMessagesResponse = await axiosInstance.get(
+        `/chatuser/chatuser/chat-messages/${loggedInUserId}/${userId}`
+      );
+
+      if (checkMessagesResponse.data.data.length > 0) {
+        navigate('/user/chateduser');
+      } else {
+        setOpenDialog(true);
+      }
+    } catch (error) {
+      console.error('Error checking messages:', error);
+    }
   };
 
   const handleCloseDialog = () => {
@@ -78,10 +107,9 @@ export default function Chat() {
       const loggedInUserId = parsedToken.userId?.user_id;
 
       const payload = {
-        receiver_id: loggedInUserId, // Assuming you want to update the logged-in user's chateduser field
+        receiver_id: loggedInUserId,
       };
 
-      // Replace 'YOUR_API_ENDPOINT' with your actual API endpoint for updating the user details
       const updateUserResponse = await axiosInstance.put(`/signup/signup/users/${userId}`, payload);
 
       console.log('User details updated successfully:', updateUserResponse.data);
@@ -92,11 +120,10 @@ export default function Chat() {
         message,
       };
 
-      // Replace 'YOUR_API_ENDPOINT' with your actual API endpoint for sending messages
       const sendMessageResponse = await axiosInstance.post('/chatuser/chat-messages', chatPayload);
 
       console.log('Message sent successfully:', sendMessageResponse.data);
-      navigate('/user/chateduser'); 
+      navigate('/user/chateduser');
       setOpenDialog(false);
     } catch (error) {
       console.error('Error sending message:', error);
@@ -118,13 +145,13 @@ export default function Chat() {
             <section className="">
               <MDBContainer className="py-5 h-100">
                 <MDBRow className="justify-content-center align-items-center h-100">
-                  <MDBCol lg="9" className="mb-2 mb-lg-0">
+                  <MDBCol lg="8" className="mb-2 mb-lg-0">
                     <MDBCard className="mb-3" style={{ borderRadius: '.5rem' }}>
                       <MDBRow className="g-0">
                         <MDBCol
                           md="4"
                           className="gradient-custom text-center text-white d-flex flex-column justify-content-center align-items-center"
-                          style={{ borderTopLeftRadius: '.5rem', borderBottomLeftRadius: '.5rem' }}
+                          style={{ borderTopLeftRadius: '.5rem', borderBottomLeftRadius: '.5rem', height: '400px' }}
                         >
                           <FontAwesomeIcon
                             icon={faUser}
@@ -137,50 +164,33 @@ export default function Chat() {
                           <MDBTypography tag="h5">
                             {userDetail.firstname} {userDetail.lastname}
                           </MDBTypography>
-                          <MDBCardText>{userDetail.username}</MDBCardText>
                           <MDBIcon far icon="edit mb-5" />
                         </MDBCol>
 
                         <MDBCol md="8">
                           <MDBCardBody className="p-4 pb-4">
-                            <MDBTypography tag="h6">Owner Detail</MDBTypography>
-                            <hr className="mt-0 mb-2" />
-                            <MDBRow className="pt-1 pb-4 pt-3">
-                              <MDBCol size="6" className="mb-3">
-                                <MDBTypography tag="h6">Email</MDBTypography>
-                                <MDBCardText className="text-muted">{userDetail.email}</MDBCardText>
-                              </MDBCol>
-                              <MDBCol size="6" className="mb-3">
-                                <MDBTypography tag="h6">Phone</MDBTypography>
-                                <MDBCardText className="text-muted">{userDetail.phonenumber}</MDBCardText>
-                              </MDBCol>
-                            </MDBRow>
-
-                            <MDBTypography tag="h6">Company Detail</MDBTypography>
-                            <hr className="mt-0 mb-2" />
-                            <MDBRow className="pt-1 pb-4 pt-3">
-                              <MDBCol size="6" className="mb-3">
-                                <MDBTypography tag="h6">Company Name:</MDBTypography>
-                                <MDBCardText className="text-muted">{userDetail.companyname}</MDBCardText>
-                              </MDBCol>
-                            </MDBRow>
-
-                            <MDBTypography tag="h6">Contact</MDBTypography>
+                            {/* ... */}
+                            <MDBTypography tag="h6">Owner</MDBTypography>
                             <hr className="" />
                             <MDBRow className="">
                               <MDBCol size="6" className="">
                                 <Button variant="contained" color="primary" onClick={handleSendMessage}>
-                                  Chat with {userDetail?.firstname}
+                                  Chat with {userDetail?.firstname} {userDetail?.lastname}
                                 </Button>
-                                <Dialog open={openDialog} onClose={handleCloseDialog}>
-                                  <DialogTitle>Send Message</DialogTitle>
+                                <StyledDialog open={openDialog} onClose={handleCloseDialog} position="fixed">
+                                  <DialogTitle>
+                                    Start Conversation with {userDetail?.firstname} {userDetail?.lastname}
+                                  </DialogTitle>
                                   <DialogContent>
                                     <TextField
                                       label="Your Message"
                                       variant="outlined"
                                       fullWidth
+                                      multiline
+                                      rows={5} // Set the number of visible rows as needed
                                       value={message}
                                       onChange={(e) => setMessage(e.target.value)}
+                                      style={{ marginTop: '16px', marginBottom: '16px' }}
                                     />
                                   </DialogContent>
                                   <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
@@ -188,7 +198,7 @@ export default function Chat() {
                                       Send
                                     </Button>
                                   </div>
-                                </Dialog>
+                                </StyledDialog>
                               </MDBCol>
                             </MDBRow>
                           </MDBCardBody>

@@ -187,7 +187,7 @@ export default function FreeWebsite() {
                                         }}
                                         color="error"
                                       >
-                                        Deactivated
+                                        Inactive
                                       </Button>
                                     </Tooltip>
                                   );
@@ -202,7 +202,7 @@ export default function FreeWebsite() {
                                         }}
                                         style={{ color: 'green', borderColor: 'green' }}
                                       >
-                                        Activate
+                                        Active 
                                       </Button>
                                     </Tooltip>
                                   );

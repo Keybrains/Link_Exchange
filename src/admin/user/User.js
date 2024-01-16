@@ -155,7 +155,7 @@ export default function User() {
                                   setOpenActivateDialog(true);
                                 }}
                               >
-                                Deactivate
+                                Inactive
                               </Button>
                             </Tooltip>
                           ) : (
@@ -169,7 +169,7 @@ export default function User() {
                                   setOpenActivateDialog(true);
                                 }}
                               >
-                                Activate
+                                Active
                               </Button>
                             </Tooltip>
                           )}

@@ -78,23 +78,38 @@ export default function AdminLogin() {
     }
   };
 
+  // const handleTokenDecoding = (token) => {
+  //   localStorage.setItem('authToken', token);
+  //   try {
+  //     const decodedToken = decodeToken(token);
+  //     console.log('Decoded Token:', decodedToken);
+  //     console.log('User ID:', decodedToken.id.client_id);
+  //     toast.success('Token Decoded Successfully');
+
+  //     // Store the decoded token in localStorage
+  //     localStorage.setItem('decodedToken', JSON.stringify(decodedToken));
+  //     localStorage.setItem('authToken', token);
+
+  //     // Perform any further actions with the decoded token if needed
+  //   } catch (error) {
+  //     console.error('Token decoding error:', error);
+  //     toast.error('Failed to decode token');
+  //     // Handle the error or perform additional actions as needed
+  //   }
+  // };
+
   const handleTokenDecoding = (token) => {
     localStorage.setItem('authToken', token);
     try {
       const decodedToken = decodeToken(token);
-      console.log('Decoded Token:', decodedToken);
-      console.log('User ID:', decodedToken.id.client_id);
       toast.success('Token Decoded Successfully');
 
-      // Store the decoded token in localStorage
-      localStorage.setItem('decodedToken', JSON.stringify(decodedToken));
-      localStorage.setItem('authToken', token);
-
-      // Perform any further actions with the decoded token if needed
+      // Convert decodedToken to a string before storing it
+      const decodedTokenString = JSON.stringify(decodedToken);
+      localStorage.setItem('decodedToken', decodedTokenString);
     } catch (error) {
       console.error('Token decoding error:', error);
       toast.error('Failed to decode token');
-      // Handle the error or perform additional actions as needed
     }
   };
 
@@ -121,6 +136,7 @@ export default function AdminLogin() {
           });
 
         const { token } = response.data;
+        console.log('Received Token:', token); 
         handleTokenDecoding(token);
       } else {
         toast.error('Failed to log in');

@@ -7,7 +7,6 @@ import { styled } from '@mui/material/styles';
 import { Card, Link, Container, Typography, Box } from '@mui/material';
 import axiosInstance from '../config/AxiosInstance';
 
-
 // hooks
 import useResponsive from '../hooks/useResponsive';
 // components
@@ -75,18 +74,37 @@ export default function Register() {
       const response = await axiosInstance.post('/signup/signup', data, {
         headers: {
           'Content-Type': 'application/json',
-        },  
+        },
       });
 
-      if (response && response.data && response.data.success) {
-        toast.success(response.data.message);
-        navigate('/login');
+      if (response && response.data) {
+        if (response.data.success) {
+          toast.success(response.data.message);
+          navigate('/login');
+        } else {
+          const errorMessage = response.data.message || 'Failed to register user. Please try again.';
+          toast.error(errorMessage);
+        }
       } else {
-        toast.error(response.data.message || 'Failed to register user');
+        toast.error('Failed to register user. Please try again.');
+      }
+
+      switch (response.status) {
+        case 201:
+          toast.info('Email already exists.');
+          break;
+        case 202:
+          toast.info('Phone number already exists.');
+          break;
+        case 203:
+          toast.info('User name already exists.');
+          break;
+        default:
+          break;
       }
     } catch (error) {
       console.error('Error occurred:', error);
-      toast.error('An error occurred while processing your request.');
+      // toast.error('An error occurred while processing your request.');
     }
   };
 

@@ -6,15 +6,47 @@ const { hashPassword, hashCompare, createToken } = require('../utils/authhelper'
 
 router.post('/signup', async (req, res) => {
   try {
+    const existingEmailUser = await Signup.findOne({
+      email: req.body.email,
+    });
+
+    const existingPhoneUser = await Signup.findOne({
+      phonenumber: req.body.phonenumber,
+    });
+
+    const existingUserName = await Signup.findOne({
+      username: req.body.username,
+    });
+
+    if (existingEmailUser) {
+      return res.status(201).json({
+        success: false,
+        message: 'Email already exists',
+      });
+    }
+
+    if (existingPhoneUser) {
+      return res.status(202).json({
+        success: false,
+        message: 'Phone number already exists.',
+      });
+    }
+
+    if (existingUserName) {
+      return res.status(203).json({
+        success: false,
+        message: 'User Name already exists.',
+      });
+    }
+
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substr(5, 15);
     const randomNumber = Math.floor(Math.random() * Math.pow(10, 10))
       .toString()
       .padStart(10, '0');
     const uniqueId = `${timestamp}${randomString}${randomNumber}`;
-    const userUniqueId = (req.body['user_id'] = uniqueId);
-    const createTime = (req.body['createAt'] = moment().format('YYYY-MM-DD HH:mm:ss'));
-    const updateTime = (req.body['updateAt'] = moment().format('YYYY-MM-DD HH:mm:ss'));
+    const createTime = moment().format('YYYY-MM-DD HH:mm:ss');
+    const updateTime = moment().format('YYYY-MM-DD HH:mm:ss');
     const hashedPassword = await hashPassword(req.body.password);
 
     const newUser = new Signup({
@@ -27,7 +59,7 @@ router.post('/signup', async (req, res) => {
       password: hashedPassword,
       createAt: createTime,
       updateAt: updateTime,
-      user_id: userUniqueId,
+      user_id: uniqueId,
     });
 
     await newUser.save();
@@ -47,16 +79,21 @@ router.post('/signup', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-    const user = await Signup.findOne({ email: req.body.email });
+    const { identifier, password } = req.body;
+
+    // Check if the user exists by email or username
+    const user = await Signup.findOne({
+      $or: [{ email: identifier }, { username: identifier }],
+    });
 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'User does not exist',
+        message: `User with ${/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier) ? 'email' : 'username'} '${identifier}' does not exist`,
       });
     }
 
-    const compare = await hashCompare(req.body.password, user.password);
+    const compare = await hashCompare(password, user.password);
 
     if (!compare) {
       return res.status(422).json({
@@ -77,10 +114,11 @@ router.post('/login', async (req, res) => {
     console.error(error);
     res.status(500).json({
       success: false,
-      message: error,
+      message: error.message || 'Internal Server Error',
     });
   }
 });
+
 
 router.get('/users', async (req, res) => {
   try {

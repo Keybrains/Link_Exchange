@@ -45,6 +45,8 @@ router.post('/adminsignup', async (req, res) => {
   }
 });
 
+
+
 router.post('/adminlogin', async (req, res) => {
   try {
     const user = await AdminSignup.findOne({ email: req.body.email });
@@ -81,5 +83,52 @@ router.post('/adminlogin', async (req, res) => {
     });
   }
 });
+
+router.put('/adminchangepassword/:user_id', async (req, res) => {
+  try {
+    const { user_id } = req.params;
+    const { oldPassword, newPassword } = req.body;
+
+    // Find the user by user_id
+    const user = await AdminSignup.findOne({ user_id });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Admin not found',
+      });
+    }
+
+    // Check if the old password is correct
+    const compare = await hashCompare(oldPassword, user.password);
+
+    if (!compare) {
+      return res.status(422).json({
+        success: false,
+        message: 'Incorrect old password',
+      });
+    }
+
+    // Hash and update the new password
+    const hashedNewPassword = await hashPassword(newPassword);
+    user.password = hashedNewPassword;
+    user.updateAt = moment().format('YYYY-MM-DD HH:mm:ss');
+
+    // Save the updated user
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Password updated successfully',
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+});
+
 
 module.exports = router;

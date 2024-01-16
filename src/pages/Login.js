@@ -1,6 +1,6 @@
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-  import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 // @mui
@@ -156,11 +156,11 @@ export default function Login() {
         const statusCode = error.response.status;
 
         if (statusCode === 404) {
-          toast.error('Wrong email or password');
+          toast.error('User not found. Please check your email or username.');
         } else if (statusCode === 422) {
-          toast.error('Wrong email or password');
+          toast.error('Incorrect username or password. Please try again.');
         } else {
-          toast.error('Failed to log in');
+          toast.error('Failed to log in. Please try again later.');
         }
       } else {
         toast.error('An error occurred while processing your request.');
