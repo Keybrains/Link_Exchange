@@ -120,4 +120,48 @@ router.get('/chatuser/chat-messages/:userId/:otherUserId', async (req, res) => {
   }
 });
 
+router.get('/chatuser/unread-messages/:userId/:otherUserId', async (req, res) => {
+  const { userId, otherUserId } = req.params;
+
+  try {
+    const unreadMessagesCount = await ChatMessage.countDocuments({
+      receiver_id: userId,
+      sender_id: otherUserId,
+      read: false,
+    });
+
+    res.json({ unreadMessagesCount });
+  } catch (error) {
+    console.error('Error fetching unread messages count:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+router.put('/chatuser/mark-messages-as-read/:userId/:otherUserId', async (req, res) => {
+  const { userId, otherUserId } = req.params;
+
+  try {
+    // Update unread messages to read status
+    const updateResult = await ChatMessage.updateMany(
+      {
+        receiver_id: userId,
+        sender_id: otherUserId,
+        read: false,
+      },
+      {
+        $set: { read: true },
+      }
+    );
+
+    res.json({
+      success: true,
+      message: 'Unread messages marked as read successfully',
+      updatedCount: updateResult.nModified, // Number of documents updated
+    });
+  } catch (error) {
+    console.error('Error updating unread messages:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 module.exports = router;

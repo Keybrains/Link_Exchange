@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { countries } from 'countries-list';
+import iso6391 from 'iso-639-1';
 import {
   Typography,
   Card,
@@ -12,6 +14,10 @@ import {
   MenuItem,
   Container,
   Grid,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Dialog,
 } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 
@@ -20,10 +26,13 @@ import axiosInstance from '../config/AxiosInstanceAdmin';
 import Page from '../../components/Page';
 
 export default function UpdateWebSiteInfo() {
+  const countryCodes = Object.keys(countries);
+  const languageCodes = iso6391.getAllCodes();
   const { websiteId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-
+  const [openDialog, setOpenDialog] = useState(false);
+  const [daysInput, setDaysInput] = useState('');
   const [formData, setFormData] = useState({
     _id: '',
     user_id: '',
@@ -34,8 +43,8 @@ export default function UpdateWebSiteInfo() {
     spamScore: '',
     categories: [],
     linkType: '',
-    country: '',
-    language: '',
+    country: '', // Use short name (code) for country
+    language: '', // Use short name (code) for language
     surfaceInGoogleNews: false,
     backlinksAllowed: '',
     costOfAddingBacklink: '',
@@ -53,8 +62,18 @@ export default function UpdateWebSiteInfo() {
       try {
         const response = await axiosInstance.get(`website/websites/${websiteId}`);
         if (response.status === 200) {
-          setFormData(response.data.data);
-          console.log(response.data.data, 'response.data.data');
+          // Update country and language to short names (codes)
+          const countryShortName = Object.keys(countries).find(
+            (code) => countries[code].name === response.data.data.country
+          );
+          const languageShortName = iso6391.getCode(response.data.data.language);
+
+          setFormData({
+            ...response.data.data,
+            country: countryShortName,
+            language: languageShortName,
+          });
+
           setLoading(false);
         } else {
           throw new Error('Failed to fetch website data');
@@ -62,8 +81,6 @@ export default function UpdateWebSiteInfo() {
       } catch (error) {
         console.error(error);
         setLoading(false);
-
-        // Handle error state if needed
       }
     }
 
@@ -72,7 +89,17 @@ export default function UpdateWebSiteInfo() {
 
   const handleUpdate = async () => {
     try {
-      const response = await axiosInstance.put(`website/websites/${websiteId}`, formData);
+      // Convert country and language to full names before sending to the backend
+      const countryFullName = countries[formData.country].name;
+      const languageFullName = iso6391.getName(formData.language);
+
+      const updatedData = {
+        ...formData,
+        country: countryFullName,
+        language: languageFullName,
+      };
+
+      const response = await axiosInstance.put(`website/websites/${websiteId}`, updatedData);
       if (response.status === 200) {
         navigate('/admin/freewebsite');
       } else {
@@ -80,9 +107,9 @@ export default function UpdateWebSiteInfo() {
       }
     } catch (error) {
       console.error(error);
-      // Handle error state if needed
     }
   };
+
   const handleCancel = () => {
     navigate(-1); // Navigate back to the previous location
   };
@@ -157,7 +184,6 @@ export default function UpdateWebSiteInfo() {
                 label="costOfAddingBacklink"
               >
                 <MenuItem value="Free">Free</MenuItem>
-
                 <MenuItem value="Paid">Paid</MenuItem>
               </Select>
             </FormControl>
@@ -196,11 +222,29 @@ export default function UpdateWebSiteInfo() {
                 labelId="country"
                 id="country"
                 label="country"
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: '200px', // Set your desired height
+                      width: '150px', // Set your desired width
+                    },
+                  },
+                  anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  },
+                  transformOrigin: {
+                    vertical: 'top',
+                    horizontal: 'left',
+                  },
+                  getContentAnchorEl: null,
+                }}
               >
-                <MenuItem value="USA">USA</MenuItem>
-                <MenuItem value="UK">UK</MenuItem>
-                <MenuItem value="India">India</MenuItem>
-                {/* Add more countries */}
+                {countryCodes.map((code) => (
+                  <MenuItem key={code} value={code}>
+                    {countries[code].name}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
             <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
@@ -213,12 +257,33 @@ export default function UpdateWebSiteInfo() {
                 labelId="language"
                 id="language"
                 label="language"
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: '200px', // Set your desired height
+                      width: '150px', // Set your desired width
+                    },
+                  },
+                  anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  },
+                  transformOrigin: {
+                    vertical: 'top',
+                    horizontal: 'left',
+                  },
+                  getContentAnchorEl: null,
+                }}
               >
-                <MenuItem value="English">English</MenuItem>
-                <MenuItem value="Spanish">Spanish</MenuItem>
-                <MenuItem value="Spanish">Hindi</MenuItem>
+                {languageCodes.map((code) => (
+                  <MenuItem key={code} value={code}>
+                    {iso6391.getName(code)}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
+
+            {/* ... (other form fields) */}
             <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
               <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
                 Category*
@@ -242,15 +307,51 @@ export default function UpdateWebSiteInfo() {
               </InputLabel>
               <Select
                 value={formData.linkTime}
-                onChange={(e) => setFormData({ ...formData, linkTime: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, linkTime: e.target.value });
+                  if (e.target.value === 'Specific time in days') {
+                    setOpenDialog(true);
+                  }
+                }}
                 labelId="linkTime"
                 id="linkTime"
                 label="linkTime"
               >
-                <MenuItem value="Specific time in days">Specific time in days</MenuItem>
                 <MenuItem value="Forever">Forever</MenuItem>
+                <MenuItem value="Specific time in days">Specific time in days</MenuItem>
+                {formData.linkTime !== 'Forever' && formData.linkTime !== 'Specific time in days' && (
+                  <MenuItem value={formData.linkTime}>{formData.linkTime}</MenuItem>
+                )}
               </Select>
             </FormControl>
+
+            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+              <DialogTitle>Enter Number of Days</DialogTitle>
+              <DialogContent>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  label="Days"
+                  type="number"
+                  fullWidth
+                  value={daysInput}
+                  onChange={(e) => setDaysInput(e.target.value)}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+                <Button
+                  onClick={() => {
+                    setOpenDialog(false);
+                    const specificTimeInDays = daysInput !== '' ? `${daysInput} days` : 'Forever';
+                    setFormData({ ...formData, linkTime: specificTimeInDays });
+                    setDaysInput('');
+                  }}
+                >
+                  Confirm
+                </Button>
+              </DialogActions>
+            </Dialog>
 
             <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
               <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
@@ -277,18 +378,7 @@ export default function UpdateWebSiteInfo() {
               <Button onClick={handleCancel} style={{ marginRight: '20px', color: 'black' }}>
                 Cancel
               </Button>
-              <Button
-                variant="outlined"
-                onClick={handleUpdate}
-                // sx={{
-                //   backgroundColor: 'lightblue', // Change this to the color you prefer
-                //   color: 'black', // Text color
-                //   '&:hover': {
-                //     // backgroundColor: 'black', // Change this to the color you prefer on hover
-                //     color:"white"
-                //   },
-                // }}
-              >
+              <Button variant="outlined" onClick={handleUpdate}>
                 Update
               </Button>
             </Box>

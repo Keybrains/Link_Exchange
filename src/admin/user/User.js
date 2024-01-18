@@ -15,6 +15,7 @@ import {
   DialogContent,
   DialogTitle,
   Tooltip,
+  TablePagination, // Import TablePagination
 } from '@mui/material';
 import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -31,8 +32,11 @@ export default function User() {
   const [activateUserId, setActivateUserId] = useState(null);
   const [openActivateDialog, setOpenActivateDialog] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const navigate = useNavigate();
+
   useEffect(() => {
     async function fetchUsers() {
       try {
@@ -52,6 +56,15 @@ export default function User() {
 
     fetchUsers();
   }, []);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   useEffect(() => {
     if (deleteUserId) {
@@ -77,8 +90,6 @@ export default function User() {
       // Handle error state if needed
     }
   };
-
-  // ... (previous code remains unchanged)
 
   const handleStatusToggle = async (userId, newStatus) => {
     try {
@@ -108,7 +119,7 @@ export default function User() {
   };
 
   return (
-    <Page title="User" sx={{ padding: '25px', overflow: 'hidden' }}>
+    <Page title="User" sx={{ padding: '15px', overflowY: 'hidden' }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />
@@ -133,72 +144,106 @@ export default function User() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {users.map((user) => (
-                      <TableRow
-                        key={user.user_id}
-                        onClick={() => handleRowClick(user.user_id)}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        <TableCell>{user.firstname}</TableCell>
-                        <TableCell>{user.lastname}</TableCell>
-                        <TableCell>{user.email}</TableCell>
-                        <TableCell>{user.phonenumber}</TableCell>
-                        <TableCell>
-                          {user.status === 'deactivate' ? (
-                            <Tooltip title="To Activate - Click Here">
-                              <Button
-                                variant="outlined"
-                                color="error"
+                    {(rowsPerPage > 0 ? users.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : users).map(
+                      (user) => (
+                        <TableRow
+                          key={user.user_id}
+                          onClick={() => handleRowClick(user.user_id)}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <TableCell>{user.firstname}</TableCell>
+                          <TableCell>{user.lastname}</TableCell>
+                          <TableCell>{user.email}</TableCell>
+                          <TableCell>{user.phonenumber}</TableCell>
+                          <TableCell>
+                            {user.status === 'deactivate' ? (
+                              <Tooltip title="To Activate - Click Here">
+                                <Button
+                                  variant="outlined"
+                                  color="error"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActivateUserId(user.user_id);
+                                    setOpenActivateDialog(true);
+                                  }}
+                                >
+                                  Inactive
+                                </Button>
+                              </Tooltip>
+                            ) : (
+                              <Tooltip title="To Deactivate - Click Here">
+                                <Button
+                                  variant="outlined"
+                                  style={{ color: 'green', borderColor: 'green' }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActivateUserId(user.user_id);
+                                    setOpenActivateDialog(true);
+                                  }}
+                                >
+                                  Active
+                                </Button>
+                              </Tooltip>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Tooltip title="Delete">
+                              <span
+                                role="button"
+                                tabIndex={0}
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  setActivateUserId(user.user_id);
-                                  setOpenActivateDialog(true);
-                                }}
-                              >
-                                Inactive
-                              </Button>
-                            </Tooltip>
-                          ) : (
-                            <Tooltip title="To Deactivate - Click Here">
-                              <Button
-                                variant="outlined"
-                                style={{ color: 'green', borderColor: 'green' }}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setActivateUserId(user.user_id);
-                                  setOpenActivateDialog(true);
-                                }}
-                              >
-                                Active
-                              </Button>
-                            </Tooltip>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <Tooltip title="Delete">
-                            <span
-                              role="button"
-                              tabIndex={0}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setDeleteUserId(user.user_id);
-                              }}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
                                   setDeleteUserId(user.user_id);
-                                }
-                              }}
-                              style={{ cursor: 'pointer', fontSize: '15px' }}
-                            >
-                              <FontAwesomeIcon icon={faTrashAlt} />
-                            </span>
-                          </Tooltip>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    setDeleteUserId(user.user_id);
+                                  }
+                                }}
+                                style={{ cursor: 'pointer', fontSize: '15px' }}
+                              >
+                                <FontAwesomeIcon icon={faTrashAlt} />
+                              </span>
+                            </Tooltip>
+                          </TableCell>
+                        </TableRow>
+                      )
+                    )}
                   </TableBody>
                 </Table>
               </TableContainer>
+
+              <hr style={{ borderTop: '1px solid black', width: '100%', margin: '20px 0' }} />
+
+              <TablePagination
+                component="div"
+                count={users.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                rowsPerPageOptions={[5, 10, 15, 25, { label: 'All', value: -1 }]}
+                labelRowsPerPage="Rows per page:"
+                labelDisplayedRows={({ from, to, count }) => (
+                  <div style={{ fontSize: '14px', fontStyle: 'italic', marginTop: '5px' }}>
+                    Showing {from}-{to} of {count !== -1 ? count : 'more than'}
+                  </div>
+                )}
+                SelectProps={{
+                  style: { marginBottom: '10px' },
+                  renderValue: (value) => `${value} rows`,
+                }}
+                nextIconButtonProps={{
+                  style: {
+                    marginBottom: '5px',
+                  },
+                }}
+                backIconButtonProps={{
+                  style: {
+                    marginBottom: '5px',
+                  },
+                }}
+              />
               <Dialog
                 open={openDeleteDialog}
                 onClose={() => setOpenDeleteDialog(false)}

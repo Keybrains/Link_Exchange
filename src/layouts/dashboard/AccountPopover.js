@@ -11,26 +11,26 @@ import account from '../../_mock/account';
 // ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
-  {
-    label: 'Account Setting',
-    icon: 'eva:home-fill',
-    linkTo: '#',
-  },
-  {
-    label: 'My Rating & Reviews',
-    icon: 'eva:person-fill',
-    linkTo: '#',
-  },
-  {
-    label: 'Referral Program',
-    icon: 'eva:settings-2-fill',
-    linkTo: '#',
-  },
-  {
-    label: 'Switch To Buyer',
-    icon: 'eva:settings-2-fill',
-    linkTo: '#',
-  },
+  // {
+  //   label: 'Account Setting',
+  //   icon: 'eva:home-fill',
+  //   linkTo: '#',
+  // },
+  // {
+  //   label: 'My Rating & Reviews',
+  //   icon: 'eva:person-fill',
+  //   linkTo: '#',
+  // },
+  // {
+  //   label: 'Referral Program',
+  //   icon: 'eva:settings-2-fill',
+  //   linkTo: '#',
+  // },
+  // {
+  //   label: 'Switch To Buyer',
+  //   icon: 'eva:settings-2-fill',
+  //   linkTo: '#',
+  // },
 ];
 
 // ----------------------------------------------------------------------
@@ -94,7 +94,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-       <Avatar src={account.photoURL} alt="photoURL" />
+        <Avatar src={account.photoURL} alt="photoURL" />
       </IconButton>
 
       <MenuPopover
@@ -120,15 +120,15 @@ export default function AccountPopover() {
           </Typography>
         </Box>
 
-        <Divider sx={{ borderStyle: 'dashed' }} />
+        {/* <Divider sx={{ borderStyle: 'dashed' }} /> */}
 
-        <Stack sx={{ p: 1 }}>
+        {/* <Stack sx={{ p: 1 }}>
           {MENU_OPTIONS.map((option) => (
             <MenuItem key={option.label} to={option.linkTo} component={RouterLink} onClick={handleClose}>
               {option.label}
             </MenuItem>
           ))}
-        </Stack>
+        </Stack> */}
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 

@@ -17,6 +17,7 @@ import {
   DialogTitle,
   Dialog,
   TextField,
+  TablePagination,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -31,6 +32,8 @@ export default function AllWebsite() {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const fetchWebsites = async () => {
     try {
@@ -111,6 +114,15 @@ export default function AllWebsite() {
     navigate(`/admin/websitedetail/${websiteId}`);
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <Page title="Approve Request" sx={{ padding: '25px', overflow: 'hidden' }}>
       {loading ? (
@@ -123,71 +135,107 @@ export default function AllWebsite() {
             Approve Request
           </Typography>
           {websites.length > 0 ? (
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead sx={{ backgroundColor: '#C3E0E5' }}>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold' }}>URL</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>User</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Country</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Language</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Cost</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Is Paid</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Approved</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Action</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {websites.map((website) => (
-                    <TableRow
-                      key={website.website_id}
-                      onClick={() => handleRowClick(website.website_id)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <TableCell>{website.url}</TableCell>
-                      <TableCell>{`${website.users?.firstname} ${website.users?.lastname}`}</TableCell>
-                      <TableCell>{website.country}</TableCell>
-                      <TableCell>{website.language}</TableCell>
-                      <TableCell>
-                        {website.costOfAddingBacklink} (${website.charges || 0})
-                      </TableCell>
-                      <TableCell>{website.isPaid ? 'Yes' : 'No'}</TableCell>
-                      <TableCell>{website.approved ? 'Yes' : 'No'}</TableCell>
-                      <TableCell>
-                        {!website.approved && (
-                          <>
-                            <Tooltip title="To Approve - Click Here">
-                              <Button
-                                variant="outlined"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleApprove(website.website_id);
-                                }}
-                                style={{ marginRight: '10px' }}
-                              >
-                                Approve
-                              </Button>
-                            </Tooltip>
-                            <Tooltip title="To Reject - Click Here">
-                              <Button
-                                variant="outlined"
-                                color="error"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleReject(website.website_id);
-                                }}
-                              >
-                                Reject
-                              </Button>
-                            </Tooltip>
-                          </>
-                        )}
-                      </TableCell>
+            <>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead sx={{ backgroundColor: '#C3E0E5' }}>
+                    <TableRow>
+                      <TableCell sx={{ fontWeight: 'bold' }}>URL</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>User</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>Country</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>Language</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>Cost</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>Is Paid</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>Approved</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>Action</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                  </TableHead>
+                  <TableBody>
+                    {(rowsPerPage > 0
+                      ? websites.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      : websites
+                    ).map((website) => (
+                      <TableRow
+                        key={website.website_id}
+                        onClick={() => handleRowClick(website.website_id)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <TableCell>{website.url}</TableCell>
+                        <TableCell>{`${website.users?.firstname} ${website.users?.lastname}`}</TableCell>
+                        <TableCell>{website.country}</TableCell>
+                        <TableCell>{website.language}</TableCell>
+                        <TableCell>
+                          {website.costOfAddingBacklink} (${website.charges || 0})
+                        </TableCell>
+                        <TableCell>{website.isPaid ? 'Yes' : 'No'}</TableCell>
+                        <TableCell>{website.approved ? 'Yes' : 'No'}</TableCell>
+                        <TableCell>
+                          {!website.approved && (
+                            <>
+                              <Tooltip title="To Approve - Click Here">
+                                <Button
+                                  variant="outlined"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleApprove(website.website_id);
+                                  }}
+                                  style={{ marginRight: '10px' }}
+                                >
+                                  Approve
+                                </Button>
+                              </Tooltip>
+                              <Tooltip title="To Reject - Click Here">
+                                <Button
+                                  variant="outlined"
+                                  color="error"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleReject(website.website_id);
+                                  }}
+                                >
+                                  Reject
+                                </Button>
+                              </Tooltip>
+                            </>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <hr style={{ borderTop: '1px solid black', width: '100%', margin: '20px 0' }} />
+
+              <TablePagination
+                component="div"
+                count={websites.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                rowsPerPageOptions={[5, 10, 15, 25, { label: 'All', value: -1 }]}
+                labelRowsPerPage="Rows per page:"
+                labelDisplayedRows={({ from, to, count }) => (
+                  <div style={{ fontSize: '14px', fontStyle: 'italic', marginTop: '5px' }}>
+                    Showing {from}-{to} of {count !== -1 ? count : 'more than'}
+                  </div>
+                )}
+                SelectProps={{
+                  style: { marginBottom: '10px' },
+                  renderValue: (value) => `${value} rows`,
+                }}
+                nextIconButtonProps={{
+                  style: {
+                    marginBottom: '5px',
+                  },
+                }}
+                backIconButtonProps={{
+                  style: {
+                    marginBottom: '5px',
+                  },
+                }}
+              />
+            </>
           ) : (
             <Typography>No Approve Request</Typography>
           )}

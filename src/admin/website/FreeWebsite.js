@@ -15,6 +15,7 @@ import {
   DialogContentText,
   DialogTitle,
   Tooltip,
+  TablePagination,
 } from '@mui/material';
 import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -33,6 +34,8 @@ export default function FreeWebsite() {
   const [openActionDialog, setOpenActionDialog] = useState(false);
   const [actionType, setActionType] = useState('');
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     async function fetchWebsites() {
@@ -117,6 +120,15 @@ export default function FreeWebsite() {
     navigate(`/admin/websitedetail/${websiteId}`);
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <Page title="Free Websites" sx={{ padding: '25px', overflow: 'hidden' }}>
       {loading ? (
@@ -128,6 +140,7 @@ export default function FreeWebsite() {
           <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
             Free Websites
           </Typography>
+
           {freeWebsites.length > 0 ? (
             <>
               <TableContainer component={Paper}>
@@ -146,7 +159,10 @@ export default function FreeWebsite() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {freeWebsites.map((website) => (
+                    {(rowsPerPage > 0
+                      ? freeWebsites.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      : freeWebsites
+                    ).map((website) => (
                       <>
                         <TableRow
                           key={website._id}
@@ -202,7 +218,7 @@ export default function FreeWebsite() {
                                         }}
                                         style={{ color: 'green', borderColor: 'green' }}
                                       >
-                                        Active 
+                                        Active
                                       </Button>
                                     </Tooltip>
                                   );
@@ -293,6 +309,37 @@ export default function FreeWebsite() {
                   </TableBody>
                 </Table>
               </TableContainer>
+              <hr style={{ borderTop: '1px solid black', width: '100%', margin: '20px 0' }} />
+
+              <TablePagination
+                component="div"
+                count={freeWebsites.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                rowsPerPageOptions={[5, 10, 15, 25, { label: 'All', value: -1 }]}
+                labelRowsPerPage="Rows per page:"
+                labelDisplayedRows={({ from, to, count }) => (
+                  <div style={{ fontSize: '14px', fontStyle: 'italic', marginTop: '5px' }}>
+                    Showing {from}-{to} of {count !== -1 ? count : 'more than'}
+                  </div>
+                )}
+                SelectProps={{
+                  style: { marginBottom: '10px' },
+                  renderValue: (value) => `${value} rows`,
+                }}
+                nextIconButtonProps={{
+                  style: {
+                    marginBottom: '5px',
+                  },
+                }}
+                backIconButtonProps={{
+                  style: {
+                    marginBottom: '5px',
+                  },
+                }}
+              />
               <Dialog
                 open={openDeleteDialog}
                 onClose={handleCloseDeleteDialog}

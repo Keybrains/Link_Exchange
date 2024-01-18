@@ -1,16 +1,39 @@
-#chat3 .form-control {
-    border-color: transparent;
+.body-hidden-overflow {
+  overflow-x: hidden;
+  overflow-y: hidden;
+  margin: 0;
+}
+
+/* Small devices (phones) */
+@media only screen and (max-width: 600px) {
+  body {
+    font-size: 14px;
   }
-  
-  #chat3 .form-control:focus {
-    border-color: transparent;
-    box-shadow: inset 0px 0px 0px 1px transparent;
+}
+
+/* Medium devices (tablets) */
+@media only screen and (min-width: 601px) and (max-width: 768px) {
+  body {
+    font-size: 16px;
   }
-  
-  .badge-dot {
-    border-radius: 50%;
-    height: 10px;
-    width: 10px;
-    margin-left: 2.9rem;
-    margin-top: -0.75rem;
+}
+
+/* Large devices (desktops) */
+@media only screen and (min-width: 769px) and (max-width: 1024px) {
+  body {
+    font-size: 14px;
   }
+}
+
+/* Extra large devices (large desktops) */
+@media only screen and (min-width: 1025px) {
+  body {
+    font-size: 14px;
+  }
+}
+@media only screen and (max-width: 769px) {
+  body {
+    overflow-x: auto;
+    overflow-y: auto;
+  }
+}

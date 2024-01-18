@@ -46,6 +46,7 @@ const StyledDialog = styled(Dialog)({
 export default function Chat() {
   const { userId } = useParams();
   const [userDetail, setUserDetail] = useState(null);
+  console.log('userDetail', userDetail);
   const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [message, setMessage] = useState('');
@@ -85,9 +86,9 @@ export default function Chat() {
       const checkMessagesResponse = await axiosInstance.get(
         `/chatuser/chatuser/chat-messages/${loggedInUserId}/${userId}`
       );
-
+      const data = { firstname: userDetail?.firstname, lastname: userDetail?.lastname, user_id: userId };
       if (checkMessagesResponse.data.data.length > 0) {
-        navigate('/user/chateduser');
+        navigate('/user/chateduser', { state: data });
       } else {
         setOpenDialog(true);
       }
@@ -123,7 +124,14 @@ export default function Chat() {
       const sendMessageResponse = await axiosInstance.post('/chatuser/chat-messages', chatPayload);
 
       console.log('Message sent successfully:', sendMessageResponse.data);
-      navigate('/user/chateduser');
+      navigate('/user/chateduser', {
+        state: {
+          firstname: userDetail?.firstname,
+          user_id: userId,
+          lastname: userDetail?.lastname,
+        },
+      });
+
       setOpenDialog(false);
     } catch (error) {
       console.error('Error sending message:', error);

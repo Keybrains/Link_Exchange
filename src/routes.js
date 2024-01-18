@@ -18,9 +18,6 @@ import AdminLogoOnlyLayout from './admin/layouts/AdminLogoOnlyLayout';
 import AdminPage404 from './admin/pages/AdminPage404';
 import WebsiteDashboard from './website/WebsiteDashboard';
 import AddWebSite from './website/AddWebSite';
-import VerifiedPublishers from './buyer/website/VerifiedPublishers';
-import AllPublishers from './buyer/website/AllPublishers';
-import ClientDashboardLayout from './buyer/layouts/dashboard/ClientDashboardLayout';
 import UserType from './pages/UserType';
 import OwnerOrContributor from './website/OwnerOrContributor';
 import Owner from './website/Owner';
@@ -88,14 +85,6 @@ const Router = () => {
         { path: 'chateduser', element: isAuthenticated() ? <ChatedUser /> : <Navigate to="/login" /> },
       ],
     },
-    {
-      path: '/buyer',
-      element: isAuthenticated() ? <ClientDashboardLayout /> : <Navigate to="/login" />,
-      children: [
-        { path: 'verifiedpublishers', element: isAuthenticated() ? <VerifiedPublishers /> : <Navigate to="/login" /> },
-        { path: 'allpublishers', element: isAuthenticated() ? <AllPublishers /> : <Navigate to="/login" /> },
-      ],
-    },
 
     {
       path: '/login',
@@ -150,7 +139,6 @@ const Router = () => {
         { path: 'userdetail/:userId', element: isAuthenticated() ? <UserDetail /> : <Navigate to="/login" /> },
         { path: 'websitedetail/:websiteId', element: isAuthenticated() ? <WebsiteDetail /> : <Navigate to="/login" /> },
         { path: 'changepassword', element: isAuthenticated() ? <ChangePassword /> : <Navigate to="/login" /> },
-        
       ],
     },
   ]);

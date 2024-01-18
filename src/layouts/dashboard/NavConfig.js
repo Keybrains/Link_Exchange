@@ -52,15 +52,16 @@ const navConfig = [
     icon: getIcon('material-symbols:paid-outline'),
   },
   {
-    title: 'My Reported Website',
-    path: '/user/reportedwebsite',
-    icon: getIcon('material-symbols:report'),
-  },
-  {
     title: 'My Pending Approval',
     path: '/user/pendingapproval',
     icon: getIcon('material-symbols:upcoming-outline'),
   },
+  {
+    title: 'Reported Website',
+    path: '/user/reportedwebsite',
+    icon: getIcon('material-symbols:report'),
+  },
+
   // {
   //   title: 'Discussions',
   //   path: '/user/discussions',
