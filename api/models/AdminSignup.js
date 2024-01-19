@@ -36,6 +36,9 @@ const UserSchema = new mongoose.Schema({
   updateAt: {
     type: String,
   },
+  chateduser: {
+    type: [String],
+  },
 });
 
 module.exports = mongoose.model('AdminSignup', UserSchema);

@@ -112,9 +112,11 @@ export default function PendingApproval() {
                         <span style={{ color: website.status === 'pending' ? 'gray' : 'red' }}>
                           {website.status === 'pending' ? 'Pending' : 'Rejected'}
                         </span>
-                        {website.status === 'rejected' && website.reason && (
+                        {(website.status === 'rejected' || website.status === 'pending') && website.reason && (
                           <Typography style={{ marginBottom: '10px', marginTop: '15px' }}>
-                            <span style={{ fontWeight: 'bold' }}>Rejection Reason: </span>
+                            <span style={{ fontWeight: 'bold' }}>
+                              {website.status === 'rejected' ? 'Rejection Reason: ' : 'Pending Reason: '}
+                            </span>
                             {website.reason}
                           </Typography>
                         )}
@@ -193,8 +195,7 @@ export default function PendingApproval() {
       )}
       <hr style={{ borderTop: '1px solid black', width: '100%', margin: '20px 0' }} /> {/* Stylish horizontal line */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-     
-          <>
+        <>
           <FormControl margin="normal" sx={{ '& .MuiInput-root': { paddingTop: '18px' } }}>
             <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>Page</InputLabel>
             <Select
@@ -208,8 +209,7 @@ export default function PendingApproval() {
               <MenuItem value={15}>15</MenuItem>
             </Select>
           </FormControl>
-          </>
-       
+        </>
 
         {/* Add your buttons and other components here */}
 

@@ -237,7 +237,7 @@ export default function UsersWebsite() {
       ) : (
         <>
           <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
-            Search Website URL
+            Find Website URL
           </Typography>
 
           <Grid container spacing={1} alignItems="center">
@@ -524,11 +524,14 @@ export default function UsersWebsite() {
                         <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
                           <div style={{ margin: '15px' }}>
                             <Button
-                              component={Link}
-                              to={`/user/chat/${website.user_id}?url=${encodeURIComponent(website.url)}`}
                               variant="contained"
                               color="primary"
                               sx={{ marginRight: '10px' }}
+                              onClick={() => {
+                                navigate(`/user/chat/${website.user_id}?url=${encodeURIComponent(website.url)}`, {
+                                  state: { website_id: website.website_id },
+                                });
+                              }}
                             >
                               Contact
                             </Button>
@@ -549,7 +552,7 @@ export default function UsersWebsite() {
               ))}
             </>
           ) : (
-            <Typography>No Free Websites</Typography>
+            <Typography>No Websites</Typography>
           )}
           <Dialog open={openReportDialog} onClose={handleCloseReportDialog}>
             <DialogTitle>Report Website</DialogTitle>

@@ -159,4 +159,45 @@ router.delete('/deletereportedwebsite/:websiteId', async (req, res) => {
   }
 });
 
+router.put('/reportedwebsite/toggle-status/:websiteId', async (req, res) => {
+  try {
+    const websiteId = req.params.websiteId;
+    const website = await Website.findOne({ website_id: websiteId });
+
+    if (!website) {
+      return res.status(404).json({
+        success: false,
+        message: 'Website not found',
+      });
+    }
+
+    // Get the reason from the request body
+    const { reason } = req.body; // Update from 'message' to 'reason'
+
+    // Update fields as specified
+    website.approved = false;
+    website.status = 'pending';
+
+    // Update the 'reported' field with the provided reason
+    website.reported = false; // Set the reported field based on your logic
+
+    // Update the 'reason' field if needed
+    website.reason = reason || 'No reason provided';
+
+    await website.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Website details updated successfully',
+      data: website,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+});
+
 module.exports = router;

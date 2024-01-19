@@ -15,7 +15,8 @@ import {
   DialogContent,
   DialogTitle,
   Tooltip,
-  TablePagination, // Import TablePagination
+  TablePagination,
+  TextField, // Import TextField for search input
 } from '@mui/material';
 import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -34,6 +35,7 @@ export default function User() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState(''); // New state for search query
 
   const navigate = useNavigate();
 
@@ -57,6 +59,14 @@ export default function User() {
     fetchUsers();
   }, []);
 
+  useEffect(() => {
+    if (deleteUserId) {
+      const userToDelete = users.find((user) => user.user_id === deleteUserId);
+      setDeleteUser(userToDelete);
+      setOpenDeleteDialog(true);
+    }
+  }, [deleteUserId, users]);
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -65,14 +75,6 @@ export default function User() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
-  useEffect(() => {
-    if (deleteUserId) {
-      const userToDelete = users.find((user) => user.user_id === deleteUserId);
-      setDeleteUser(userToDelete);
-      setOpenDeleteDialog(true);
-    }
-  }, [deleteUserId, users]);
 
   const handleDeleteUser = async () => {
     try {
@@ -118,6 +120,15 @@ export default function User() {
     navigate(`/admin/userdetail/${userId}`);
   };
 
+  // Function to filter users based on search query
+  const filteredUsers = users.filter(
+    (user) =>
+      user.firstname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.lastname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.phonenumber.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <Page title="User" sx={{ padding: '15px', overflowY: 'hidden' }}>
       {loading ? (
@@ -129,7 +140,14 @@ export default function User() {
           <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
             All User
           </Typography>
-          {users.length > 0 ? (
+          <TextField
+            label="Search"
+            variant="outlined"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            sx={{ marginBottom: '15px' }}
+          />
+          {filteredUsers.length > 0 ? (
             <>
               <TableContainer component={Paper}>
                 <Table>
@@ -144,71 +162,72 @@ export default function User() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {(rowsPerPage > 0 ? users.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : users).map(
-                      (user) => (
-                        <TableRow
-                          key={user.user_id}
-                          onClick={() => handleRowClick(user.user_id)}
-                          style={{ cursor: 'pointer' }}
-                        >
-                          <TableCell>{user.firstname}</TableCell>
-                          <TableCell>{user.lastname}</TableCell>
-                          <TableCell>{user.email}</TableCell>
-                          <TableCell>{user.phonenumber}</TableCell>
-                          <TableCell>
-                            {user.status === 'deactivate' ? (
-                              <Tooltip title="To Activate - Click Here">
-                                <Button
-                                  variant="outlined"
-                                  color="error"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setActivateUserId(user.user_id);
-                                    setOpenActivateDialog(true);
-                                  }}
-                                >
-                                  Inactive
-                                </Button>
-                              </Tooltip>
-                            ) : (
-                              <Tooltip title="To Deactivate - Click Here">
-                                <Button
-                                  variant="outlined"
-                                  style={{ color: 'green', borderColor: 'green' }}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setActivateUserId(user.user_id);
-                                    setOpenActivateDialog(true);
-                                  }}
-                                >
-                                  Active
-                                </Button>
-                              </Tooltip>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <Tooltip title="Delete">
-                              <span
-                                role="button"
-                                tabIndex={0}
+                    {(rowsPerPage > 0
+                      ? filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      : filteredUsers
+                    ).map((user) => (
+                      <TableRow
+                        key={user.user_id}
+                        onClick={() => handleRowClick(user.user_id)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <TableCell>{user.firstname}</TableCell>
+                        <TableCell>{user.lastname}</TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>{user.phonenumber}</TableCell>
+                        <TableCell>
+                          {user.status === 'deactivate' ? (
+                            <Tooltip title="To Activate - Click Here">
+                              <Button
+                                variant="outlined"
+                                color="error"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  setDeleteUserId(user.user_id);
+                                  setActivateUserId(user.user_id);
+                                  setOpenActivateDialog(true);
                                 }}
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') {
-                                    setDeleteUserId(user.user_id);
-                                  }
-                                }}
-                                style={{ cursor: 'pointer', fontSize: '15px' }}
                               >
-                                <FontAwesomeIcon icon={faTrashAlt} />
-                              </span>
+                                Inactive
+                              </Button>
                             </Tooltip>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    )}
+                          ) : (
+                            <Tooltip title="To Deactivate - Click Here">
+                              <Button
+                                variant="outlined"
+                                style={{ color: 'green', borderColor: 'green' }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setActivateUserId(user.user_id);
+                                  setOpenActivateDialog(true);
+                                }}
+                              >
+                                Active
+                              </Button>
+                            </Tooltip>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <Tooltip title="Delete">
+                            <span
+                              role="button"
+                              tabIndex={0}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDeleteUserId(user.user_id);
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  setDeleteUserId(user.user_id);
+                                }
+                              }}
+                              style={{ cursor: 'pointer', fontSize: '15px' }}
+                            >
+                              <FontAwesomeIcon icon={faTrashAlt} />
+                            </span>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -217,7 +236,7 @@ export default function User() {
 
               <TablePagination
                 component="div"
-                count={users.length}
+                count={filteredUsers.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}

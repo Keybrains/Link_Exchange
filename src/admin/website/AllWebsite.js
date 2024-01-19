@@ -30,6 +30,7 @@ export default function AllWebsite() {
   const [selectedWebsite, setSelectedWebsite] = useState(null);
   const [approveDialogOpen, setApproveDialogOpen] = useState(false);
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(''); // New state for search query
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
@@ -110,6 +111,7 @@ export default function AllWebsite() {
       // Handle error state if needed
     }
   };
+
   const handleRowClick = (websiteId) => {
     navigate(`/admin/websitedetail/${websiteId}`);
   };
@@ -123,6 +125,18 @@ export default function AllWebsite() {
     setPage(0);
   };
 
+  // Function to filter websites based on search query
+  const filteredWebsites = websites.filter(
+    (website) =>
+      website.url.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      `${website.users?.firstname} ${website.users?.lastname}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.language.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.costOfAddingBacklink.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.isPaid.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.approved.toString().toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <Page title="Approve Request" sx={{ padding: '25px', overflow: 'hidden' }}>
       {loading ? (
@@ -134,7 +148,14 @@ export default function AllWebsite() {
           <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
             Approve Request
           </Typography>
-          {websites.length > 0 ? (
+          <TextField
+            label="Search"
+            variant="outlined"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            sx={{ marginBottom: '15px' }}
+          />
+          {filteredWebsites.length > 0 ? (
             <>
               <TableContainer component={Paper}>
                 <Table>
@@ -152,8 +173,8 @@ export default function AllWebsite() {
                   </TableHead>
                   <TableBody>
                     {(rowsPerPage > 0
-                      ? websites.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      : websites
+                      ? filteredWebsites.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      : filteredWebsites
                     ).map((website) => (
                       <TableRow
                         key={website.website_id}
@@ -208,7 +229,7 @@ export default function AllWebsite() {
 
               <TablePagination
                 component="div"
-                count={websites.length}
+                count={filteredWebsites.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}

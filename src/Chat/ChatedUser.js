@@ -33,14 +33,17 @@ export default function App() {
   const loggedInUserId = JSON.parse(localStorage.getItem('decodedToken'))?.userId?.user_id;
   const chatContainerRef = useRef(null);
   const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+  console.log('loggedInUsername', loggedInUsername);
+  const [userColors, setUserColors] = useState({});
 
   useEffect(() => {
     const fetchChatedUsers = async () => {
       try {
-        const response = await axiosInstance.get(`/signup/signup/users/${loggedInUserId}/chatedusers`);
+        const response = await axiosInstance.get(`/signup/signup/users/${loggedInUserId}/chatedallusers`);
         const userDetails = await Promise.all(
           response.data.chatedUsers.map(async (userId) => {
-            const userResponse = await axiosInstance.get(`/signup/users/${userId}`);
+            const userResponse = await axiosInstance.get(`/signup/allusers/${userId}`);
+            console.log('userResponse', userResponse);
             const unreadMessagesResponse = await axiosInstance.get(
               `/chatuser/chatuser/unread-messages/${loggedInUserId}/${userId}`
             );
@@ -76,7 +79,7 @@ export default function App() {
 
     const fetchLoggedInUser = async () => {
       try {
-        const response = await axiosInstance.get(`/signup/users/${loggedInUserId}`);
+        const response = await axiosInstance.get(`/signup/allusers/${loggedInUserId}`);
         setLoggedInUsername(`${response.data.data.firstname} ${response.data.data.lastname}`);
       } catch (error) {
         console.error('Error fetching logged-in user:', error);
@@ -160,7 +163,7 @@ export default function App() {
   const fetchUsers = async (messages) => {
     const userIds = messages.map((message) => message.sender_id);
     try {
-      const response = await axiosInstance.get('/signup/users', { params: { userIds } });
+      const response = await axiosInstance.get('/signup/allusers', { params: { userIds } });
 
       const usersData = {};
 
@@ -220,11 +223,58 @@ export default function App() {
 
   const filteredUsers = chatedUsers.filter((userData) => {
     const userDetail = userData.data;
+    console.log('userDetail', userDetail);
     const fullName = `${userDetail.firstname} ${userDetail.lastname}`.toLowerCase();
     const username = userDetail.username.toLowerCase();
 
     return fullName.includes(searchQuery.toLowerCase()) || username.includes(searchQuery.toLowerCase());
   });
+
+  const [userAvatarColors, setUserAvatarColors] = useState(() => {
+    // Try to retrieve colors from localStorage
+    const storedColors = localStorage.getItem('userAvatarColors');
+    return storedColors ? JSON.parse(storedColors) : {};
+  });
+
+  const getRandomColor = (userId) => {
+    // If color for user already generated, return it
+    if (userAvatarColors[userId]) {
+      return userAvatarColors[userId];
+    }
+
+    const getLightColor = () => {
+      const letters = 'ABCDEF';
+      let lightColor = '#';
+      for (let i = 0; i < 3; i += 1) {
+        lightColor += letters[Math.floor(Math.random() * 6)]; // Use only lighter colors (A to F)
+      }
+      return lightColor;
+    };
+
+    const getBrightColor = () => {
+      const letters = '123456';
+      let brightColor = '#';
+      for (let i = 0; i < 3; i += 1) {
+        brightColor += letters[Math.floor(Math.random() * 6)]; // Use only bright colors (1 to 6)
+      }
+      return brightColor;
+    };
+
+    const colors = {
+      background: getLightColor(),
+      text: getBrightColor(),
+    };
+
+    const updatedColors = {
+      ...userAvatarColors,
+      [userId]: colors,
+    };
+    setUserAvatarColors(updatedColors);
+
+    // Save colors to localStorage
+    localStorage.setItem('userAvatarColors', JSON.stringify(updatedColors));
+    return colors;
+  };
 
   return (
     <Page title="Chated User" style={{ overflowY: 'hidden', overflowX: 'hidden' }}>
@@ -275,7 +325,10 @@ export default function App() {
                                         {filteredUsers.map((userData, index) => {
                                           const userDetail = userData.data;
                                           const userId = userData.data.user_id;
+                                          console.log('userId', userId);
                                           const isSelected = userId === selectedUser;
+                                          const colors = getRandomColor(userId);
+
                                           return (
                                             <div
                                               key={index}
@@ -301,7 +354,7 @@ export default function App() {
                                                   className="circle-avatar me-2"
                                                   style={{
                                                     fontSize: '1.2em',
-                                                    color: isSelected ? 'brown' : 'black',
+                                                    color: isSelected ? 'brown' : colors.text,
                                                     textTransform: 'uppercase',
                                                     borderRadius: '50%',
                                                     width: '50px',
@@ -309,13 +362,14 @@ export default function App() {
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
-                                                    background: '#f1f1f1',
+                                                    background: colors.background,
                                                   }}
                                                 >
                                                   {`${userDetail.firstname ? userDetail.firstname.charAt(0) : 'U'}${
                                                     userDetail.lastname ? userDetail.lastname.charAt(0) : 'U'
                                                   }`}
                                                 </div>
+
                                                 <div className="d-flex flex-column ms-2">
                                                   <div className="font-weight-bold">
                                                     {`${userDetail.firstname

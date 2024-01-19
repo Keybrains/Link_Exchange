@@ -53,7 +53,7 @@ export default function Discussions() {
   const fetchUsers = async (messages) => {
     const userIds = messages.map((message) => message.sender_id);
     try {
-      const response = await axiosInstance.get('/signup/users', { userIds });
+      const response = await axiosInstance.get('/signup/allusers', { userIds });
       const usersData = {};
 
       response.data.data.forEach((user) => {
@@ -99,6 +99,7 @@ export default function Discussions() {
       console.error('Error sending message:', error);
     }
   };
+  
 
   return (
     <MDBContainer fluid className="py-5">

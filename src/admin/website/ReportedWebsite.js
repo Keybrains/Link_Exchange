@@ -16,6 +16,7 @@ import {
   DialogTitle,
   Tooltip,
   TablePagination,
+  TextField,
 } from '@mui/material';
 import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -27,9 +28,10 @@ import axiosInstance from '../config/AxiosInstanceAdmin';
 import Page from '../../components/Page';
 
 export default function ReportedWebsite() {
-  const [reportedWebsites, setreportedWebsites] = useState([]);
+  const [reportedWebsites, setReportedWebsites] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedWebsiteId, setSelectedWebsiteId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(''); // New state for search query
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
@@ -40,7 +42,7 @@ export default function ReportedWebsite() {
       try {
         const response = await axiosInstance.get('reportedwebsite/reportedwebsites');
         if (response.status === 200) {
-          setreportedWebsites(response.data.data);
+          setReportedWebsites(response.data.data);
           setLoading(false);
         } else {
           throw new Error('Failed to fetch websites');
@@ -48,7 +50,6 @@ export default function ReportedWebsite() {
       } catch (error) {
         console.error(error);
         setLoading(false);
-
         // Handle error state if needed
       }
     }
@@ -69,7 +70,7 @@ export default function ReportedWebsite() {
         const updatedWebsites = reportedWebsites.map((website) =>
           website._id === selectedWebsiteId ? { ...website, reported: false } : website
         );
-        setreportedWebsites(updatedWebsites);
+        setReportedWebsites(updatedWebsites);
 
         const deleteResponse = await axiosInstance.delete(`reportedwebsite/deletereportedwebsite/${selectedWebsiteId}`);
 
@@ -77,7 +78,7 @@ export default function ReportedWebsite() {
           // After successful deletion, fetch the updated reported websites
           const response = await axiosInstance.get('/reportedwebsite/reportedwebsites');
           if (response.status === 200) {
-            setreportedWebsites(response.data.data);
+            setReportedWebsites(response.data.data);
           } else {
             throw new Error('Failed to fetch updated reported websites');
           }
@@ -100,7 +101,7 @@ export default function ReportedWebsite() {
   };
 
   const handleRowClick = (websiteId) => {
-    navigate(`/admin/websitedetail/${websiteId}`);
+    navigate(`/admin/reportedwebsitedetail/${websiteId}`);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -111,6 +112,15 @@ export default function ReportedWebsite() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  // Function to filter reported websites based on search query
+  const filteredReportedWebsites = reportedWebsites.filter(
+    (website) =>
+      website.url.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      `${website.user?.firstname} ${website.user?.lastname}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      new Date(website.createAt).toLocaleDateString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (!website.resolved && 'Resolve'.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
 
   return (
     <Page title="Reported Website" sx={{ padding: '25px', overflow: 'hidden' }}>
@@ -123,22 +133,29 @@ export default function ReportedWebsite() {
           <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
             Reported Websites
           </Typography>
-          {reportedWebsites.length > 0 ? (
+          <TextField
+            label="Search"
+            variant="outlined"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            sx={{ marginBottom: '15px' }}
+          />
+          {filteredReportedWebsites.length > 0 ? (
             <>
               <TableContainer component={Paper}>
                 <Table>
                   <TableHead sx={{ backgroundColor: '#C3E0E5' }}>
                     <TableRow>
                       <TableCell sx={{ fontWeight: 'bold' }}>URL</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>User</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>Reported by</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Action</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {(reportedWebsites > 0
-                      ? reportedWebsites.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      : reportedWebsites
+                    {(rowsPerPage > 0
+                      ? filteredReportedWebsites.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      : filteredReportedWebsites
                     ).map((website) => (
                       <TableRow
                         key={website._id}
@@ -175,7 +192,7 @@ export default function ReportedWebsite() {
 
               <TablePagination
                 component="div"
-                count={reportedWebsites.length}
+                count={filteredReportedWebsites.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}

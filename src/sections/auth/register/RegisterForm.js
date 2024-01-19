@@ -5,7 +5,16 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Stack, IconButton, InputAdornment, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import {
+  Stack,
+  IconButton,
+  InputAdornment,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Typography,
+} from '@mui/material';
 
 import { LoadingButton } from '@mui/lab';
 import Iconify from '../../../components/Iconify';
@@ -85,7 +94,7 @@ export default function RegisterForm({ onSubmit }) {
 
   return (
     <FormProvider methods={methods} onSubmit={methods.handleSubmit(onSubmit)}>
-      <Stack spacing={1.5}>
+      <Stack spacing={1}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
           <RHFTextField name="firstname" label="First Name" />
           <RHFTextField name="lastname" label="Last Name" />
@@ -153,6 +162,11 @@ export default function RegisterForm({ onSubmit }) {
           />
         </Stack>
         <RHFTextField name="username" label="User Name" />
+        <Typography sx={{ color: 'text.secondary', mb: 1, pl: 1, fontSize: '0.8rem' }}>
+          *Password must contain at least one number, one special character, one uppercase letter, and one lowercase
+          letter
+        </Typography>
+
         <RHFTextField
           name="password"
           label="Password"

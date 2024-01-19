@@ -55,7 +55,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
   flexDirection: 'column',
-  padding: theme.spacing(8, 0),
+  padding: theme.spacing(0), // Set padding to zero
   overflow: 'hidden', // Apply overflow: hidden to the content
 }));
 
@@ -113,22 +113,14 @@ export default function Register() {
       <Page title="Register" sx={{ overflow: 'hidden' }}>
         <RootStyle sx={{ overflow: 'hidden' }}>
           <HeaderStyle>
-            <Box
-              sx={{
-                px: 2.5,
-                py: 3,
-                display: 'flex',
-              }}
-            >
-              <Logo sx={{ width: '100px', height: '50px' }} />
-            </Box>
             {smUp && (
-              <Typography variant="body2" sx={{ mt: { md: -2 } }}>
-                Already have an account? {''}
-                <Link variant="subtitle2" component={RouterLink} to="/login">
-                  Login
-                </Link>
-              </Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                }}
+              >
+                <Logo sx={{ width: '100px', height: '50px' }} />
+              </Box>
             )}
           </HeaderStyle>
 
@@ -143,15 +135,15 @@ export default function Register() {
 
           <Container sx={{ overflow: 'hidden' }}>
             <ContentStyle>
-              <Typography variant="h4" sx={{ mt: 5 }} gutterBottom>
+              <Typography variant="h4" sx={{ mt: 1, mb: 2 }} gutterBottom>
                 Sign up to Link Exchange
               </Typography>
 
-              <Typography sx={{ color: 'text.secondary', mb: 5 }}>Enter your details below.</Typography>
+              {/* <Typography sx={{ color: 'text.secondary', mb: 1 }}>Enter your details below.</Typography> */}
 
               <RegisterForm onSubmit={handleSubmit} />
 
-              <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 3 }}>
+              <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 2 }}>
                 By registering, I agree to Minimal&nbsp;
                 <Link underline="always" color="text.primary" href="#">
                   Terms of Service
@@ -171,6 +163,16 @@ export default function Register() {
                   </Link>
                 </Typography>
               )}
+              <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 3 }}>
+                {smUp && (
+                  <Typography variant="body2" sx={{ mt: { md: -2 } }}>
+                    Already have an account? {''}
+                    <Link variant="subtitle2" component={RouterLink} to="/login">
+                      Login
+                    </Link>
+                  </Typography>
+                )}
+              </Typography>
             </ContentStyle>
           </Container>
         </RootStyle>

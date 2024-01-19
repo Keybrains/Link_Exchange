@@ -39,11 +39,11 @@ const navConfig = [
     path: '/admin/reportedwebsite',
     icon: getIcon('material-symbols:report'),
   },
-  // {
-  //   title: 'Contact Users',
-  //   path: '/admin/discussions',
-  //   icon: getIcon('material-symbols:chat'),
-  // },
+  {
+    title: 'Contact Users',
+    path: '/admin/discussions',
+    icon: getIcon('material-symbols:chat'),
+  },
   {
     title: 'Change Password',
     path: '/admin/changepassword',

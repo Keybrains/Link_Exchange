@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Typography, Button, TextField, DialogContent, DialogTitle, Dialog } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { styled } from '@mui/system';
@@ -24,8 +24,8 @@ const StyledDialog = styled(Dialog)({
   '& .MuiDialogTitle-root': {
     backgroundColor: '#2196F3',
     color: '#ffffff',
-    borderBottom: '1px solid #1565c0', // Add a border at the bottom of the title
-    paddingBottom: '8px', // Add some padding at the bottom of the title
+    borderBottom: '1px solid #1565c0',
+    paddingBottom: '8px',
   },
   '& .MuiDialogContent-root': {
     padding: '16px',
@@ -37,14 +37,17 @@ const StyledDialog = styled(Dialog)({
     marginRight: '8px',
   },
   '& .MuiDialog-paper': {
-    minWidth: '400px', // Set your desired width
-    minHeight: '300px', // Set your desired height
-    borderRadius: '10px', // Add some border radius
+    minWidth: '400px',
+    minHeight: '300px',
+    borderRadius: '10px',
   },
 });
 
 export default function Chat() {
   const { userId } = useParams();
+  const { state } = useLocation();
+  console.log('state', state);
+  console.log('website_id', state?.website_id);
   const [userDetail, setUserDetail] = useState(null);
   console.log('userDetail', userDetail);
   const [loading, setLoading] = useState(true);
@@ -111,7 +114,7 @@ export default function Chat() {
         receiver_id: loggedInUserId,
       };
 
-      const updateUserResponse = await axiosInstance.put(`/signup/signup/users/${userId}`, payload);
+      const updateUserResponse = await axiosInstance.put(`/signup/signup/allusers/${userId}`, payload);
 
       console.log('User details updated successfully:', updateUserResponse.data);
 

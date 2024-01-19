@@ -19,12 +19,12 @@ import {
   InputLabel,
   FormControl,
   MenuItem,
+  Box,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CircularProgress from '@mui/material/CircularProgress';
-
 import axiosInstance from '../config/AxiosInstance';
-
 import Page from '../admin/components/Page';
 
 export default function FreeWebsite() {
@@ -33,6 +33,7 @@ export default function FreeWebsite() {
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5); // Updated state for items per page
   const [totalPages, setTotalPages] = useState(1);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchPaidWebsites() {
@@ -149,17 +150,55 @@ export default function FreeWebsite() {
     }
   };
 
+  const handleNavigate = () => {
+    navigate('/user/terms');
+  };
+
   return (
     <Page title="Paid Website" sx={{ padding: '25px', overflow: 'hidden' }}>
+      <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
+        My Paid Website
+      </Typography>
+      <Box
+        className="green-line"
+        sx={{
+          backgroundColor: '#E0F2F1',
+          padding: '20px',
+          marginY: '20px',
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Typography
+          variant="body1"
+          className="green-line__text"
+          sx={{
+            flexGrow: 1,
+            marginBottom: { xs: '20px', md: 0 },
+            textAlign: { xs: 'center', md: 'left' },
+          }}
+        >
+          Want to monetize your site while placing or creating unique and relevant content?
+        </Typography>
+        <Button
+          variant="contained"
+          className="button button--black green-line__button"
+          onClick={handleNavigate}
+          sx={{
+            marginLeft: { xs: 0, md: '20px' },
+          }}
+        >
+          Add website
+        </Button>
+      </Box>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />
         </div>
       ) : (
         <>
-          <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
-            My Paid Website
-          </Typography>
           {PaidWebsites.length > 0 ? (
             PaidWebsites.map((website) => (
               <Card key={website._id} sx={{ marginBottom: '20px' }}>
@@ -287,8 +326,7 @@ export default function FreeWebsite() {
       )}
       <hr style={{ borderTop: '1px solid black', width: '100%', margin: '20px 0' }} /> {/* Stylish horizontal line */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-       
-          <>
+        <>
           <FormControl margin="normal" sx={{ '& .MuiInput-root': { paddingTop: '18px' } }}>
             <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>Page</InputLabel>
             <Select
@@ -302,8 +340,7 @@ export default function FreeWebsite() {
               <MenuItem value={15}>15</MenuItem>
             </Select>
           </FormControl>
-          </>
-       
+        </>
 
         {totalPages > 1 && (
           <Stack spacing={2} sx={{ justifyContent: 'center' }}>

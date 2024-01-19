@@ -45,6 +45,7 @@ import UsersPaidWebsite from './OtherUserWebsite/UsersPaidWebsite';
 import Chat from './Chat/Chat';
 import ChatedUser from './Chat/ChatedUser';
 import ChangePassword from './admin/user/ChangePassword';
+import ReportedWebsiteDetail from './admin/website/ReportedWebsiteDetail';
 
 const isAuthenticated = () => {
   const authToken = localStorage.getItem('authToken');
@@ -138,6 +139,10 @@ const Router = () => {
         },
         { path: 'userdetail/:userId', element: isAuthenticated() ? <UserDetail /> : <Navigate to="/login" /> },
         { path: 'websitedetail/:websiteId', element: isAuthenticated() ? <WebsiteDetail /> : <Navigate to="/login" /> },
+        {
+          path: 'reportedwebsitedetail/:websiteId',
+          element: isAuthenticated() ? <ReportedWebsiteDetail /> : <Navigate to="/login" />,
+        },
         { path: 'changepassword', element: isAuthenticated() ? <ChangePassword /> : <Navigate to="/login" /> },
       ],
     },

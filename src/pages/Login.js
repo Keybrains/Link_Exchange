@@ -173,23 +173,16 @@ export default function Login() {
       <Page title="Login">
         <RootStyle>
           <HeaderStyle>
-            <Box
-              sx={{
-                px: 2.5,
-                py: 3,
-                display: 'flex',
-              }}
-            >
-              <Logo sx={{ width: '100px', height: '50px' }} />
-            </Box>
-
             {smUp && (
-              <Typography variant="body2" sx={{ mt: { md: -2 } }}>
-                Don’t have an account? {''}
-                <Link variant="subtitle2" component={RouterLink} to="/register">
-                  Get started
-                </Link>
-              </Typography>
+              <Box
+                sx={{
+                  px: 2.5,
+                  py: 3,
+                  display: 'flex',
+                }}
+              >
+                <Logo sx={{ width: '100px', height: '50px' }} />
+              </Box>
             )}
           </HeaderStyle>
 
@@ -220,6 +213,17 @@ export default function Login() {
                   </Link>
                 </Typography>
               )}
+
+              <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 5 }}>
+                {smUp && (
+                  <Typography variant="body2" sx={{ mt: { md: -2 } }}>
+                    Don’t have an account? {''}
+                    <Link variant="subtitle2" component={RouterLink} to="/register">
+                      Get started
+                    </Link>
+                  </Typography>
+                )}
+              </Typography>
             </ContentStyle>
           </Container>
         </RootStyle>

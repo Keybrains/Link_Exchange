@@ -56,11 +56,11 @@ const navConfig = [
     path: '/user/pendingapproval',
     icon: getIcon('material-symbols:upcoming-outline'),
   },
-  {
-    title: 'Reported Website',
-    path: '/user/reportedwebsite',
-    icon: getIcon('material-symbols:report'),
-  },
+  // {
+  //   title: 'Reported Website',
+  //   path: '/user/reportedwebsite',
+  //   icon: getIcon('material-symbols:report'),
+  // },
 
   // {
   //   title: 'Discussions',

@@ -1,0 +1,596 @@
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+  Card,
+  Tooltip,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+} from '@mui/material';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { styled } from '@mui/system';
+import {
+  faUser,
+  faEnvelope,
+  faPhone,
+  faBuilding,
+  faUserCircle,
+  faDotCircle,
+  faMoneyBill,
+  faBarsProgress,
+  faInfo,
+  faCircleInfo,
+  faLink,
+  faBug,
+} from '@fortawesome/free-solid-svg-icons';
+import {
+  MDBCol,
+  MDBContainer,
+  MDBRow,
+  MDBCard,
+  MDBCardText,
+  MDBCardBody,
+  MDBCardImage,
+  MDBTypography,
+  MDBIcon,
+} from 'mdb-react-ui-kit';
+import CircularProgress from '@mui/material/CircularProgress';
+
+import Page from '../components/Page';
+import axiosInstance from '../config/AxiosInstanceAdmin';
+
+const IconWrapper = styled('span')({
+  marginRight: '8px',
+  fontSize: '20px',
+});
+
+const StyledDialog = styled(Dialog)({
+  '& .MuiDialogTitle-root': {
+    backgroundColor: '#2196F3',
+    color: '#ffffff',
+    borderBottom: '1px solid #1565c0',
+    paddingBottom: '8px',
+  },
+  '& .MuiDialogContent-root': {
+    padding: '16px',
+  },
+  '& .MuiTextField-root': {
+    marginBottom: '16px',
+  },
+  '& .MuiButton-root': {
+    marginRight: '8px',
+  },
+  '& .MuiDialog-paper': {
+    minWidth: '400px',
+    minHeight: '300px',
+    borderRadius: '10px',
+  },
+});
+
+export default function ReportedWebsiteDetail() {
+  const { websiteId } = useParams();
+  const [websiteDetail, setWebsiteDetail] = useState({});
+  console.log('websiteDetail', websiteDetail);
+  const [loading, setLoading] = useState(true);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [message, setMessage] = useState('');
+
+  const navigate = useNavigate();
+
+  const fetchWebsiteDetail = async (websiteId) => {
+    try {
+      const response = await axiosInstance.get(`/website/websitesdetail?website_id=${websiteId}`);
+      if (response.data && response.data.success) {
+        setWebsiteDetail(response.data.data); // Assuming "website" is the key for website details
+        console.log(response.data.data, 'response.data.data.website');
+        setLoading(false);
+      } else {
+        console.error('No data found in response:', response);
+        setLoading(false);
+
+        // Handle other cases if needed (e.g., error messages)
+      }
+    } catch (error) {
+      console.error('Error fetching website details:', error);
+      setLoading(false);
+
+      // Handle error state if needed
+    }
+  };
+
+  const handleToggleStatus = async () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleSendMessageAndToggleStatus = async () => {
+    try {
+      const decodedToken = localStorage.getItem('decodedToken');
+      const parsedToken = JSON.parse(decodedToken);
+      const loggedInUserId = parsedToken.userId?.user_id;
+
+      // Check if there are existing messages
+      const checkMessagesResponse = await axiosInstance.get(
+        `/chatuser/chatuser/chat-messages/${loggedInUserId}/${websiteDetail.user?.user_id}`
+      );
+
+      if (checkMessagesResponse.data.data.length > 0) {
+        navigate('/user/chateduser');
+      } else {
+        // If no existing messages, send a new message
+        setOpenDialog(true);
+
+        const payload = {
+          receiver_id: loggedInUserId,
+        };
+
+        const updateUserResponse = await axiosInstance.put(
+          `/signup/signup/allusers/${websiteDetail.user?.user_id}`,
+          payload
+        );
+
+        console.log('User details updated successfully:', updateUserResponse.data);
+
+        const chatPayload = {
+          receiver_id: websiteDetail.user?.user_id,
+          sender_id: loggedInUserId,
+          message,
+        };
+
+        const sendMessageResponse = await axiosInstance.post('/chatuser/chat-messages', chatPayload);
+
+        console.log('Message sent successfully:', sendMessageResponse.data);
+
+        // After sending the message, toggle the status and delete the reported website
+        await toggleStatusAndDeleteReportedWebsite();
+      }
+    } catch (error) {
+      console.error('Error handling send message and toggle status:', error);
+    }
+  };
+
+  const toggleStatusAndDeleteReportedWebsite = async () => {
+    try {
+      const response = await axiosInstance.put(`/reportedwebsite/reportedwebsite/toggle-status/${websiteId}`);
+
+      if (response.data && response.data.success) {
+        console.log(response.data.message);
+
+        // Delete the reported website
+        const deleteResponse = await axiosInstance.delete(`/reportedwebsite/deletereportedwebsite/${websiteId}`);
+        if (deleteResponse.data && deleteResponse.data.success) {
+          console.log(deleteResponse.data.message);
+          navigate('/admin/allwebsite');
+        } else {
+          console.error('Failed to delete reported website:', deleteResponse.data.message);
+        }
+
+        fetchWebsiteDetail();
+      } else {
+        console.error('Failed to toggle status:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error toggling status and deleting reported website:', error);
+    } finally {
+      setOpenDialog(false);
+    }
+  };
+
+  // const handleConfirmDialog = async () => {
+  //   try {
+  //     const response = await axiosInstance.put(`/reportedwebsite/reportedwebsite/toggle-status/${websiteId}`);
+
+  //     if (response.data && response.data.success) {
+  //       // Handle success, e.g., show a success message
+  //       console.log(response.data.message);
+
+  //       // Delete the reported website
+  //       const deleteResponse = await axiosInstance.delete(`/reportedwebsite/deletereportedwebsite/${websiteId}`);
+  //       if (deleteResponse.data && deleteResponse.data.success) {
+  //         console.log(deleteResponse.data.message);
+  //         navigate('/admin/allwebsite');
+  //       } else {
+  //         console.error('Failed to delete reported website:', deleteResponse.data.message);
+  //       }
+
+  //       fetchWebsiteDetail();
+  //     } else {
+  //       // Handle failure, e.g., show an error message
+  //       console.error('Failed to toggle status:', response.data.message);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error toggling status:', error);
+  //   } finally {
+  //     // Close the dialog whether the request succeeded or failed
+  //     setOpenDialog(false);
+  //   }
+  // };
+
+  useEffect(() => {
+    console.log('Website ID from params:', websiteId);
+    fetchWebsiteDetail(websiteId);
+  }, [websiteId]);
+
+  //--------------------------------------------------------
+  // const handleSendMessage = async () => {
+  //   try {
+  //     const decodedToken = localStorage.getItem('decodedToken');
+  //     const parsedToken = JSON.parse(decodedToken);
+  //     const loggedInUserId = parsedToken.userId?.user_id;
+
+  //     const checkMessagesResponse = await axiosInstance.get(
+  //       `/chatuser/chatuser/chat-messages/${loggedInUserId}/${websiteDetail.user?.user_id}`
+  //     );
+
+  //     if (checkMessagesResponse.data.data.length > 0) {
+  //       navigate('/user/chateduser');
+  //     } else {
+  //       setOpenDialog(true);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error checking messages:', error);
+  //   }
+  // };
+
+  const handleSendButtonClick = async () => {
+    try {
+      const decodedToken = localStorage.getItem('decodedToken');
+      const parsedToken = JSON.parse(decodedToken);
+      const loggedInUserId = parsedToken.userId?.user_id;
+
+      // Update user details
+      const updatePayload = {
+        receiver_id: loggedInUserId,
+      };
+      await axiosInstance.put(`/signup/signup/allusers/${websiteDetail.user?.user_id}`, updatePayload);
+
+      // Send a new message
+      const chatPayload = {
+        receiver_id: websiteDetail.user?.user_id,
+        sender_id: loggedInUserId,
+        message,
+      };
+      await axiosInstance.post('/chatuser/chat-messages', chatPayload);
+
+      // Toggle status and delete the reported website
+      await toggleStatusAndDeleteReportedWebsite();
+
+      setOpenDialog(false);
+    } catch (error) {
+      console.error('Error sending message and toggling status:', error);
+    }
+  };
+
+  return (
+    <Page title="User Detail">
+      {loading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+          <CircularProgress color="primary" />
+        </div>
+      ) : (
+        <>
+          {websiteDetail && (
+            <section style={{ overflow: 'hidden' }}>
+              <MDBContainer className="py-3 h-100">
+                <MDBRow className="justify-content-center align-items-center h-100">
+                  <MDBCol lg="12" className="mb-2 mb-lg-0">
+                    <MDBCard className="mb-3" style={{ borderRadius: '.5rem' }}>
+                      <MDBRow className="g-0">
+                        {/* <MDBCol
+                      md="4"
+                      className="gradient-custom text-center text-white d-flex flex-column justify-content-center align-items-center"
+                      style={{ borderTopLeftRadius: '.5rem', borderBottomLeftRadius: '.5rem' }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faUser}
+                        style={{
+                          fontSize: '3em', // Adjust the size as needed
+                          marginBottom: '25px',
+                          marginTop: '25px',
+                        }}
+                      />
+
+                      <MDBTypography tag="h6">
+                        {websiteDetail.url} {websiteDetail.lastname}
+                      </MDBTypography>
+                      <MDBCardText>{websiteDetail.username}</MDBCardText>
+                      <MDBIcon far icon="edit mb-5" />
+                    </MDBCol> */}
+
+                        <MDBCol>
+                          <MDBCardBody className="p-4 pb-4">
+                            <MDBTypography tag="h5" className="pb-2" style={{ color: '#145DA0' }}>
+                              <FontAwesomeIcon
+                                icon={faUser}
+                                style={{
+                                  paddingRight: '5px',
+                                }}
+                              />
+                              User Detail
+                            </MDBTypography>
+
+                            <hr className="mt-0 mb-3" />
+                            <MDBRow>
+                              <MDBCol size="12" lg="6" className="mb-3 d-flex">
+                                <MDBTypography tag="h6" className="me-2">
+                                  Name:
+                                </MDBTypography>
+                                <MDBCardText className="text-muted">
+                                  {websiteDetail.user?.firstname} {websiteDetail.user?.lastname}
+                                </MDBCardText>
+                              </MDBCol>
+                              <MDBCol size="12" lg="6" className="mb-3 d-flex">
+                                <MDBTypography tag="h6" className="me-2">
+                                  Username:
+                                </MDBTypography>
+                                <MDBCardText className="text-muted">{websiteDetail.user?.username}</MDBCardText>
+                              </MDBCol>
+                            </MDBRow>
+                            <MDBRow>
+                              <MDBCol size="12" lg="6" className="mb-3 d-flex">
+                                <MDBTypography tag="h6" className="me-2">
+                                  Phone Number :
+                                </MDBTypography>
+                                <MDBCardText className="text-muted"> {websiteDetail.user?.phonenumber}</MDBCardText>
+                              </MDBCol>
+                              <MDBCol size="12" lg="6" className="mb-3 d-flex">
+                                <MDBTypography tag="h6" className="me-2">
+                                  Email:
+                                </MDBTypography>
+                                <MDBCardText className="text-muted">{websiteDetail.user?.email}</MDBCardText>
+                              </MDBCol>
+                            </MDBRow>
+
+                            {websiteDetail.reportedWebsites && (
+                              <>
+                                <MDBTypography tag="h5" className="pb-2 pt-2" style={{ color: 'red' }}>
+                                  <FontAwesomeIcon
+                                    icon={faBug}
+                                    style={{
+                                      paddingRight: '5px',
+                                    }}
+                                  />
+                                  Reported
+                                </MDBTypography>
+
+                                <hr className="mt-0 mb-3" />
+                                <MDBRow>
+                                  <MDBCol size="12" lg="6" className="mb-3 d-flex">
+                                    <MDBTypography tag="h6" className="me-2">
+                                      User Message:
+                                    </MDBTypography>
+                                    <MDBCardText className="text-muted">
+                                      {websiteDetail.reportedWebsites?.message}
+                                    </MDBCardText>
+                                  </MDBCol>
+                                </MDBRow>
+                              </>
+                            )}
+
+                            <MDBTypography tag="h5" className="pb-2 pt-2" style={{ color: '#145DA0' }}>
+                              <FontAwesomeIcon
+                                icon={faLink}
+                                style={{
+                                  paddingRight: '5px',
+                                }}
+                              />
+                              URL
+                            </MDBTypography>
+
+                            <hr className="mt-0 mb-2" />
+                            <MDBRow className="pt-1 pb-2 pt-2">
+                              <MDBCol size="12" className="mb-3">
+                                {/* <MDBTypography tag="h6">Email</MDBTypography> */}
+                                <MDBCardText className="text-muted" style={{ fontSize: '20px' }}>
+                                  {websiteDetail.website?.url}
+                                </MDBCardText>
+                              </MDBCol>
+                            </MDBRow>
+
+                            <MDBTypography tag="h5" className="pb-2 pt-2" style={{ color: '#145DA0' }}>
+                              <FontAwesomeIcon
+                                icon={faCircleInfo}
+                                style={{
+                                  paddingRight: '5px',
+                                }}
+                              />
+                              Other Detail
+                            </MDBTypography>
+                            <hr className="mt-0 mb-3" />
+                            <MDBRow>
+                              <MDBCol size="12" lg="6" className="mb-3 d-flex">
+                                <MDBTypography tag="h6" className="me-2">
+                                  Organic Visits :
+                                </MDBTypography>
+                                <MDBCardText className="text-muted">
+                                  {' '}
+                                  {websiteDetail.website?.monthlyVisits}
+                                </MDBCardText>
+                              </MDBCol>
+                              <MDBCol size="12" lg="6" className="mb-3 d-flex">
+                                <MDBTypography tag="h6" className="me-2">
+                                  Domain Authority :
+                                </MDBTypography>
+                                <MDBCardText className="text-muted">{websiteDetail.website?.DA}</MDBCardText>
+                              </MDBCol>
+                            </MDBRow>
+                            <MDBRow>
+                              <MDBCol size="12" lg="6" className="mb-3 d-flex">
+                                <MDBTypography tag="h6" className="me-2">
+                                  Spam Score :
+                                </MDBTypography>
+                                <MDBCardText className="text-muted">{websiteDetail.website?.spamScore}</MDBCardText>
+                              </MDBCol>
+                              <MDBCol size="12" lg="6" className="mb-3 d-flex">
+                                <MDBTypography tag="h6" className="me-2">
+                                  Link Period :
+                                </MDBTypography>
+                                <MDBCardText className="text-muted">{websiteDetail.website?.linkTime}</MDBCardText>
+                              </MDBCol>
+                            </MDBRow>
+                            <MDBRow>
+                              <MDBCol size="12" lg="6" className="mb-3 d-flex">
+                                <MDBTypography tag="h6" className="me-2">
+                                  Link Quantity :
+                                </MDBTypography>
+                                <MDBCardText className="text-muted">
+                                  {websiteDetail.website?.backlinksAllowed}
+                                </MDBCardText>
+                              </MDBCol>
+                              <MDBCol size="12" lg="6" className="mb-3 d-flex">
+                                <MDBTypography tag="h6" className="me-2">
+                                  Country :
+                                </MDBTypography>
+                                <MDBCardText className="text-muted">{websiteDetail.website?.country}</MDBCardText>
+                              </MDBCol>
+                            </MDBRow>
+                            <MDBRow>
+                              <MDBCol size="12" lg="6" className="mb-3 d-flex">
+                                <MDBTypography tag="h6" className="me-2">
+                                  Language :
+                                </MDBTypography>
+                                <MDBCardText className="text-muted">{websiteDetail.website?.language}</MDBCardText>
+                              </MDBCol>
+                              <MDBCol size="12" lg="6" className="mb-3 d-flex">
+                                <MDBTypography tag="h6" className="me-2">
+                                  Google News :
+                                </MDBTypography>
+                                <MDBCardText className="text-muted">
+                                  {' '}
+                                  {websiteDetail.website?.surfaceInGoogleNews ? 'Yes' : 'No'}
+                                </MDBCardText>
+                              </MDBCol>
+                            </MDBRow>
+                            <MDBRow>
+                              <MDBCol size="12" lg="6" className="mb-3 d-flex">
+                                <MDBTypography tag="h6" className="me-2">
+                                  Link Type :
+                                </MDBTypography>
+                                <MDBCardText className="text-muted">{websiteDetail.website?.linkType}</MDBCardText>
+                              </MDBCol>
+                              <MDBCol size="12" lg="6" className="mb-3 d-flex">
+                                <MDBTypography tag="h6" className="me-2">
+                                  Reported :
+                                </MDBTypography>
+                                <MDBCardText className="text-muted">
+                                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <span
+                                      style={{
+                                        marginBottom: '5px',
+                                        color: websiteDetail.website?.reported ? 'red' : 'initial',
+                                      }}
+                                    >
+                                      {websiteDetail.website?.reported ? 'Yes' : 'No'}
+                                    </span>
+                                  </div>
+                                </MDBCardText>
+                              </MDBCol>
+                            </MDBRow>
+
+                            <MDBTypography tag="h5" className="pb-2 pt-2" style={{ color: '#145DA0' }}>
+                              <FontAwesomeIcon
+                                icon={faMoneyBill}
+                                style={{
+                                  paddingRight: '5px',
+                                }}
+                              />
+                              Cost
+                            </MDBTypography>
+                            <hr className="mt-0 mb-3" />
+                            <MDBRow>
+                              <MDBCol size="12" lg="6" className="mb-3 d-flex">
+                                <MDBTypography tag="h6" className="me-2">
+                                  Cost Of Adding Backlink :
+                                </MDBTypography>
+                                <MDBCardText className="text-muted">
+                                  {websiteDetail.website?.costOfAddingBacklink}
+                                </MDBCardText>
+                              </MDBCol>
+                              <MDBCol size="12" lg="6" className="mb-3 d-flex">
+                                <MDBTypography tag="h6" className="me-2">
+                                  Cost :
+                                </MDBTypography>
+                                <MDBCardText className="text-muted">
+                                  {' '}
+                                  ${websiteDetail.website?.charges || 0}
+                                </MDBCardText>
+                              </MDBCol>
+                            </MDBRow>
+
+                            <MDBTypography tag="h5" className="pt-2" style={{ color: '#145DA0' }}>
+                              <FontAwesomeIcon
+                                icon={faBarsProgress}
+                                style={{
+                                  paddingRight: '5px',
+                                }}
+                              />
+                              Status
+                            </MDBTypography>
+                            <hr className="" />
+                            <MDBRow className="">
+                              <MDBCol size="6" className="">
+                                <>
+                                  {websiteDetail.website?.status === 'activate' && (
+                                    <Tooltip title="To Deactivate URL - Click Here">
+                                      <Button
+                                        variant="outlined"
+                                        onClick={handleToggleStatus}
+                                        style={{ color: 'green', borderColor: 'green' }}
+                                      >
+                                        Activate
+                                      </Button>
+                                    </Tooltip>
+                                  )}
+                                </>
+                              </MDBCol>
+                            </MDBRow>
+                          </MDBCardBody>
+                        </MDBCol>
+                      </MDBRow>
+                    </MDBCard>
+                  </MDBCol>
+                </MDBRow>
+              </MDBContainer>
+            </section>
+          )}
+          <StyledDialog open={openDialog} onClose={handleCloseDialog} position="fixed">
+            <DialogTitle>
+              Start Conversation with {websiteDetail.user?.firstname} {websiteDetail.user?.lastname}
+            </DialogTitle>
+            <DialogContent>
+              <TextField
+                label="Your Message"
+                variant="outlined"
+                fullWidth
+                multiline
+                rows={5} // Set the number of visible rows as needed
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                style={{ marginTop: '16px', marginBottom: '16px' }}
+              />
+            </DialogContent>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+              <Button variant="contained" color="primary" onClick={handleSendButtonClick}>
+                Send
+              </Button>
+            </div>
+          </StyledDialog>
+        </>
+      )}
+    </Page>
+  );
+}

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const moment = require('moment');
 const Signup = require('../models/Signup');
+const AdminSignup = require('../models/AdminSignup');
 const { hashPassword, hashCompare, createToken } = require('../utils/authhelper');
 
 router.post('/signup', async (req, res) => {
@@ -89,7 +90,9 @@ router.post('/login', async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: `User with ${/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier) ? 'email' : 'username'} '${identifier}' does not exist`,
+        message: `User with ${
+          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier) ? 'email' : 'username'
+        } '${identifier}' does not exist`,
       });
     }
 
@@ -119,7 +122,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-
 router.get('/users', async (req, res) => {
   try {
     // Fetch all users from the database
@@ -144,6 +146,38 @@ router.get('/users', async (req, res) => {
     });
   }
 });
+
+router.get('/allusers', async (req, res) => {
+  try {
+    // Fetch all users from the Signup model
+    const usersSignup = await Signup.find();
+
+    // Fetch all users from the AdminSignup model
+    const usersAdminSignup = await AdminSignup.find();
+
+    // Concatenate users from both models
+    const allUsers = [...usersSignup, ...usersAdminSignup];
+
+    if (!allUsers || allUsers.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No users found',
+      });
+    }
+
+    res.json({
+      success: true,
+      data: allUsers.reverse(), // Reverse the order of the array
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+});
+
 
 //delete user
 router.delete('/users/:userId', async (req, res) => {
@@ -240,6 +274,41 @@ router.get('/users/:userId', async (req, res) => {
   }
 });
 
+router.get('/allusers/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Find the user in the Signup model
+    const userSignup = await Signup.findOne({ user_id: userId });
+
+    // Find the user in the AdminSignup model
+    const userAdminSignup = await AdminSignup.findOne({ user_id: userId });
+
+    // Check if the user exists in either model
+    if (!userSignup && !userAdminSignup) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    // Return the user data from the model where it was found
+    const userData = userSignup || userAdminSignup;
+
+    res.json({
+      success: true,
+      data: userData,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+});
+
+
 router.put('/signup/users/:userId', async (req, res) => {
   const userId = req.params.userId;
   const { receiver_id } = req.body;
@@ -279,6 +348,75 @@ router.put('/signup/users/:userId', async (req, res) => {
   }
 });
 
+router.put('/signup/allusers/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  const { receiver_id } = req.body;
+
+  try {
+    // Find the sender in Signup model by userId and update the chateduser field
+    const updatedSender = await Signup.findOneAndUpdate(
+      { user_id: userId },
+      { $addToSet: { chateduser: receiver_id } },
+      { new: true }
+    );
+
+    if (!updatedSender) {
+      // If the sender is not found in Signup model, check in AdminSignup model
+      const updatedSenderAdmin = await AdminSignup.findOneAndUpdate(
+        { user_id: userId },
+        { $addToSet: { chateduser: receiver_id } },
+        { new: true }
+      );
+
+      if (!updatedSenderAdmin) {
+        return res.status(404).json({ message: 'Sender not found' });
+      }
+
+      return res.json({
+        message: 'Users updated successfully',
+        sender: updatedSenderAdmin,
+        receiver: null, // You can adjust the response structure based on your needs
+      });
+    }
+
+    // Find the receiver in Signup model by receiver_id and update the chateduser field
+    const updatedReceiver = await Signup.findOneAndUpdate(
+      { user_id: receiver_id },
+      { $addToSet: { chateduser: userId } },
+      { new: true }
+    );
+
+    if (!updatedReceiver) {
+      // If the receiver is not found in Signup model, check in AdminSignup model
+      const updatedReceiverAdmin = await AdminSignup.findOneAndUpdate(
+        { user_id: receiver_id },
+        { $addToSet: { chateduser: userId } },
+        { new: true }
+      );
+
+      if (!updatedReceiverAdmin) {
+        // If the receiver is not found in both models, handle this case accordingly
+        return res.status(404).json({ message: 'Receiver not found' });
+      }
+
+      return res.json({
+        message: 'Users updated successfully',
+        sender: updatedSender,
+        receiver: updatedReceiverAdmin,
+      });
+    }
+
+    return res.json({
+      message: 'Users updated successfully',
+      sender: updatedSender,
+      receiver: updatedReceiver,
+    });
+  } catch (error) {
+    console.error('Error updating users:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
 router.get('/signup/users/:userId/chatedusers', async (req, res) => {
   const userId = req.params.userId;
 
@@ -294,6 +432,36 @@ router.get('/signup/users/:userId/chatedusers', async (req, res) => {
     const chatedUsers = user.chateduser;
 
     return res.json({ chatedUsers });
+  } catch (error) {
+    console.error('Error getting chated users:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+router.get('/signup/users/:userId/chatedallusers', async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    // Find the user by userId and get the chateduser field in Signup model
+    const userSignup = await Signup.findOne({ user_id: userId });
+
+    if (!userSignup) {
+      // If the user is not found in Signup model, check in AdminSignup model
+      const userAdminSignup = await AdminSignup.findOne({ user_id: userId });
+
+      if (!userAdminSignup) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Get the list of chated users from AdminSignup model
+      const chatedUsersAdmin = userAdminSignup.chateduser;
+
+      return res.json({ chatedUsers: chatedUsersAdmin });
+    }
+
+    // Get the list of chated users from Signup model
+    const chatedUsersSignup = userSignup.chateduser;
+
+    return res.json({ chatedUsers: chatedUsersSignup });
   } catch (error) {
     console.error('Error getting chated users:', error);
     return res.status(500).json({ message: 'Internal Server Error' });

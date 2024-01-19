@@ -11,7 +11,13 @@ export default function AddWebSite() {
   const [websiteUrl, setWebsiteUrl] = useState('');
 
   const handleInputChange = (event) => {
-    setWebsiteUrl(event.target.value);
+    let inputUrl = event.target.value;
+
+    if (!inputUrl.startsWith('https://') && !inputUrl.startsWith('http://')) {
+      inputUrl = `https://${inputUrl}`;
+    }
+
+    setWebsiteUrl(inputUrl);
   };
 
   const handleSubmit = () => {

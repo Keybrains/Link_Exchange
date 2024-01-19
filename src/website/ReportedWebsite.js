@@ -187,23 +187,21 @@ export default function ReportedWebsite() {
       )}
       <hr style={{ borderTop: '1px solid black', width: '100%', margin: '20px 0' }} /> {/* Stylish horizontal line */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-      
-          <>
-            <FormControl margin="normal" sx={{ '& .MuiInput-root': { paddingTop: '18px' } }}>
-              <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>Page</InputLabel>
-              <Select
-                value={itemsPerPage}
-                onChange={handleItemsPerPageChange}
-                label="Items per Page"
-                sx={{ fontSize: '0.9rem' }} // Adjust the fontSize as needed
-              >
-                <MenuItem value={5}>5</MenuItem>
-                <MenuItem value={10}>10</MenuItem>
-                <MenuItem value={15}>15</MenuItem>
-              </Select>
-            </FormControl>
-          </>
-      
+        <>
+          <FormControl margin="normal" sx={{ '& .MuiInput-root': { paddingTop: '18px' } }}>
+            <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>Page</InputLabel>
+            <Select
+              value={itemsPerPage}
+              onChange={handleItemsPerPageChange}
+              label="Items per Page"
+              sx={{ fontSize: '0.9rem' }} // Adjust the fontSize as needed
+            >
+              <MenuItem value={5}>5</MenuItem>
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={15}>15</MenuItem>
+            </Select>
+          </FormControl>
+        </>
 
         {/* Add your buttons and other components here */}
 

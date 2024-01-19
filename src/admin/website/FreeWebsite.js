@@ -16,6 +16,7 @@ import {
   DialogTitle,
   Tooltip,
   TablePagination,
+  TextField,
 } from '@mui/material';
 import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -36,6 +37,7 @@ export default function FreeWebsite() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState(''); // New state for search query
 
   useEffect(() => {
     async function fetchWebsites() {
@@ -116,6 +118,7 @@ export default function FreeWebsite() {
       setActionType('');
     }
   };
+
   const handleRowClick = (websiteId) => {
     navigate(`/admin/websitedetail/${websiteId}`);
   };
@@ -129,19 +132,39 @@ export default function FreeWebsite() {
     setPage(0);
   };
 
+  // Function to filter websites based on search query
+  const filteredWebsites = freeWebsites.filter(
+    (website) =>
+      website.url.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      `${website.users?.firstname} ${website.users?.lastname}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.language.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.costOfAddingBacklink.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.approved.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.reported.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.status.toString().toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <Page title="Free Websites" sx={{ padding: '25px', overflow: 'hidden' }}>
+    <Page title="Free Websites" sx={{ padding: '10px', overflow: 'hidden' }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />
         </div>
       ) : (
         <>
-          <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
-            Free Websites
-          </Typography>
+          <Typography variant="h4">Free Websites</Typography>
 
-          {freeWebsites.length > 0 ? (
+          {/* Search Input */}
+          <TextField
+            label="Search"
+            variant="outlined"
+            margin="normal"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+
+          {filteredWebsites.length > 0 ? (
             <>
               <TableContainer component={Paper}>
                 <Table>
@@ -160,151 +183,149 @@ export default function FreeWebsite() {
                   </TableHead>
                   <TableBody>
                     {(rowsPerPage > 0
-                      ? freeWebsites.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      : freeWebsites
+                      ? filteredWebsites.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      : filteredWebsites
                     ).map((website) => (
-                      <>
-                        <TableRow
-                          key={website._id}
-                          onClick={() => handleRowClick(website.website_id)}
-                          style={{ cursor: 'pointer' }}
-                        >
-                          <TableCell>{website.url}</TableCell>
-                          <TableCell>
-                            {website.users?.firstname} {website.users?.lastname}
-                          </TableCell>
-                          <TableCell>{website.country}</TableCell>
-                          <TableCell>{website.language}</TableCell>
-                          <TableCell>{website.costOfAddingBacklink}</TableCell>
-                          <TableCell>
-                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                              <span style={{ marginBottom: '5px' }}>{website.approved ? 'Yes' : 'No'}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                              <span style={{ marginBottom: '5px', color: website.reported ? 'red' : 'initial' }}>
-                                {website.reported ? 'Yes' : 'No'}
-                              </span>
-                            </div>
-                          </TableCell>
+                      <TableRow
+                        key={website._id}
+                        onClick={() => handleRowClick(website.website_id)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <TableCell>{website.url}</TableCell>
+                        <TableCell>
+                          {website.users?.firstname} {website.users?.lastname}
+                        </TableCell>
+                        <TableCell>{website.country}</TableCell>
+                        <TableCell>{website.language}</TableCell>
+                        <TableCell>{website.costOfAddingBacklink}</TableCell>
+                        <TableCell>
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span style={{ marginBottom: '5px' }}>{website.approved ? 'Yes' : 'No'}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span style={{ marginBottom: '5px', color: website.reported ? 'red' : 'initial' }}>
+                              {website.reported ? 'Yes' : 'No'}
+                            </span>
+                          </div>
+                        </TableCell>
 
-                          <TableCell>
-                            {(() => {
-                              switch (website.status) {
-                                case 'deactivate':
-                                  return (
-                                    <Tooltip title="To Activate URL - Click Here">
-                                      <Button
-                                        variant="outlined"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleToggleStatus(website._id, 'activate');
-                                        }}
-                                        color="error"
-                                      >
-                                        Inactive
-                                      </Button>
-                                    </Tooltip>
-                                  );
-                                case 'activate':
-                                  return (
-                                    <Tooltip title="To Deactivate URL - Click Here">
-                                      <Button
-                                        variant="outlined"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleToggleStatus(website._id, 'deactivate');
-                                        }}
-                                        style={{ color: 'green', borderColor: 'green' }}
-                                      >
-                                        Active
-                                      </Button>
-                                    </Tooltip>
-                                  );
-                                case 'rejected':
-                                  return (
-                                    <Tooltip title="This URL is rejected">
-                                      <Button
-                                        style={{ color: 'red' }}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                        }}
-                                      >
-                                        Rejected
-                                      </Button>
-                                    </Tooltip>
-                                  );
-                                default:
-                                  return (
-                                    <Tooltip title="This URL is not approved by admin">
-                                      <Button
-                                        style={{ color: 'gray' }}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                        }}
-                                      >
-                                        Pending
-                                      </Button>
-                                    </Tooltip>
-                                  );
+                        <TableCell>
+                          {(() => {
+                            switch (website.status) {
+                              case 'deactivate':
+                                return (
+                                  <Tooltip title="To Activate URL - Click Here">
+                                    <Button
+                                      variant="outlined"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleToggleStatus(website._id, 'activate');
+                                      }}
+                                      color="error"
+                                    >
+                                      Inactive
+                                    </Button>
+                                  </Tooltip>
+                                );
+                              case 'activate':
+                                return (
+                                  <Tooltip title="To Deactivate URL - Click Here">
+                                    <Button
+                                      variant="outlined"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleToggleStatus(website._id, 'deactivate');
+                                      }}
+                                      style={{ color: 'green', borderColor: 'green' }}
+                                    >
+                                      Active
+                                    </Button>
+                                  </Tooltip>
+                                );
+                              case 'rejected':
+                                return (
+                                  <Tooltip title="This URL is rejected">
+                                    <Button
+                                      style={{ color: 'red' }}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                      }}
+                                    >
+                                      Rejected
+                                    </Button>
+                                  </Tooltip>
+                                );
+                              default:
+                                return (
+                                  <Tooltip title="This URL is not approved by admin">
+                                    <Button
+                                      style={{ color: 'gray' }}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                      }}
+                                    >
+                                      Pending
+                                    </Button>
+                                  </Tooltip>
+                                );
+                            }
+                          })()}
+                        </TableCell>
+
+                        <TableCell>
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleUpdate(website._id);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handleUpdate(website._id);
                               }
-                            })()}
-                          </TableCell>
-
-                          <TableCell>
+                            }}
+                            style={{
+                              cursor: website.status === 'rejected' ? 'not-allowed' : 'pointer',
+                              marginRight: '10px',
+                              fontSize: '15px',
+                              opacity: website.status === 'rejected' ? 0.5 : 1,
+                            }}
+                          >
+                            {website.status === 'rejected' ? (
+                              <Tooltip title="This website is rejected">
+                                <span>
+                                  <FontAwesomeIcon icon={faPencilAlt} />
+                                </span>
+                              </Tooltip>
+                            ) : (
+                              <Tooltip title="Edit">
+                                <FontAwesomeIcon icon={faPencilAlt} />
+                              </Tooltip>
+                            )}
+                          </span>
+                          <Tooltip title="Delete">
                             <span
                               role="button"
                               tabIndex={0}
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleUpdate(website._id);
+                                handleOpenDialog(website);
                               }}
                               onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
-                                  handleUpdate(website._id);
+                                  handleOpenDialog(website);
                                 }
                               }}
-                              style={{
-                                cursor: website.status === 'rejected' ? 'not-allowed' : 'pointer',
-                                marginRight: '10px',
-                                fontSize: '15px',
-                                opacity: website.status === 'rejected' ? 0.5 : 1,
-                              }}
+                              style={{ cursor: 'pointer', fontSize: '15px' }}
                             >
-                              {website.status === 'rejected' ? (
-                                <Tooltip title="This website is rejected">
-                                  <span>
-                                    <FontAwesomeIcon icon={faPencilAlt} />
-                                  </span>
-                                </Tooltip>
-                              ) : (
-                                <Tooltip title="Edit">
-                                  <FontAwesomeIcon icon={faPencilAlt} />
-                                </Tooltip>
-                              )}
+                              <FontAwesomeIcon icon={faTrashAlt} />
                             </span>
-                            <Tooltip title="Delete">
-                              <span
-                                role="button"
-                                tabIndex={0}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleOpenDialog(website);
-                                }}
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') {
-                                    handleOpenDialog(website);
-                                  }
-                                }}
-                                style={{ cursor: 'pointer', fontSize: '15px' }}
-                              >
-                                <FontAwesomeIcon icon={faTrashAlt} />
-                              </span>
-                            </Tooltip>
-                          </TableCell>
-                        </TableRow>
-                      </>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
                     ))}
                   </TableBody>
                 </Table>
@@ -313,7 +334,7 @@ export default function FreeWebsite() {
 
               <TablePagination
                 component="div"
-                count={freeWebsites.length}
+                count={filteredWebsites.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}

@@ -48,60 +48,6 @@ router.post('/chat-messages', async (req, res) => {
   }
 });
 
-// router.get('/chat-messages', async (req, res) => {
-//   try {
-//     // Retrieve all chat messages from the database
-//     const chatMessages = await ChatMessage.find();
-
-//     res.status(200).json({
-//       success: true,
-//       data: chatMessages,
-//       message: 'Chat messages retrieved successfully',
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: 'Error retrieving chat messages',
-//       error: error.message,
-//     });
-//   }
-// });
-
-// router.get('/chatuser/chat-messages/:userId', async (req, res) => {
-//   try {
-//     const userId = req.params.userId;
-
-//     // Fetch chat messages for the specified user
-//     const messages = await ChatMessage.find({
-//       $or: [{ sender_id: userId }, { receiver_id: userId }],
-//     }).sort({ createdAt: 1 });
-
-//     res.json({ data: messages });
-//   } catch (error) {
-//     console.error('Error fetching chat messages:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
-
-// router.get('/chatuser/chat-messages/:otherUserId', async (req, res) => {
-//   const { otherUserId } = req.params;
-//   const userId = req.user.user_id;
-
-//   try {
-//     const messages = await ChatMessage.find({
-//       $or: [
-//         { sender_id: userId, receiver_id: otherUserId },
-//         { sender_id: otherUserId, receiver_id: userId },
-//       ],
-//     }).sort({ createdAt: -1 });
-
-//     res.json({ data: messages });
-//   } catch (error) {
-//     console.error('Error fetching messages:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
-
 router.get('/chatuser/chat-messages/:userId/:otherUserId', async (req, res) => {
   const { userId, otherUserId } = req.params;
 

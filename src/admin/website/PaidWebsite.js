@@ -16,6 +16,7 @@ import {
   DialogTitle,
   Tooltip,
   TablePagination,
+  TextField, // Added TextField for search functionality
 } from '@mui/material';
 import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -36,6 +37,7 @@ export default function PaidWebsite() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState(''); // Added state for search query
 
   useEffect(() => {
     async function fetchWebsites() {
@@ -130,6 +132,23 @@ export default function PaidWebsite() {
     setPage(0);
   };
 
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Function to filter paid websites based on search query
+  const filteredPaidWebsites = paidWebsites.filter(
+    (website) =>
+      website.url.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      `${website.users?.firstname} ${website.users?.lastname}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.language.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.costOfAddingBacklink.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.approved.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.reported.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.status.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <Page title="Paid Websites" sx={{ padding: '25px', overflow: 'hidden' }}>
       {loading ? (
@@ -138,10 +157,15 @@ export default function PaidWebsite() {
         </div>
       ) : (
         <>
-          <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
-            Paid Websites
-          </Typography>
-          {paidWebsites.length > 0 ? (
+          <Typography variant="h4">Paid Websites</Typography>
+          <TextField
+            label="Search"
+            variant="outlined"
+            margin="normal"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+          {filteredPaidWebsites.length > 0 ? (
             <>
               <TableContainer component={Paper}>
                 <Table>
@@ -153,14 +177,15 @@ export default function PaidWebsite() {
                       <TableCell sx={{ fontWeight: 'bold' }}>Language</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Cost</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Approved</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>Reported</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {(rowsPerPage > 0
-                      ? paidWebsites.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      : paidWebsites
+                      ? filteredPaidWebsites.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      : filteredPaidWebsites
                     ).map((website) => (
                       <TableRow
                         key={website._id}
@@ -177,9 +202,16 @@ export default function PaidWebsite() {
                         <TableCell>
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <span style={{ marginBottom: '5px' }}>{website.approved ? 'Yes' : 'No'}</span>
-                            {website.reported && <span style={{ color: 'red' }}>Reported</span>}
                           </div>
                         </TableCell>
+                        <TableCell>
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span style={{ marginBottom: '5px', color: website.reported ? 'red' : 'initial' }}>
+                              {website.reported ? 'Yes' : 'No'}
+                            </span>
+                          </div>
+                        </TableCell>
+
                         <TableCell>
                           {(() => {
                             switch (website.status) {
@@ -301,7 +333,7 @@ export default function PaidWebsite() {
               <hr style={{ borderTop: '1px solid black', width: '100%', margin: '20px 0' }} />
               <TablePagination
                 component="div"
-                count={paidWebsites.length}
+                count={filteredPaidWebsites.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
