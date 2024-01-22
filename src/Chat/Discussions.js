@@ -1,20 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-  Card,
-  Button,
-  TextField,
-  DialogContent,
-  DialogTitle,
-  Dialog,
-} from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import {
   MDBContainer,
   MDBRow,
@@ -22,7 +7,6 @@ import {
   MDBCard,
   MDBCardBody,
   MDBIcon,
-  MDBBtn,
   MDBTypography,
   MDBCardHeader,
 } from 'mdb-react-ui-kit';
@@ -88,8 +72,6 @@ export default function Discussions() {
 
         const response = await axiosInstance.post('/chatuser/chat-messages', payload);
 
-        console.log('Message sent successfully:', response.data);
-
         setMessages([...messages, response.data.data]);
         fetchUsers([...messages, response.data.data]);
       } else {
@@ -99,7 +81,6 @@ export default function Discussions() {
       console.error('Error sending message:', error);
     }
   };
-  
 
   return (
     <MDBContainer fluid className="py-5">

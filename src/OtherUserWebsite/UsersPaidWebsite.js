@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import { faDotCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { countries } from 'countries-list';
 import iso6391 from 'iso-639-1';
 import {
@@ -34,9 +34,9 @@ import Page from '../admin/components/Page';
 
 export default function UsersWebsite() {
   const countryCodes = Object.keys(countries);
-  const countryNames = countryCodes.map((code) => countries[code].name);
+  // const countryNames = countryCodes.map((code) => countries[code].name);
   const languageCodes = iso6391.getAllCodes();
-  const languageNames = languageCodes.map((code) => iso6391.getName(code));
+  // const languageNames = languageCodes.map((code) => iso6391.getName(code));
 
   const [PaidWebsite, setAllWebsites] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -72,35 +72,35 @@ export default function UsersWebsite() {
     setPage(1);
   };
 
-  const handleFilterButtonClick = () => {
-    // Function to filter data based on entered values
-    const filteredData = PaidWebsite.filter((website) => {
-      const countryFilter = !filters.country || website.country.toLowerCase() === filters.country.toLowerCase();
-      const languageFilter = !filters.language || website.language.toLowerCase() === filters.language.toLowerCase();
-      const costOfaddingbacklinkfilter =
-        !filters.costOfAddingBacklink ||
-        website.costOfAddingBacklink.toLowerCase() === filters.costOfAddingBacklink.toLowerCase();
-      const monthlyVisitsFilter =
-        !filters.monthlyVisits || website.monthlyVisits === parseInt(filters.monthlyVisits, 10);
-      const DAFiter = !filters.DA || website.DA === parseInt(filters.DA, 10);
-      const spamScoreFilter = !filters.spamScore || website.spamScore === parseInt(filters.spamScore, 10);
+  // const handleFilterButtonClick = () => {
+  //   // Function to filter data based on entered values
+  //   const filteredData = PaidWebsite.filter((website) => {
+  //     const countryFilter = !filters.country || website.country.toLowerCase() === filters.country.toLowerCase();
+  //     const languageFilter = !filters.language || website.language.toLowerCase() === filters.language.toLowerCase();
+  //     const costOfaddingbacklinkfilter =
+  //       !filters.costOfAddingBacklink ||
+  //       website.costOfAddingBacklink.toLowerCase() === filters.costOfAddingBacklink.toLowerCase();
+  //     const monthlyVisitsFilter =
+  //       !filters.monthlyVisits || website.monthlyVisits === parseInt(filters.monthlyVisits, 10);
+  //     const DAFiter = !filters.DA || website.DA === parseInt(filters.DA, 10);
+  //     const spamScoreFilter = !filters.spamScore || website.spamScore === parseInt(filters.spamScore, 10);
 
-      // Add more filters as needed
+  //     // Add more filters as needed
 
-      return (
-        costOfaddingbacklinkfilter &&
-        countryFilter &&
-        languageFilter &&
-        monthlyVisitsFilter &&
-        DAFiter &&
-        spamScoreFilter
-      );
-    });
+  //     return (
+  //       costOfaddingbacklinkfilter &&
+  //       countryFilter &&
+  //       languageFilter &&
+  //       monthlyVisitsFilter &&
+  //       DAFiter &&
+  //       spamScoreFilter
+  //     );
+  //   });
 
-    // Set the filtered data and reset the page to 1
-    setAllWebsites(filteredData);
-    setPage(1);
-  };
+  //   // Set the filtered data and reset the page to 1
+  //   setAllWebsites(filteredData);
+  //   setPage(1);
+  // };
 
   useEffect(() => {
     // Function to fetch all websites
@@ -209,7 +209,6 @@ export default function UsersWebsite() {
       });
 
       if (response.status === 201) {
-        console.log('Website reported successfully:', response.data);
         handleCloseReportDialog();
         await axiosInstance.put(`website/updateReportedStatus/${websiteToReport.website_id}`);
         setAllWebsites((prevWebsites) => prevWebsites.filter((website) => website.url !== reportedURL));

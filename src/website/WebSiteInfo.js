@@ -126,8 +126,8 @@ export default function WebSiteInfo() {
           language: fullLanguageName,
         };
 
-        const response = await axiosInstance.post('/website/website', dataToSend);
-        console.log('Response:', response.data);
+        await axiosInstance.post('/website/website', dataToSend);
+       
         navigate('/user/pendingapproval');
       } catch (error) {
         if (axios.isAxiosError(error) && error.response && error.response.status === 400) {
@@ -140,9 +140,7 @@ export default function WebSiteInfo() {
     }
   };
 
-  const handlePayment = () => {
-    console.log('Redirecting to payment gateway...');
-  };
+  const handlePayment = () => {};
 
   const handleCountryChange = (event) => {
     const selectedCountry = event.target.value;

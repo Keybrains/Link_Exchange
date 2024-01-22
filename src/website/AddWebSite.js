@@ -29,7 +29,7 @@ export default function AddWebSite() {
       toast.error('Please enter a valid main domain URL (e.g., https://www.mydomain.com)', { position: 'top-center' });
     } else {
       // URL is valid, proceed with navigation
-      console.log('Submitted URL:', websiteUrl);
+    
       navigate(`/user/websiteinfo?url=${encodeURIComponent(websiteUrl)}`);
     }
   };

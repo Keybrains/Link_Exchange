@@ -13,7 +13,6 @@ import {
   FormControl,
   MenuItem,
 } from '@mui/material';
-import axios from 'axios';
 import { faDotCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -52,8 +51,6 @@ export default function ReportedWebsite() {
 
             setReportedWebsite(paginatedWebsites);
             setTotalPages(Math.ceil(response.data.data.length / itemsPerPage));
-
-            console.log('response.data.data', response.data.data);
           } else {
             throw new Error('Failed to fetch reported websites');
           }
@@ -167,7 +164,7 @@ export default function ReportedWebsite() {
                       </Grid>
                       <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
                         <div style={{ margin: '15px' }}>
-                          <Button variant="contained" color="primary" sx={{ marginRight: '10px' }}>
+                          <Button variant="contained" color="primary" sx={{ marginRight: '10px' }} >
                             Contact
                           </Button>
                           {/* <Button variant="contained" color="secondary" sx={{ backgroundColor: '#FF7F7F' }}>

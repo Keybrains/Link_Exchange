@@ -5,8 +5,8 @@ import { IconButton, Badge, Tooltip, Typography, Box, Divider, Button } from '@m
 import Iconify from '../../components/Iconify';
 import MenuPopover from '../../components/MenuPopover';
 import Scrollbar from '../../components/Scrollbar';
-import NotificationList from './NotificationList'; // Create NotificationList component
-import axiosInstance from '../../config/AxiosInstance';
+import NotificationList from './AdminNotificationList'; // Create NotificationList component
+import axiosInstance from '../../config/AxiosInstanceAdmin';
 
 const NotificationsPopover = () => {
   const [notificationsData, setNotificationsData] = useState(null);
@@ -19,7 +19,6 @@ const NotificationsPopover = () => {
       try {
         const response = await axiosInstance.get(`notification/unread-notifications/${loggedInUserId}`);
         const data = response.data; // Use response.data to get the response body
-        console.log('data', data)
         setNotificationsData(data);
       } catch (error) {
         console.error('Error fetching notifications:', error);

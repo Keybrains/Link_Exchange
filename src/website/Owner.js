@@ -1,25 +1,6 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  Typography,
-  Card,
-  Box,
-  Button,
-  TextField,
-  Link,
-  Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  CardContent,
-} from '@mui/material';
+import { Typography, Card, Button } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faMailBulk,
-  faQuestion,
-  faPlus,
-  faMinus,
   faFilter,
   // ... other icon imports
 } from '@fortawesome/free-solid-svg-icons';
@@ -30,7 +11,6 @@ export default function Owner() {
   const handleModerationClick = () => {
     // Functionality for passing moderation as Contributor
     // Add your logic here
-    console.log('Pass moderation as Contributor clicked');
   };
   return (
     <>

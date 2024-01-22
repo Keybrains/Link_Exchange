@@ -1,19 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Typography, Button, TextField, DialogContent, DialogTitle, Dialog } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { styled } from '@mui/system';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
-import {
-  MDBCol,
-  MDBContainer,
-  MDBRow,
-  MDBCard,
-  MDBCardText,
-  MDBCardBody,
-  MDBTypography,
-  MDBIcon,
-} from 'mdb-react-ui-kit';
+import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardBody, MDBTypography, MDBIcon } from 'mdb-react-ui-kit';
 import CircularProgress from '@mui/material/CircularProgress';
 import Page from '../admin/components/Page';
 
@@ -45,11 +36,7 @@ const StyledDialog = styled(Dialog)({
 
 export default function Chat() {
   const { userId } = useParams();
-  const { state } = useLocation();
-  console.log('state', state);
-  console.log('website_id', state?.website_id);
   const [userDetail, setUserDetail] = useState(null);
-  console.log('userDetail', userDetail);
   const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [message, setMessage] = useState('');
@@ -89,7 +76,11 @@ export default function Chat() {
       const checkMessagesResponse = await axiosInstance.get(
         `/chatuser/chatuser/chat-messages/${loggedInUserId}/${userId}`
       );
-      const data = { firstname: userDetail?.firstname, lastname: userDetail?.lastname, user_id: userId };
+      const data = {
+        firstname: userDetail?.firstname,
+        lastname: userDetail?.lastname,
+        user_id: userId,
+      };
       if (checkMessagesResponse.data.data.length > 0) {
         navigate('/user/chateduser', { state: data });
       } else {
@@ -114,9 +105,7 @@ export default function Chat() {
         receiver_id: loggedInUserId,
       };
 
-      const updateUserResponse = await axiosInstance.put(`/signup/signup/allusers/${userId}`, payload);
-
-      console.log('User details updated successfully:', updateUserResponse.data);
+      await axiosInstance.put(`/signup/signup/allusers/${userId}`, payload);
 
       const chatPayload = {
         receiver_id: userId,
@@ -124,9 +113,15 @@ export default function Chat() {
         message,
       };
 
-      const sendMessageResponse = await axiosInstance.post('/chatuser/chat-messages', chatPayload);
+      await axiosInstance.post('/chatuser/chat-messages', chatPayload);
 
-      console.log('Message sent successfully:', sendMessageResponse.data);
+      const notificationPayload = {
+        receiver_id: userId,
+        sender_id: loggedInUserId,
+      };
+
+      axiosInstance.post('/notification/notifications', notificationPayload);
+
       navigate('/user/chateduser', {
         state: {
           firstname: userDetail?.firstname,

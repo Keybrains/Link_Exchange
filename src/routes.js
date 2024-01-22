@@ -46,6 +46,7 @@ import Chat from './Chat/Chat';
 import ChatedUser from './Chat/ChatedUser';
 import ChangePassword from './admin/user/ChangePassword';
 import ReportedWebsiteDetail from './admin/website/ReportedWebsiteDetail';
+import AdminChat from './Chat/AdminChat';
 
 const isAuthenticated = () => {
   const authToken = localStorage.getItem('authToken');
@@ -83,6 +84,7 @@ const Router = () => {
         { path: 'freeuserwebsite', element: isAuthenticated() ? <UsersFreeWebsite /> : <Navigate to="/login" /> },
         { path: 'paiduserwebsite', element: isAuthenticated() ? <UsersPaidWebsite /> : <Navigate to="/login" /> },
         { path: 'chat/:userId', element: isAuthenticated() ? <Chat /> : <Navigate to="/login" /> },
+        { path: 'adminchat/:userId', element: isAuthenticated() ? <AdminChat /> : <Navigate to="/login" /> },
         { path: 'chateduser', element: isAuthenticated() ? <ChatedUser /> : <Navigate to="/login" /> },
       ],
     },

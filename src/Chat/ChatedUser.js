@@ -1,17 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
-import {
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBCard,
-  MDBCardBody,
-  MDBIcon,
-  MDBTypography,
-  MDBInputGroup,
-} from 'mdb-react-ui-kit';
+import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBTypography, MDBInputGroup } from 'mdb-react-ui-kit';
 import './Chats.css';
 import { useLocation } from 'react-router-dom';
-import { Grid, TextField, Button, Typography, Hidden } from '@mui/material';
+import { TextField, Button, Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -21,8 +12,8 @@ import axiosInstance from '../config/AxiosInstance';
 export default function App() {
   const { state } = useLocation();
   console.log('state', state);
-  console.log('user_id', state?.user_id);
   const [chatedUsers, setChatedUsers] = useState([]);
+  console.log('chatedUsers', chatedUsers);
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
@@ -33,8 +24,6 @@ export default function App() {
   const loggedInUserId = JSON.parse(localStorage.getItem('decodedToken'))?.userId?.user_id;
   const chatContainerRef = useRef(null);
   const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
-  console.log('loggedInUsername', loggedInUsername);
-  const [userColors, setUserColors] = useState({});
 
   useEffect(() => {
     const fetchChatedUsers = async () => {
@@ -43,13 +32,12 @@ export default function App() {
         const userDetails = await Promise.all(
           response.data.chatedUsers.map(async (userId) => {
             const userResponse = await axiosInstance.get(`/signup/allusers/${userId}`);
-            console.log('userResponse', userResponse);
+
             const unreadMessagesResponse = await axiosInstance.get(
               `/chatuser/chatuser/unread-messages/${loggedInUserId}/${userId}`
             );
-            console.log('unreadMessagesResponse', unreadMessagesResponse);
+
             const unreadMessagesCount = unreadMessagesResponse.data.unreadMessagesCount || 0;
-            console.log('unreadMessagesCount', unreadMessagesCount);
 
             setUnreadMessagesCount((prevCounts) => ({
               ...prevCounts,
@@ -148,6 +136,14 @@ export default function App() {
         setMessages([...messages, response.data.data]);
         setMessage('');
         // scrollToBottom(); // Scroll to the bottom after sending a message
+
+        const notificationPayload = {
+          receiver_id: selectedUser,
+          sender_id: loggedInUserId,
+        };
+
+         const responce = await axiosInstance.post('/notification/notifications', notificationPayload);
+        console.log('responce', responce)
       } else {
         console.error('No messages available to reply to.');
       }
@@ -179,10 +175,10 @@ export default function App() {
     }
   };
 
-  const getSenderFullName = (senderId) => {
-    const user = users[senderId];
-    return user ? `${user.firstname} ${user.lastname}` : '';
-  };
+  // const getSenderFullName = (senderId) => {
+  //   const user = users[senderId];
+  //   return user ? `${user.firstname} ${user.lastname}` : '';
+  // };
 
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
@@ -223,7 +219,7 @@ export default function App() {
 
   const filteredUsers = chatedUsers.filter((userData) => {
     const userDetail = userData.data;
-    console.log('userDetail', userDetail);
+
     const fullName = `${userDetail.firstname} ${userDetail.lastname}`.toLowerCase();
     const username = userDetail.username.toLowerCase();
 
@@ -325,7 +321,7 @@ export default function App() {
                                         {filteredUsers.map((userData, index) => {
                                           const userDetail = userData.data;
                                           const userId = userData.data.user_id;
-                                          console.log('userId', userId);
+
                                           const isSelected = userId === selectedUser;
                                           const colors = getRandomColor(userId);
 
@@ -468,7 +464,7 @@ export default function App() {
                                     </div>
                                   ) : (
                                     <>
-                                      {messages.map((message, index) => (
+                                      {messages.map((message) => (
                                         <div
                                           key={message._id}
                                           className={`d-flex justify-content-${
@@ -502,6 +498,7 @@ export default function App() {
                                         </div>
                                       ))}
                                       <div
+                                        className="sticky-bottom"
                                         style={{
                                           display: 'flex',
                                           flexDirection: 'row',
@@ -511,7 +508,6 @@ export default function App() {
                                           backdropFilter: 'blur(10px)',
                                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
                                         }}
-                                        className="sticky-bottom"
                                       >
                                         <TextField
                                           label="Your Message"

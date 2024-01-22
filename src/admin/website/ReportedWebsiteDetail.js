@@ -1,59 +1,19 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-  Card,
-  Tooltip,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-} from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Tooltip, Button, Dialog, DialogTitle, DialogContent, TextField } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { styled } from '@mui/system';
-import {
-  faUser,
-  faEnvelope,
-  faPhone,
-  faBuilding,
-  faUserCircle,
-  faDotCircle,
-  faMoneyBill,
-  faBarsProgress,
-  faInfo,
-  faCircleInfo,
-  faLink,
-  faBug,
-} from '@fortawesome/free-solid-svg-icons';
-import {
-  MDBCol,
-  MDBContainer,
-  MDBRow,
-  MDBCard,
-  MDBCardText,
-  MDBCardBody,
-  MDBCardImage,
-  MDBTypography,
-  MDBIcon,
-} from 'mdb-react-ui-kit';
+import { faUser, faMoneyBill, faBarsProgress, faCircleInfo, faLink, faBug } from '@fortawesome/free-solid-svg-icons';
+import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBTypography } from 'mdb-react-ui-kit';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import Page from '../components/Page';
 import axiosInstance from '../config/AxiosInstanceAdmin';
 
-const IconWrapper = styled('span')({
-  marginRight: '8px',
-  fontSize: '20px',
-});
+// const IconWrapper = styled('span')({
+//   marginRight: '8px',
+//   fontSize: '20px',
+// });
 
 const StyledDialog = styled(Dialog)({
   '& .MuiDialogTitle-root': {
@@ -81,7 +41,7 @@ const StyledDialog = styled(Dialog)({
 export default function ReportedWebsiteDetail() {
   const { websiteId } = useParams();
   const [websiteDetail, setWebsiteDetail] = useState({});
-  console.log('websiteDetail', websiteDetail);
+
   const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [message, setMessage] = useState('');
@@ -93,7 +53,7 @@ export default function ReportedWebsiteDetail() {
       const response = await axiosInstance.get(`/website/websitesdetail?website_id=${websiteId}`);
       if (response.data && response.data.success) {
         setWebsiteDetail(response.data.data); // Assuming "website" is the key for website details
-        console.log(response.data.data, 'response.data.data.website');
+
         setLoading(false);
       } else {
         console.error('No data found in response:', response);
@@ -117,63 +77,56 @@ export default function ReportedWebsiteDetail() {
     setOpenDialog(false);
   };
 
-  const handleSendMessageAndToggleStatus = async () => {
-    try {
-      const decodedToken = localStorage.getItem('decodedToken');
-      const parsedToken = JSON.parse(decodedToken);
-      const loggedInUserId = parsedToken.userId?.user_id;
+  // const handleSendMessageAndToggleStatus = async () => {
+  //   try {
+  //     const decodedToken = localStorage.getItem('decodedToken');
+  //     const parsedToken = JSON.parse(decodedToken);
+  //     const loggedInUserId = parsedToken.userId?.user_id;
 
-      // Check if there are existing messages
-      const checkMessagesResponse = await axiosInstance.get(
-        `/chatuser/chatuser/chat-messages/${loggedInUserId}/${websiteDetail.user?.user_id}`
-      );
+  //     // Check if there are existing messages
+  //     const checkMessagesResponse = await axiosInstance.get(
+  //       `/chatuser/chatuser/chat-messages/${loggedInUserId}/${websiteDetail.user?.user_id}`
+  //     );
 
-      if (checkMessagesResponse.data.data.length > 0) {
-        navigate('/user/chateduser');
-      } else {
-        // If no existing messages, send a new message
-        setOpenDialog(true);
+  //     if (checkMessagesResponse.data.data.length > 0) {
+  //       navigate('/user/chateduser');
+  //     } else {
+  //       // If no existing messages, send a new message
+  //       setOpenDialog(true);
 
-        const payload = {
-          receiver_id: loggedInUserId,
-        };
+  //       const payload = {
+  //         receiver_id: loggedInUserId,
+  //       };
 
-        const updateUserResponse = await axiosInstance.put(
-          `/signup/signup/allusers/${websiteDetail.user?.user_id}`,
-          payload
-        );
+  //       const updateUserResponse = await axiosInstance.put(
+  //         `/signup/signup/allusers/${websiteDetail.user?.user_id}`,
+  //         payload
+  //       );
 
-        console.log('User details updated successfully:', updateUserResponse.data);
+  //       const chatPayload = {
+  //         receiver_id: websiteDetail.user?.user_id,
+  //         sender_id: loggedInUserId,
+  //         message,
+  //       };
 
-        const chatPayload = {
-          receiver_id: websiteDetail.user?.user_id,
-          sender_id: loggedInUserId,
-          message,
-        };
+  //       const sendMessageResponse = await axiosInstance.post('/chatuser/chat-messages', chatPayload);
 
-        const sendMessageResponse = await axiosInstance.post('/chatuser/chat-messages', chatPayload);
-
-        console.log('Message sent successfully:', sendMessageResponse.data);
-
-        // After sending the message, toggle the status and delete the reported website
-        await toggleStatusAndDeleteReportedWebsite();
-      }
-    } catch (error) {
-      console.error('Error handling send message and toggle status:', error);
-    }
-  };
+  //       // After sending the message, toggle the status and delete the reported website
+  //       await toggleStatusAndDeleteReportedWebsite();
+  //     }
+  //   } catch (error) {
+  //     console.error('Error handling send message and toggle status:', error);
+  //   }
+  // };
 
   const toggleStatusAndDeleteReportedWebsite = async () => {
     try {
       const response = await axiosInstance.put(`/reportedwebsite/reportedwebsite/toggle-status/${websiteId}`);
 
       if (response.data && response.data.success) {
-        console.log(response.data.message);
-
         // Delete the reported website
         const deleteResponse = await axiosInstance.delete(`/reportedwebsite/deletereportedwebsite/${websiteId}`);
         if (deleteResponse.data && deleteResponse.data.success) {
-          console.log(deleteResponse.data.message);
           navigate('/admin/allwebsite');
         } else {
           console.error('Failed to delete reported website:', deleteResponse.data.message);
@@ -196,12 +149,12 @@ export default function ReportedWebsiteDetail() {
 
   //     if (response.data && response.data.success) {
   //       // Handle success, e.g., show a success message
-  //       console.log(response.data.message);
+  //
 
   //       // Delete the reported website
   //       const deleteResponse = await axiosInstance.delete(`/reportedwebsite/deletereportedwebsite/${websiteId}`);
   //       if (deleteResponse.data && deleteResponse.data.success) {
-  //         console.log(deleteResponse.data.message);
+  //
   //         navigate('/admin/allwebsite');
   //       } else {
   //         console.error('Failed to delete reported website:', deleteResponse.data.message);
@@ -221,7 +174,6 @@ export default function ReportedWebsiteDetail() {
   // };
 
   useEffect(() => {
-    console.log('Website ID from params:', websiteId);
     fetchWebsiteDetail(websiteId);
   }, [websiteId]);
 
@@ -265,6 +217,13 @@ export default function ReportedWebsiteDetail() {
         message,
       };
       await axiosInstance.post('/chatuser/chat-messages', chatPayload);
+
+      const notificationPayload = {
+        receiver_id: websiteDetail.user?.user_id,
+        sender_id: loggedInUserId,
+      };
+
+      await axiosInstance.post('/notification/notifications', notificationPayload);
 
       // Toggle status and delete the reported website
       await toggleStatusAndDeleteReportedWebsite();

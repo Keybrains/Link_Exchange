@@ -31,12 +31,10 @@ export default function ChangePassword() {
       const parsedToken = JSON.parse(decodedToken);
       const adminId = parsedToken.userId?.user_id;
 
-      const response = await axiosInstance.put(`/adminsignup/adminchangepassword/${adminId}`, {
+      await axiosInstance.put(`/adminsignup/adminchangepassword/${adminId}`, {
         oldPassword,
         newPassword,
       });
-
-      console.log(response.data);
 
       // Remove tokens from local storage
       localStorage.removeItem('authToken');

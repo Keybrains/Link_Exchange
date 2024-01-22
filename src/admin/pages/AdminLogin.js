@@ -1,10 +1,9 @@
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
-import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 // @mui
 import { styled } from '@mui/material/styles';
-import { Card, Link, Container, Typography, Box } from '@mui/material';
+import { Card,Container, Typography, Box } from '@mui/material';
 import axiosInstance from '../config/AxiosInstanceAdmin';
 // hooks
 import useResponsive from '../hooks/useResponsive';
@@ -12,8 +11,7 @@ import useResponsive from '../hooks/useResponsive';
 import Page from '../components/Page';
 import Logo from '../components/Logo';
 // sections
-import { LoginForm } from '../sections/auth/login';
-import AuthSocial from '../sections/auth/AuthSocial';
+
 import AdminLoginForm from '../sections/auth/login/AdminLoginForm';
 
 // ----------------------------------------------------------------------
@@ -64,7 +62,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
 export default function AdminLogin() {
   const navigate = useNavigate();
 
-  const smUp = useResponsive('up', 'sm');
+  // const smUp = useResponsive('up', 'sm');
 
   const mdUp = useResponsive('up', 'md');
 
@@ -82,8 +80,6 @@ export default function AdminLogin() {
   //   localStorage.setItem('authToken', token);
   //   try {
   //     const decodedToken = decodeToken(token);
-  //     console.log('Decoded Token:', decodedToken);
-  //     console.log('User ID:', decodedToken.id.client_id);
   //     toast.success('Token Decoded Successfully');
 
   //     // Store the decoded token in localStorage
@@ -122,7 +118,7 @@ export default function AdminLogin() {
         },
       });
 
-      console.log('Response:', response);
+  
 
       if (response && response.data && response.data.success) {
         await toast
@@ -136,7 +132,7 @@ export default function AdminLogin() {
           });
 
         const { token } = response.data;
-        console.log('Received Token:', token); 
+      
         handleTokenDecoding(token);
       } else {
         toast.error('Failed to log in');

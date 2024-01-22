@@ -1,8 +1,8 @@
-import { AsYouType, getCountries, getCountryCallingCode } from 'libphonenumber-js';
-import { Dropdown } from 'bootstrap';
+import { getCountries, getCountryCallingCode } from 'libphonenumber-js';
+
 import * as Yup from 'yup';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
@@ -21,8 +21,6 @@ import Iconify from '../../../components/Iconify';
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
 
 export default function RegisterForm({ onSubmit }) {
-  const navigate = useNavigate();
-
   const [showPassword, setShowPassword] = useState(false);
   const [showRetypePassword, setShowRetypePassword] = useState(false);
 
@@ -72,9 +70,6 @@ export default function RegisterForm({ onSubmit }) {
     }));
     setCountryCodes(codes);
   }, []);
-
-  // Display the list of country codes and their phone number codes
-  console.log(countryCodes);
 
   const [formattedPhoneNumber, setFormattedPhoneNumber] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');

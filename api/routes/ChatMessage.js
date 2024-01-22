@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const ChatMessage = require('../models/ChatMessage'); // Adjust the path based on your project structure
+const ChatMessage = require('../models/ChatMessage');
 const moment = require('moment');
 
-// POST a new chat message
 router.post('/chat-messages', async (req, res) => {
   try {
     const timestamp = Date.now();
@@ -17,10 +16,8 @@ router.post('/chat-messages', async (req, res) => {
     const createTime = (req.body['createAt'] = moment().format('YYYY-MM-DD HH:mm:ss'));
     const updateTime = (req.body['updateAt'] = moment().format('YYYY-MM-DD HH:mm:ss'));
 
-    // Extract data from the request body
     const { website_id, sender_id, receiver_id, message } = req.body;
 
-    // Create a new ChatMessage instance
     const newChatMessage = new ChatMessage({
       chat_id: chatUniqueId,
       website_id,
@@ -31,7 +28,6 @@ router.post('/chat-messages', async (req, res) => {
       updateAt: updateTime,
     });
 
-    // Save the new chat message to the database
     const savedChatMessage = await newChatMessage.save();
 
     res.status(201).json({
@@ -87,7 +83,6 @@ router.put('/chatuser/mark-messages-as-read/:userId/:otherUserId', async (req, r
   const { userId, otherUserId } = req.params;
 
   try {
-    // Update unread messages to read status
     const updateResult = await ChatMessage.updateMany(
       {
         receiver_id: userId,
@@ -102,7 +97,7 @@ router.put('/chatuser/mark-messages-as-read/:userId/:otherUserId', async (req, r
     res.json({
       success: true,
       message: 'Unread messages marked as read successfully',
-      updatedCount: updateResult.nModified, // Number of documents updated
+      updatedCount: updateResult.nModified,
     });
   } catch (error) {
     console.error('Error updating unread messages:', error);

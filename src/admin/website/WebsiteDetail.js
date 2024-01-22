@@ -1,54 +1,18 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-  Card,
-  Tooltip,
-  Button,
-} from '@mui/material';
+import { useParams } from 'react-router-dom';
+import { Tooltip } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { styled } from '@mui/system';
-import {
-  faUser,
-  faEnvelope,
-  faPhone,
-  faBuilding,
-  faUserCircle,
-  faDotCircle,
-  faMoneyBill,
-  faBarsProgress,
-  faInfo,
-  faCircleInfo,
-  faLink,
-  faBug,
-} from '@fortawesome/free-solid-svg-icons';
-import {
-  MDBCol,
-  MDBContainer,
-  MDBRow,
-  MDBCard,
-  MDBCardText,
-  MDBCardBody,
-  MDBCardImage,
-  MDBTypography,
-  MDBIcon,
-} from 'mdb-react-ui-kit';
+// import { styled } from '@mui/system';
+import { faUser, faMoneyBill, faBarsProgress, faCircleInfo, faLink, faBug } from '@fortawesome/free-solid-svg-icons';
+import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBTypography } from 'mdb-react-ui-kit';
 import CircularProgress from '@mui/material/CircularProgress';
-
 import Page from '../components/Page';
 import axiosInstance from '../config/AxiosInstanceAdmin';
 
-const IconWrapper = styled('span')({
-  marginRight: '8px',
-  fontSize: '20px',
-});
+// const IconWrapper = styled('span')({
+//   marginRight: '8px',
+//   fontSize: '20px',
+// });
 
 export default function WebsiteDetail() {
   const { websiteId } = useParams();
@@ -60,7 +24,7 @@ export default function WebsiteDetail() {
       const response = await axiosInstance.get(`/website/websitesdetail?website_id=${websiteId}`);
       if (response.data && response.data.success) {
         setWebsiteDetail(response.data.data); // Assuming "website" is the key for website details
-        console.log(response.data.data, 'response.data.data.website');
+
         setLoading(false);
       } else {
         console.error('No data found in response:', response);
@@ -77,7 +41,6 @@ export default function WebsiteDetail() {
   };
 
   useEffect(() => {
-    console.log('Website ID from params:', websiteId);
     fetchWebsiteDetail(websiteId);
   }, [websiteId]);
 

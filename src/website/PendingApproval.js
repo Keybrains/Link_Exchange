@@ -5,15 +5,19 @@ import {
   CardContent,
   Grid,
   Button,
-  // ...other imports
+  TextField,
   Stack,
   Pagination,
   Select,
   InputLabel,
   FormControl,
   MenuItem,
+  DialogContent,
+  Dialog,
+  DialogTitle,
 } from '@mui/material';
-import axios from 'axios';
+import { styled } from '@mui/system';
+import { useNavigate } from 'react-router-dom';
 import { faDotCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -22,12 +26,42 @@ import axiosInstance from '../config/AxiosInstance';
 
 import Page from '../admin/components/Page';
 
+const StyledDialog = styled(Dialog)({
+  '& .MuiDialogTitle-root': {
+    backgroundColor: '#2196F3',
+    color: '#ffffff',
+    borderBottom: '1px solid #1565c0',
+    paddingBottom: '8px',
+  },
+  '& .MuiDialogContent-root': {
+    padding: '16px',
+  },
+  '& .MuiTextField-root': {
+    marginBottom: '16px',
+  },
+  '& .MuiButton-root': {
+    marginRight: '8px',
+  },
+  '& .MuiDialog-paper': {
+    minWidth: '400px',
+    minHeight: '300px',
+    borderRadius: '10px',
+  },
+});
+
 export default function PendingApproval() {
   const [PendingApproval, setPendingApproval] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5); // Updated state for items per page
+  const [itemsPerPage, setItemsPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [message, setMessage] = useState('');
+  const decodedToken = localStorage.getItem('decodedToken');
+  const parsedToken = JSON.parse(decodedToken);
+  const loggedInUserId = parsedToken.userId?.user_id;
+  const navigate = useNavigate();
+  const staticUserId = '1703861822774ebrhy1rn2626664125';
 
   useEffect(() => {
     async function fetchPendingApproval() {
@@ -52,8 +86,6 @@ export default function PendingApproval() {
 
             setPendingApproval(paginatedWebsites);
             setTotalPages(Math.ceil(response.data.data.length / itemsPerPage));
-
-            console.log('response.data.data', response.data.data);
           } else {
             throw new Error('Failed to fetch not approved websites');
           }
@@ -112,11 +144,9 @@ export default function PendingApproval() {
                         <span style={{ color: website.status === 'pending' ? 'gray' : 'red' }}>
                           {website.status === 'pending' ? 'Pending' : 'Rejected'}
                         </span>
-                        {(website.status === 'rejected' || website.status === 'pending') && website.reason && (
+                        {website.status === 'rejected' && website.reason && (
                           <Typography style={{ marginBottom: '10px', marginTop: '15px' }}>
-                            <span style={{ fontWeight: 'bold' }}>
-                              {website.status === 'rejected' ? 'Rejection Reason: ' : 'Pending Reason: '}
-                            </span>
+                            <span style={{ fontWeight: 'bold' }}>Rejection Reason: </span>
                             {website.reason}
                           </Typography>
                         )}
@@ -175,7 +205,16 @@ export default function PendingApproval() {
                       </Grid>
                       <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
                         <div style={{ margin: '15px' }}>
-                          <Button variant="contained" color="primary" sx={{ marginRight: '10px' }}>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            sx={{ marginRight: '10px' }}
+                            onClick={() => {
+                              navigate(`/user/adminchat/${staticUserId}?url=${encodeURIComponent(website.url)}`, {
+                                state: { website_id: website.website_id },
+                              });
+                            }}
+                          >
                             Contact
                           </Button>
                           {/* <Button variant="contained" color="secondary" sx={{ backgroundColor: '#FF7F7F' }}>

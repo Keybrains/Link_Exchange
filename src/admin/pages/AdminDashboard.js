@@ -1,30 +1,20 @@
 import { useEffect, useState } from 'react';
-import { faker } from '@faker-js/faker';
+
 // @mui
-import { useTheme } from '@mui/material/styles';
+// import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
 import axiosInstance from '../config/AxiosInstanceAdmin';
 
 // components
 import Page from '../components/Page';
-import Iconify from '../components/Iconify';
+
 // sections
-import {
-  AppTasks,
-  AppNewsUpdate,
-  AppOrderTimeline,
-  AppCurrentVisits,
-  AppWebsiteVisits,
-  AppTrafficBySite,
-  AppWidgetSummary,
-  AppCurrentSubject,
-  AppConversionRates,
-} from '../sections/@dashboard/app';
+import { AppWidgetSummary } from '../sections/@dashboard/app';
 
 // ----------------------------------------------------------------------
 
 export default function DashboardApp() {
-  const theme = useTheme();
+  // const theme = useTheme();
   const [websiteCounts, setWebsiteCounts] = useState({});
 
   useEffect(() => {
@@ -33,7 +23,6 @@ export default function DashboardApp() {
         const response = await axiosInstance.get('/website/websites/website-count');
         if (response.status === 200) {
           setWebsiteCounts(response.data); // Update to set the entire response data
-          console.log('response.data', response.data); // Log the entire response
         } else {
           throw new Error('Failed to fetch website counts');
         }

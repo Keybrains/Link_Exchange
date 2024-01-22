@@ -1,23 +1,10 @@
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+
 import toast, { Toaster } from 'react-hot-toast';
-import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 // @mui
 import { styled } from '@mui/material/styles';
-import {
-  Card,
-  Link,
-  Container,
-  Typography,
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  CardContent,
-} from '@mui/material';
+import { Card, Link, Container, Typography, Box } from '@mui/material';
 import axiosInstance from '../config/AxiosInstance';
 // hooks
 import useResponsive from '../hooks/useResponsive';
@@ -26,7 +13,6 @@ import Page from '../components/Page';
 import Logo from '../components/Logo';
 // sections
 import { LoginForm } from '../sections/auth/login';
-import AuthSocial from '../sections/auth/AuthSocial';
 
 // ----------------------------------------------------------------------
 
@@ -75,22 +61,22 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 export default function Login() {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
-  const [userType, setUserType] = useState('');
+  // const [open, setOpen] = useState(false);
+  // const [userType, setUserType] = useState('');
+  // console.log('userType', userType)
+  // const handleUserTypeSelection = (selectedType) => {
+  //   setUserType(selectedType);
+  //   setOpen(false);
+  //   handleRedirect(selectedType);
+  // };
 
-  const handleUserTypeSelection = (selectedType) => {
-    setUserType(selectedType);
-    setOpen(false);
-    handleRedirect(selectedType);
-  };
-
-  const handleRedirect = (selectedType) => {
-    if (selectedType === 'buyer') {
-      navigate('/buyer');
-    } else if (selectedType === 'publisher') {
-      navigate('/user');
-    }
-  };
+  // const handleRedirect = (selectedType) => {
+  //   if (selectedType === 'buyer') {
+  //     navigate('/buyer');
+  //   } else if (selectedType === 'publisher') {
+  //     navigate('/user');
+  //   }
+  // };
 
   const smUp = useResponsive('up', 'sm');
 
@@ -129,8 +115,6 @@ export default function Login() {
           'Content-Type': 'application/json',
         },
       });
-
-      console.log('Response:', response);
 
       if (response && response.data && response.data.success) {
         if (response.data.data.status === 'deactivate') {
@@ -229,7 +213,7 @@ export default function Login() {
         </RootStyle>
       </Page>
       <Toaster />
-      <Dialog
+      {/* <Dialog
         open={open}
         onClose={() => setOpen(false)}
         BackdropProps={{
@@ -268,7 +252,7 @@ export default function Login() {
             </DialogActions>
           </Card>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 }

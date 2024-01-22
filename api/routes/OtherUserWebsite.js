@@ -1,20 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const Website = require('../models/WebSite');
-const Signup = require('../models/Signup');
-const moment = require('moment');
-const ReportedWebsite = require('../models/ReportedWebsite');
 
 //get all website
 router.get('/websites-not-matching-user/:userId', async (req, res) => {
   try {
-    const { userId } = req.params; // Extract userId from route parameters
+    const { userId } = req.params;
 
     const websites = await Website.find({ user_id: { $ne: userId }, status: 'activate' });
 
     res.json({
       success: true,
-      data: websites.reverse(), // Reverse the order of the array
+      data: websites.reverse(),
       message: 'Websites retrieved successfully',
     });
   } catch (error) {
@@ -38,7 +35,7 @@ router.get('/paid-websites-not-matching-user/:userId', async (req, res) => {
 
     res.json({
       success: true,
-      data: paidWebsites.reverse(), // Reverse the order of the array
+      data: paidWebsites.reverse(),
       message: 'Paid websites retrieved successfully',
     });
   } catch (error) {
@@ -62,7 +59,7 @@ router.get('/free-websites-not-matching-user/:userId', async (req, res) => {
 
     res.json({
       success: true,
-      data: freeWebsites.reverse(), // Reverse the order of the array
+      data: freeWebsites.reverse(),
       message: 'Free websites retrieved successfully',
     });
   } catch (error) {

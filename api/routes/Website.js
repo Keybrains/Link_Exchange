@@ -34,7 +34,6 @@ router.post('/website', async (req, res) => {
 
       const savedData = await newWebsiteData.save();
 
-      console.log('uniqueId', uniqueId);
       return res.status(200).json({
         statusCode: 200,
         message: 'URL added successfully.',
@@ -85,9 +84,7 @@ router.post('/website', async (req, res) => {
 //get unapproved website in admin
 router.get('/websites', async (req, res) => {
   try {
-    const data = await Website.aggregate([
-      { $match: { approved: false, status: 'pending' } }, // Match documents with approved: false
-    ]);
+    const data = await Website.aggregate([{ $match: { approved: false, status: 'pending' } }]);
 
     const count = await Website.countDocuments({ approved: false });
 
@@ -99,7 +96,7 @@ router.get('/websites', async (req, res) => {
       data[i].users = users;
     }
 
-    data.reverse(); // Reverse the order of the data array
+    data.reverse();
 
     res.json({
       statusCode: 200,
@@ -118,9 +115,7 @@ router.get('/websites', async (req, res) => {
 //get website free in admin
 router.get('/websites/free', async (req, res) => {
   try {
-    const freeWebsites = await Website.aggregate([
-      { $match: { costOfAddingBacklink: 'Free' } }, // Match documents with costOfAddingBacklink as 'Free'
-    ]);
+    const freeWebsites = await Website.aggregate([{ $match: { costOfAddingBacklink: 'Free' } }]);
 
     const count = await Website.countDocuments({ costOfAddingBacklink: 'Free' });
 
@@ -132,7 +127,7 @@ router.get('/websites/free', async (req, res) => {
       freeWebsites[i].users = users;
     }
 
-    freeWebsites.reverse(); // Reverse the order of the free websites array
+    freeWebsites.reverse();
 
     res.json({
       statusCode: 200,
@@ -151,9 +146,7 @@ router.get('/websites/free', async (req, res) => {
 //get website paid in admin
 router.get('/websites/paid', async (req, res) => {
   try {
-    const paidWebsites = await Website.aggregate([
-      { $match: { costOfAddingBacklink: 'Paid' } }, // Match documents with costOfAddingBacklink as 'Paid'
-    ]);
+    const paidWebsites = await Website.aggregate([{ $match: { costOfAddingBacklink: 'Paid' } }]);
 
     const count = await Website.countDocuments({ costOfAddingBacklink: 'Paid' });
 
@@ -165,7 +158,7 @@ router.get('/websites/paid', async (req, res) => {
       paidWebsites[i].users = users;
     }
 
-    paidWebsites.reverse(); // Reverse the order of the paid websites array
+    paidWebsites.reverse();
 
     res.json({
       statusCode: 200,
@@ -304,11 +297,10 @@ router.get('/websites/paid/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
 
-    // Find paid websites for the user based on the approved status
     const paidWebsites = await Website.find({
       user_id: userId,
       costOfAddingBacklink: 'Paid',
-      approved: true, // Filter based on the approved status
+      approved: true,
       reported: false,
     });
 
@@ -353,7 +345,7 @@ router.get('/websites/free/:userId', async (req, res) => {
       });
     }
 
-    const reversedFreeWebsites = freeWebsites.reverse(); // Reverse the order of freeWebsites
+    const reversedFreeWebsites = freeWebsites.reverse();
 
     return res.status(200).json({
       success: true,
@@ -431,7 +423,6 @@ router.get('/websites/count/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
 
-    // Count Free Websites
     const countFreeWebsites = await Website.countDocuments({
       user_id: userId,
       costOfAddingBacklink: 'Free',
@@ -439,7 +430,6 @@ router.get('/websites/count/:userId', async (req, res) => {
       reported: false,
     });
 
-    // Count Paid Websites
     const countPaidWebsites = await Website.countDocuments({
       user_id: userId,
       costOfAddingBacklink: 'Paid',
@@ -447,16 +437,13 @@ router.get('/websites/count/:userId', async (req, res) => {
       reported: false,
     });
 
-    // Count Total Websites
     const countTotalWebsites = await Website.countDocuments({ user_id: userId });
 
-    // Count Pending Websites
     const countPendingWebsites = await Website.countDocuments({
       user_id: userId,
       status: { $in: ['pending', 'rejected'] },
     });
 
-    // Count Reported Websites
     const countReportedWebsites = await Website.countDocuments({ user_id: userId, reported: true });
 
     return res.status(200).json({
@@ -478,8 +465,8 @@ router.get('/websites/count/:userId', async (req, res) => {
     });
   }
 });
-//delete api for free and paid website
 
+//delete api for free and paid website
 // Delete free websites by ID
 router.delete('/websites/free/:id', async (req, res) => {
   try {
@@ -538,7 +525,6 @@ router.put('/websites/:id', async (req, res) => {
     const websiteId = req.params.id;
     const updatedWebsiteData = req.body;
 
-    // Assuming the 'isPaid' property in the website schema determines whether it's a paid website or not
     const isPaidWebsite = updatedWebsiteData.isPaid;
 
     const updatedWebsite = await Website.findByIdAndUpdate(websiteId, updatedWebsiteData, { new: true });
@@ -570,7 +556,6 @@ router.get('/websites/:id', async (req, res) => {
   try {
     const websiteId = req.params.id;
 
-    // Fetch website data by ID from the database
     const website = await Website.findById(websiteId);
 
     if (!website) {
@@ -620,7 +605,6 @@ router.get('/websites/not-approved/:userId', async (req, res) => {
   const { userId } = req.params;
 
   try {
-    // Find websites where approved status is false or status is 'rejected' and matches the user_id
     const notApprovedWebsites = await Website.find({
       user_id: userId,
       $or: [{ approved: false }, { status: 'rejected' }],
@@ -630,22 +614,21 @@ router.get('/websites/not-approved/:userId', async (req, res) => {
       return res.status(404).json({ success: false, message: 'No not approved or rejected websites found' });
     }
 
-    res.status(200).json({ success: true, data: notApprovedWebsites.reverse() }); // Reverse the order of the array
+    res.status(200).json({ success: true, data: notApprovedWebsites.reverse() });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to fetch not approved or rejected websites' });
   }
 });
 
-
 //reject website
 router.put('/reject/:websiteId', async (req, res) => {
   const { websiteId } = req.params;
-  const { reason } = req.body; // Extract reason for rejection from the request body
+  const { reason } = req.body;
 
   try {
     const updatedWebsite = await Website.findOneAndUpdate(
       { website_id: websiteId },
-      { $set: { status: 'rejected', reason: reason } }, // Update 'status' to 'rejected' and store 'reason'
+      { $set: { status: 'rejected', reason: reason } },
       { new: true }
     );
 
@@ -664,10 +647,8 @@ router.get('/websitesdetail', async (req, res) => {
   try {
     const websiteId = req.query.website_id;
 
-    // Fetch website data by website_id from the database
     const website = await Website.findOne({ website_id: websiteId });
 
-    // Check if the website is not found
     if (!website) {
       return res.status(404).json({
         success: false,
@@ -677,14 +658,12 @@ router.get('/websitesdetail', async (req, res) => {
 
     const userId = website.user_id;
 
-    // Fetch user details using the user_id from the website
     const user = await Signup.findOne({ user_id: userId });
 
     const reportedwebsiteId = website.website_id;
 
     const reportedWebsites = await ReportedWebsite.findOne({ website_id: reportedwebsiteId });
 
-    // Combine website and user data into one response object
     const responseData = {
       website: website,
       user: user,

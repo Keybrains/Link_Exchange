@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import {
   Typography,
   Table,
@@ -41,7 +40,7 @@ export default function AllWebsite() {
       const response = await axiosInstance.get('/website/websites');
       if (response.status === 200) {
         setWebsites(response.data.data);
-        console.log(response.data.data); // Add this line for debugging
+     
         setLoading(false);
       } else {
         throw new Error('Failed to fetch websites');
@@ -92,7 +91,7 @@ export default function AllWebsite() {
   };
 
   const [rejectReason, setRejectReason] = useState('');
-  console.log('rejectReason', rejectReason);
+
 
   const handleConfirmReject = async () => {
     try {

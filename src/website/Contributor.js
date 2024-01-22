@@ -1,25 +1,6 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  Typography,
-  Card,
-  Box,
-  Button,
-  TextField,
-  Link,
-  Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  CardContent,
-} from '@mui/material';
+import { Typography, Card, Button } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faMailBulk,
-  faQuestion,
-  faPlus,
-  faMinus,
   faFilter,
   // ... other icon imports
 } from '@fortawesome/free-solid-svg-icons';
@@ -29,19 +10,17 @@ import Page from '../admin/components/Page';
 const handleModerationClick = () => {
   // Functionality for passing moderation as Contributor
   // Add your logic here
-  console.log('Pass moderation as Contributor clicked');
 };
 
 const handleAddWithoutConfirmationClick = () => {
   // Functionality for adding without confirmation
   // Add your logic here
-  console.log('Add without confirmation clicked');
 };
 export default function Contributor() {
   return (
     <>
       <Page title="Add Web Site" sx={{ padding: '25px', overflow: 'hidden' }}>
-        <Card style={{padding:"20px"}}>
+        <Card style={{ padding: '20px' }}>
           <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
             Confirmation status
           </Typography>

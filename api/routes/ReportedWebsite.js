@@ -171,17 +171,13 @@ router.put('/reportedwebsite/toggle-status/:websiteId', async (req, res) => {
       });
     }
 
-    // Get the reason from the request body
-    const { reason } = req.body; // Update from 'message' to 'reason'
+    const { reason } = req.body;
 
-    // Update fields as specified
     website.approved = false;
     website.status = 'pending';
 
-    // Update the 'reported' field with the provided reason
-    website.reported = false; // Set the reported field based on your logic
+    website.reported = false;
 
-    // Update the 'reason' field if needed
     website.reason = reason || 'No reason provided';
 
     await website.save();

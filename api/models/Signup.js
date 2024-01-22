@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-// const generateLongUniqueId= require('../routes/UniqueIdGenerator');
-
-// const longUniqueId = generateLongUniqueId();
 
 const UserSchema = new mongoose.Schema({
   user_id: {

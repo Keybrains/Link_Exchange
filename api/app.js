@@ -18,6 +18,8 @@ const WebSiteRouter = require('./routes/Website');
 const OtherUserWebSiteRouter = require('./routes/OtherUserWebsite');
 const ReportedWebSiteRouter = require('./routes/ReportedWebsite');
 const ChatWebSiteRouter = require('./routes/ChatMessage');
+const NotificationRouter = require('./routes/Notification');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -37,6 +39,7 @@ app.use('/api/website', WebSiteRouter);
 app.use('/api/reportedwebsite', ReportedWebSiteRouter);
 app.use('/api/otheruserwebsite', OtherUserWebSiteRouter);
 app.use('/api/chatuser', ChatWebSiteRouter);
+app.use('/api/notification', NotificationRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

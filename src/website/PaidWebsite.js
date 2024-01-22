@@ -22,7 +22,6 @@ import {
   Box,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import CircularProgress from '@mui/material/CircularProgress';
 import axiosInstance from '../config/AxiosInstance';
 import Page from '../admin/components/Page';
@@ -87,10 +86,10 @@ export default function FreeWebsite() {
   const [reportMessage, setReportMessage] = useState('');
 
   // Function to handle opening the report dialog
-  const handleOpenReportDialog = (url) => {
-    setReportedURL(url);
-    setOpenReportDialog(true);
-  };
+  // const handleOpenReportDialog = (url) => {
+  //   setReportedURL(url);
+  //   setOpenReportDialog(true);
+  // };
 
   // Function to handle closing the report dialog
   const handleCloseReportDialog = () => {
@@ -126,7 +125,7 @@ export default function FreeWebsite() {
       });
 
       if (response.status === 201) {
-        console.log('Website reported successfully:', response.data);
+   
         handleCloseReportDialog();
 
         // Update reported status for the reported URL using the PUT API
@@ -139,7 +138,7 @@ export default function FreeWebsite() {
       }
 
       if (response.status === 201) {
-        console.log('Website reported successfully:', response.data);
+     
         handleCloseReportDialog(); // Close the dialog after reporting
       } else {
         throw new Error('Failed to report website');

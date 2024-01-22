@@ -1,64 +1,43 @@
-import { useEffect, useState } from 'react';
-import { faker } from '@faker-js/faker';
-// @mui
-import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
-import axiosInstance from '../config/AxiosInstance';
 
 // components
 import Page from '../components/Page';
-import Iconify from '../components/Iconify';
-// sections
-import {
-  AppTasks,
-  AppNewsUpdate,
-  AppOrderTimeline,
-  AppCurrentVisits,
-  AppWebsiteVisits,
-  AppTrafficBySite,
-  AppWidgetSummary,
-  AppCurrentSubject,
-  AppConversionRates,
-} from '../sections/@dashboard/app';
 
 // ----------------------------------------------------------------------
 
 export default function DashboardApp() {
-  const theme = useTheme();
-  const [websiteCounts, setWebsiteCounts] = useState({});
+  // const [websiteCounts, setWebsiteCounts] = useState({});
+  // useEffect(() => {
+  //   async function fetchFreeWebsites() {
+  //     try {
+  //       // Retrieve the decodedToken from localStorage
+  //       const decodedToken = localStorage.getItem('decodedToken');
 
-  useEffect(() => {
-    async function fetchFreeWebsites() {
-      try {
-        // Retrieve the decodedToken from localStorage
-        const decodedToken = localStorage.getItem('decodedToken');
+  //       if (decodedToken) {
+  //         const parsedToken = JSON.parse(decodedToken);
+  //         const userId = parsedToken.userId?.user_id; // Extracting user_id from decodedToken
 
-        if (decodedToken) {
-          const parsedToken = JSON.parse(decodedToken);
-          const userId = parsedToken.userId?.user_id; // Extracting user_id from decodedToken
+  //         // Update formData with the user_id
+  //         //   setFormData((prevData) => ({ ...prevData, user_id: userId }));
 
-          // Update formData with the user_id
-          //   setFormData((prevData) => ({ ...prevData, user_id: userId }));
+  //         const response = await axiosInstance.get(`/website/websites/count/${userId}`);
+  //         if (response.status === 200) {
+  //           setWebsiteCounts(response.data.data);
+  //         } else {
+  //           throw new Error('Failed to fetch approved websites');
+  //         }
+  //       } else {
+  //         throw new Error('User ID not found in decoded token');
+  //       }
+  //     } catch (error) {
+  //       console.error(error);
+  //       // Handle error state if needed
+  //     }
+  //   }
 
-          const response = await axiosInstance.get(`/website/websites/count/${userId}`);
-          if (response.status === 200) {
-            setWebsiteCounts(response.data.data);
-            console.log('response.data.data', response.data.data);
-          } else {
-            throw new Error('Failed to fetch approved websites');
-          }
-        } else {
-          throw new Error('User ID not found in decoded token');
-        }
-      } catch (error) {
-        console.error(error);
-        // Handle error state if needed
-      }
-    }
+  //   fetchFreeWebsites();
+  // }, []);
 
-    fetchFreeWebsites();
-  }, []);
-  
   return (
     <Page title="User Dashboard">
       <Container maxWidth="xl">
@@ -83,7 +62,7 @@ export default function DashboardApp() {
               icon={'teenyicons:adjust-vertical-solid'}
             />
           </Grid> */}
-{/* 
+          {/* 
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary
               title="Free Website"

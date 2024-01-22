@@ -1,17 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
-import {
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBCard,
-  MDBCardBody,
-  MDBIcon,
-  MDBTypography,
-  MDBInputGroup,
-} from 'mdb-react-ui-kit';
+import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBTypography, MDBInputGroup } from 'mdb-react-ui-kit';
 import './Chats.css';
 import { useLocation } from 'react-router-dom';
-import { Grid, TextField, Button, Typography, Hidden } from '@mui/material';
+import { TextField, Button, Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -20,8 +11,7 @@ import Page from '../../components/Page';
 
 export default function Discussions() {
   const { state } = useLocation();
-  console.log('state', state);
-  console.log('user_id', state?.user_id);
+
   const [chatedUsers, setChatedUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -44,9 +34,8 @@ export default function Discussions() {
             const unreadMessagesResponse = await axiosInstance.get(
               `/chatuser/chatuser/unread-messages/${loggedInUserId}/${userId}`
             );
-            console.log('unreadMessagesResponse', unreadMessagesResponse);
+
             const unreadMessagesCount = unreadMessagesResponse.data.unreadMessagesCount || 0;
-            console.log('unreadMessagesCount', unreadMessagesCount);
 
             setUnreadMessagesCount((prevCounts) => ({
               ...prevCounts,
@@ -142,6 +131,13 @@ export default function Discussions() {
 
         const response = await axiosInstance.post('/chatuser/chat-messages', payload);
 
+        const notificationPayload = {
+          receiver_id: selectedUser,
+          sender_id: loggedInUserId,
+        };
+
+        await axiosInstance.post('/notification/notifications', notificationPayload);
+
         setMessages([...messages, response.data.data]);
         setMessage('');
         // scrollToBottom(); // Scroll to the bottom after sending a message
@@ -176,10 +172,10 @@ export default function Discussions() {
     }
   };
 
-  const getSenderFullName = (senderId) => {
-    const user = users[senderId];
-    return user ? `${user.firstname} ${user.lastname}` : '';
-  };
+  // const getSenderFullName = (senderId) => {
+  //   const user = users[senderId];
+  //   return user ? `${user.firstname} ${user.lastname}` : '';
+  // };
 
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
@@ -461,7 +457,7 @@ export default function Discussions() {
                                     </div>
                                   ) : (
                                     <>
-                                      {messages.map((message, index) => (
+                                      {messages.map((message) => (
                                         <div
                                           key={message._id}
                                           className={`d-flex justify-content-${
