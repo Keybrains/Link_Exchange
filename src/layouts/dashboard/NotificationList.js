@@ -4,14 +4,20 @@ import { Box, Divider, Button } from '@mui/material';
 import Scrollbar from '../../components/Scrollbar';
 import NotificationItem from './NotificationItem'; // Create NotificationItem component
 
-const NotificationList = ({ notifications }) => {
+const NotificationList = ({ notifications, navigate, onMarkRead, onClosePopover }) => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Divider sx={{ borderStyle: 'dashed' }} />
 
       <Scrollbar sx={{ height: '100%' }}>
         {notifications.map((notification) => (
-          <NotificationItem key={notification.sender_id} notification={notification} />
+          <NotificationItem
+            key={notification.sender_id}
+            notification={notification}
+            navigate={navigate}
+            onMarkRead={onMarkRead}
+            onClosePopover={onClosePopover}
+          />
         ))}
       </Scrollbar>
 

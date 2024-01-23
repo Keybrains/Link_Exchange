@@ -93,6 +93,7 @@ export default function App() {
 
           // Mark messages as read when the chat opens
           await axiosInstance.put(`/chatuser/chatuser/mark-messages-as-read/${loggedInUserId}/${selectedUser}`);
+          await axiosInstance.put(`notification/mark-read/${selectedUser}/${loggedInUserId}`);
 
           // Update unread messages count
           setUnreadMessagesCount((prevCounts) => ({
@@ -142,8 +143,8 @@ export default function App() {
           sender_id: loggedInUserId,
         };
 
-         const responce = await axiosInstance.post('/notification/notifications', notificationPayload);
-        console.log('responce', responce)
+        const responce = await axiosInstance.post('/notification/notifications', notificationPayload);
+        console.log('responce', responce);
       } else {
         console.error('No messages available to reply to.');
       }

@@ -215,7 +215,7 @@ export default function PendingApproval() {
                               });
                             }}
                           >
-                            Contact
+                            Contact Admin
                           </Button>
                           {/* <Button variant="contained" color="secondary" sx={{ backgroundColor: '#FF7F7F' }}>
                         Report

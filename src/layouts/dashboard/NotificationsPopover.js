@@ -1,5 +1,6 @@
 // NotificationsPopover.js
 
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { IconButton, Badge, Tooltip, Typography, Box, Divider, Button } from '@mui/material';
 import Iconify from '../../components/Iconify';
@@ -12,22 +13,33 @@ const NotificationsPopover = () => {
   const [notificationsData, setNotificationsData] = useState(null);
   const [open, setOpen] = useState(null);
   const loggedInUserId = JSON.parse(localStorage.getItem('decodedToken'))?.userId?.user_id;
+  const navigate = useNavigate();
+
+  const fetchData = async () => {
+    try {
+      const response = await axiosInstance.get(`notification/unread-notifications/${loggedInUserId}`);
+      const data = response.data;
+      console.log('data', data);
+      setNotificationsData(data);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  };
 
   useEffect(() => {
-    // Fetch data from the server (replace with your actual API endpoint)
-    const fetchData = async () => {
-      try {
-        const response = await axiosInstance.get(`notification/unread-notifications/${loggedInUserId}`);
-        const data = response.data; // Use response.data to get the response body
-        console.log('data', data)
-        setNotificationsData(data);
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
-      }
-    };
-
+    // Call fetchData on component mount
     fetchData();
-  }, []);
+  }, [loggedInUserId]);
+
+  const handleMarkRead = async (senderId) => {
+    try {
+      await axiosInstance.put(`notification/mark-read/${senderId}/${loggedInUserId}`);
+      // Fetch updated notifications after marking as read
+      fetchData(); // Call fetchData to update notificationsData
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  };
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -78,7 +90,12 @@ const NotificationsPopover = () => {
 
           <Scrollbar sx={{ height: '100%' }}>
             {notificationsData?.unreadNotifications && (
-              <NotificationList notifications={notificationsData.unreadNotifications} />
+              <NotificationList
+                notifications={notificationsData.unreadNotifications}
+                navigate={navigate}
+                onMarkRead={handleMarkRead}
+                onClosePopover={handleClose}
+              />
             )}
           </Scrollbar>
 

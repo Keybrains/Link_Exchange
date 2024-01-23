@@ -1,17 +1,24 @@
-// NotificationList.js
+// AdminNotificationList.js
 
 import { Box, Divider, Button } from '@mui/material';
 import Scrollbar from '../../components/Scrollbar';
 import NotificationItem from './AdminNotificationItem'; // Create NotificationItem component
 
-const NotificationList = ({ notifications }) => {
+
+const AdminNotificationList = ({ notifications, navigate, onMarkRead, onClosePopover }) => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Divider sx={{ borderStyle: 'dashed' }} />
 
       <Scrollbar sx={{ height: '100%' }}>
         {notifications.map((notification) => (
-          <NotificationItem key={notification.sender_id} notification={notification} />
+          <NotificationItem
+            key={notification.sender_id}
+            notification={notification}
+            navigate={navigate}
+            onMarkRead={onMarkRead}
+            onClosePopover={onClosePopover}
+          />
         ))}
       </Scrollbar>
 
@@ -26,4 +33,4 @@ const NotificationList = ({ notifications }) => {
   );
 };
 
-export default NotificationList;
+export default AdminNotificationList;

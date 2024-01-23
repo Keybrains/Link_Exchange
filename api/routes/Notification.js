@@ -132,4 +132,30 @@ router.put('/mark-read/:userId', async (req, res) => {
   }
 });
 
+router.put('/mark-read/:senderId/:receiverId', async (req, res) => {
+  const { senderId, receiverId } = req.params;
+
+  try {
+    // Find the specific notification using sender_id and receiver_id
+    const notification = await Notification.findOne({
+      sender_id: senderId,
+      receiver_id: receiverId,
+      isUnRead: true,
+    });
+
+    if (!notification) {
+      return res.status(404).json({ error: 'Notification not found or already marked as read' });
+    }
+
+    // Update the isUnRead status for the notification to false
+    notification.isUnRead = false;
+    await notification.save();
+
+    res.json({ message: 'Notification marked as read successfully' });
+  } catch (error) {
+    console.error('Error marking notification as read:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 module.exports = router;
