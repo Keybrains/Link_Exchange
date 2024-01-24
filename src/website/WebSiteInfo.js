@@ -25,6 +25,8 @@ import axiosInstance from '../config/AxiosInstance';
 import Page from '../admin/components/Page';
 
 export default function WebSiteInfo() {
+  const { state } = useLocation();
+  console.log('state', state);
   const countryCodes = Object.keys(countries);
   const countryNames = countryCodes.map((code) => countries[code].name);
   const languageCodes = iso6391.getAllCodes();
@@ -35,6 +37,7 @@ export default function WebSiteInfo() {
   const [formData, setFormData] = useState({
     user_id: '',
     url: '',
+    backlink: '',
     monthlyVisits: '',
     DA: '',
     spamScore: '',
@@ -97,13 +100,14 @@ export default function WebSiteInfo() {
       setFormData((prevData) => ({ ...prevData, user_id: userId }));
     }
 
-    const queryParams = new URLSearchParams(location.search);
-    const urlParam = queryParams.get('url');
-
-    if (urlParam) {
-      setFormData((prevData) => ({ ...prevData, url: urlParam }));
+    if (state && state.websiteUrl && state.backlink) {
+      setFormData((prevData) => ({
+        ...prevData,
+        url: state.websiteUrl,
+        backlink: state.backlink,
+      }));
     }
-  }, [location.search]);
+  }, [location.search, state]);
 
   const getCountryFullName = (countryCode) => {
     return countries[countryCode]?.name || '';
@@ -127,7 +131,7 @@ export default function WebSiteInfo() {
         };
 
         await axiosInstance.post('/website/website', dataToSend);
-       
+
         navigate('/user/pendingapproval');
       } catch (error) {
         if (axios.isAxiosError(error) && error.response && error.response.status === 400) {

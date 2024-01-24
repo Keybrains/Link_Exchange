@@ -12,6 +12,9 @@ const WebsiteSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
+  backlink: {
+    type: String,
+  },
   monthlyVisits: {
     type: Number,
   },

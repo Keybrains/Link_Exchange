@@ -91,6 +91,7 @@ export default function Discussions() {
 
           // Mark messages as read when the chat opens
           await axiosInstance.put(`/chatuser/chatuser/mark-messages-as-read/${loggedInUserId}/${selectedUser}`);
+          await axiosInstance.put(`notification/mark-read/${selectedUser}/${loggedInUserId}`);
 
           // Update unread messages count
           setUnreadMessagesCount((prevCounts) => ({

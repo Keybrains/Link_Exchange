@@ -38,6 +38,7 @@ export default function UpdateWebSiteInfo() {
     user_id: '',
     website_id: '',
     url: '',
+    backlink: '',
     monthlyVisits: '',
     DA: '',
     spamScore: '',
@@ -130,6 +131,13 @@ export default function UpdateWebSiteInfo() {
               label="URL"
               value={formData.url}
               onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Backlink"
+              value={formData.backlink}
+              onChange={(e) => setFormData({ ...formData, backlink: e.target.value })}
               fullWidth
               margin="normal"
             />
