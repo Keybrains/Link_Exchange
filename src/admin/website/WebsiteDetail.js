@@ -172,6 +172,26 @@ export default function WebsiteDetail() {
 
                             <MDBTypography tag="h5" className="pb-2 pt-2" style={{ color: '#145DA0' }}>
                               <FontAwesomeIcon
+                                icon={faLink}
+                                style={{
+                                  paddingRight: '5px',
+                                }}
+                              />
+                              Backlink
+                            </MDBTypography>
+
+                            <hr className="mt-0 mb-2" />
+                            <MDBRow className="pt-1 pb-2 pt-2">
+                              <MDBCol size="12" className="mb-3">
+                                {/* <MDBTypography tag="h6">Email</MDBTypography> */}
+                                <MDBCardText className="text-muted" style={{ fontSize: '20px' }}>
+                                  {websiteDetail.website?.backlink}
+                                </MDBCardText>
+                              </MDBCol>
+                            </MDBRow>
+
+                            <MDBTypography tag="h5" className="pb-2 pt-2" style={{ color: '#145DA0' }}>
+                              <FontAwesomeIcon
                                 icon={faCircleInfo}
                                 style={{
                                   paddingRight: '5px',

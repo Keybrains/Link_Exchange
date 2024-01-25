@@ -15,8 +15,8 @@ export default function AddWebSite() {
   const handleInputChange = (event) => {
     let inputUrl = event.target.value;
 
-    if (!inputUrl.startsWith('https://') && !inputUrl.startsWith('http://')) {
-      inputUrl = `https://${inputUrl}`;
+    if (!inputUrl.startsWith('http://') && !inputUrl.startsWith('http://')) {
+      inputUrl = `http://${inputUrl}`;
     }
 
     setWebsiteUrl(inputUrl);
@@ -48,12 +48,12 @@ export default function AddWebSite() {
     }
 
     // Validate backlink (general URL pattern)
-    // const backlinkRegex = /^(ftp|http|https):\/\/[a-zA-Z0-9.-]+(:\d+)?\/[a-zA-Z0-9./?=_-]+$/;
+    const backlinkRegex = /^(ftp|http|https):\/\/[^ "]+$/;
 
-    // if (!backlinkRegex.test(backlink)) {
-    //   toast.error('Please enter a valid backlink URL', { position: 'top-center' });
-    //   return; // Stop execution if backlink is invalid
-    // }
+    if (!backlinkRegex.test(backlink)) {
+      toast.error('Please enter a valid backlink URL', { position: 'top-center' });
+      return; // Stop execution if backlink is invalid
+    }
 
     // Proceed with navigation
     navigate(`/user/websiteinfo`, { state: { websiteUrl, backlink } });
@@ -80,19 +80,24 @@ export default function AddWebSite() {
         </Box>
 
         {showBacklinkBox && (
-          <Box display="flex" alignItems="center">
-            <TextField
-              required
-              label="Backlink"
-              variant="outlined"
-              value={backlink}
-              onChange={(event) => setBacklink(event.target.value)}
-              sx={{ marginTop: '15px', marginRight: '15px', flex: 1 }}
-            />
-            <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ flex: 'none', width: '80px' }}>
-              Submit
-            </Button>
-          </Box>
+          <>
+            <Box display="flex" alignItems="center">
+              <TextField
+                required
+                label="Backlink"
+                variant="outlined"
+                value={backlink}
+                onChange={(event) => setBacklink(event.target.value)}
+                sx={{ marginTop: '15px', marginRight: '15px', flex: 1 }}
+              />
+              <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ flex: 'none', width: '80px' }}>
+                Submit
+              </Button>
+            </Box>
+            <Typography variant="body1" sx={{ marginTop: '15px', fontWeight: 'bold' }}>
+              Please enter the URL where you added our backlink.
+            </Typography>
+          </>
         )}
 
         <Toaster position="top-center" />
