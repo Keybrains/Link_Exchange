@@ -150,7 +150,7 @@ export default function PaidWebsite() {
   );
 
   return (
-    <Page title="Paid Websites" sx={{ padding: '25px', overflow: 'hidden' }}>
+    <Page title="Paid Websites" sx={{ paddingX: '10px', overflow: 'hidden' }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />

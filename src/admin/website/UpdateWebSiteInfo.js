@@ -18,6 +18,7 @@ import {
   DialogContent,
   DialogTitle,
   Dialog,
+  Autocomplete
 } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 
@@ -220,76 +221,34 @@ export default function UpdateWebSiteInfo() {
                 <MenuItem value="NoFollow">No Follow</MenuItem>
               </Select>
             </FormControl>
-            <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
-              <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
-                Country
-              </InputLabel>
-              <Select
-                value={formData.country}
-                onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                labelId="country"
-                id="country"
-                label="country"
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: '200px', // Set your desired height
-                      width: '150px', // Set your desired width
-                    },
-                  },
-                  anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                  },
-                  transformOrigin: {
-                    vertical: 'top',
-                    horizontal: 'left',
-                  },
-                  getContentAnchorEl: null,
-                }}
-              >
-                {countryCodes.map((code) => (
-                  <MenuItem key={code} value={code}>
-                    {countries[code].name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
-              <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
-                Language
-              </InputLabel>
-              <Select
-                value={formData.language}
-                onChange={(e) => setFormData({ ...formData, language: e.target.value })}
-                labelId="language"
-                id="language"
-                label="language"
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: '200px', // Set your desired height
-                      width: '150px', // Set your desired width
-                    },
-                  },
-                  anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                  },
-                  transformOrigin: {
-                    vertical: 'top',
-                    horizontal: 'left',
-                  },
-                  getContentAnchorEl: null,
-                }}
-              >
-                {languageCodes.map((code) => (
-                  <MenuItem key={code} value={code}>
-                    {iso6391.getName(code)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <FormControl fullWidth margin="normal">
+  <Autocomplete
+    value={formData.country}
+    onChange={(event, newValue) => {
+      setFormData({ ...formData, country: newValue });
+    }}
+    id="country-combo-box"
+    options={countryCodes}
+    getOptionLabel={(option) => countries[option].name}
+    renderInput={(params) => <TextField {...params} label="Country" />}
+    sx={{ '& .MuiInput-root': { marginTop: '18px' } }}
+  />
+</FormControl>
+
+<FormControl fullWidth margin="normal">
+  <Autocomplete
+    value={formData.language}
+    onChange={(event, newValue) => {
+      setFormData({ ...formData, language: newValue });
+    }}
+    id="language-combo-box"
+    options={languageCodes}
+    getOptionLabel={(option) => iso6391.getName(option)}
+    renderInput={(params) => <TextField {...params} label="Language" />}
+    sx={{ '& .MuiInput-root': { marginTop: '18px' } }}
+  />
+</FormControl>
+
 
             {/* ... (other form fields) */}
             <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>

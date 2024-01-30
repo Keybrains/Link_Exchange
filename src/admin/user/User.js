@@ -130,7 +130,7 @@ export default function User() {
   );
 
   return (
-    <Page title="User" sx={{ padding: '15px', overflowY: 'hidden' }}>
+    <Page title="User" sx={{ paddingX: '10px', overflowY: 'hidden' }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />

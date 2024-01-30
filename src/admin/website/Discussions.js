@@ -4,14 +4,13 @@ import './Chats.css';
 import { useLocation } from 'react-router-dom';
 import { TextField, Button, Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import CircularProgress from '@mui/material/CircularProgress';
 import axiosInstance from '../config/AxiosInstanceAdmin';
 import Page from '../../components/Page';
 
 export default function Discussions() {
   const { state } = useLocation();
-
   const [chatedUsers, setChatedUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -23,6 +22,8 @@ export default function Discussions() {
   const loggedInUserId = JSON.parse(localStorage.getItem('decodedToken'))?.userId?.user_id;
   const chatContainerRef = useRef(null);
   const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+  const [chatLoading, chatSetLoading] = useState(false);
+  const [view, setView] = useState('user-list');
 
   useEffect(() => {
     const fetchChatedUsers = async () => {
@@ -108,14 +109,28 @@ export default function Discussions() {
     fetchMessages();
   }, [selectedUser, loggedInUserId]);
 
+  // const handleUserClick = async (userId) => {
+  //   setSelectedUser(userId);
+
+  //   try {
+  //     const response = await axiosInstance.get(`/chatuser/chatuser/chat-messages/${loggedInUserId}/${userId}`);
+  //     setMessages(response.data.data);
+  //   } catch (error) {
+  //     console.error('Error fetching messages:', error);
+  //   }
+  // };
+
   const handleUserClick = async (userId) => {
     setSelectedUser(userId);
-
+    setView('chat');
+    chatSetLoading(true);
     try {
       const response = await axiosInstance.get(`/chatuser/chatuser/chat-messages/${loggedInUserId}/${userId}`);
       setMessages(response.data.data);
+      chatSetLoading(false);
     } catch (error) {
       console.error('Error fetching messages:', error);
+      chatSetLoading(false);
     }
   };
 
@@ -268,6 +283,10 @@ export default function Discussions() {
     return colors;
   };
 
+  const handleBackButtonClick = () => {
+    setView('user-list');
+  };
+
   return (
     <Page title="Chated User" style={{ overflowY: 'hidden', overflowX: 'hidden' }}>
       <div className="body-hidden-overflow">
@@ -283,7 +302,15 @@ export default function Discussions() {
                   <MDBCard id="chat3" style={{ borderRadius: '15px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                     <MDBCardBody>
                       <MDBRow>
-                        <MDBCol md="6" lg="5" xl="4" className="mb-4 mb-md-0" style={{ borderRight: '1px solid #ddd' }}>
+                        <MDBCol
+                          md="6"
+                          lg="5"
+                          xl="4"
+                          className={`mb-4 mb-md-0 user-list ${
+                            view === 'user-list' ? 'show-user-list' : 'hide-user-list'
+                          }`}
+                          style={{ borderRight: '1px solid #ddd' }}
+                        >
                           <div className="p-3">
                             <MDBInputGroup className="rounded mb-3">
                               <input
@@ -410,11 +437,11 @@ export default function Discussions() {
                           md="6"
                           lg="7"
                           xl="8"
-                          className="overflow-auto"
+                          className={`overflow-auto chat ${view === 'chat' ? 'show-chat' : 'hide-chat'}`}
                           style={{ maxHeight: '550px' }}
                           ref={chatContainerRef}
                         >
-                          {loading ? (
+                          {chatLoading ? (
                             <div
                               style={{
                                 display: 'flex',
@@ -437,6 +464,12 @@ export default function Discussions() {
                                       padding: '10px',
                                     }}
                                   >
+                                    <FontAwesomeIcon
+                                      icon={faArrowLeft}
+                                      style={{ fontSize: '1.5em', color: 'black', paddingRight: '20px' }}
+                                      onClick={handleBackButtonClick}
+                                      className="back-to-list-button sticky-top"
+                                    />
                                     <Typography
                                       variant="h6"
                                       className="font-weight-bold"

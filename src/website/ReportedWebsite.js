@@ -75,7 +75,7 @@ export default function ReportedWebsite() {
   };
 
   return (
-    <Page title="Reported Website" sx={{ padding: '25px', overflow: 'hidden' }}>
+    <Page title="Reported Website" sx={{ paddingX: '15px', overflow: 'hidden' }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />

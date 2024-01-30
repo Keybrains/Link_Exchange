@@ -18,6 +18,7 @@ import {
   DialogContent,
   DialogTitle,
   Dialog,
+  Autocomplete,
 } from '@mui/material';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
@@ -184,7 +185,7 @@ export default function WebSiteInfo() {
 
   return (
     <>
-      <Page title="Other Detail" sx={{ padding: '25px', overflow: 'hidden' }}>
+      <Page title="Other Detail" sx={{ paddingX: '15px', overflow: 'hidden' }}>
         <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
           Add your website info
         </Typography>
@@ -330,92 +331,59 @@ export default function WebSiteInfo() {
                   )}
                 </FormControl>
                 <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
-                  <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
-                    Country*
-                  </InputLabel>
-                  <Select
-                    value={formData.country}
-                    onChange={handleCountryChange}
-                    error={Boolean(errors?.country)} // Error handling for country
-                    labelId="country"
-                    id="country"
-                    label="country"
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: '200px', // Set your desired height
-                          width: '150px', // Set your desired width
-                        },
-                      },
-                      anchorOrigin: {
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                      },
-                      transformOrigin: {
-                        vertical: 'top',
-                        horizontal: 'left',
-                      },
-                      getContentAnchorEl: null,
+                  <Autocomplete
+                    value={countryNames.find((name) => countries[formData.country]?.name === name)}
+                    onChange={(event, newValue) => {
+                      const countryCode = countryCodes.find((code) => countries[code].name === newValue);
+                      handleCountryChange({ target: { value: countryCode } });
                     }}
-                  >
-                    <MenuItem value="IN">India</MenuItem>
-                    <MenuItem value="" aria-label="None" />
-
-                    {countryCodes
-                      .filter((code) => code !== 'IN') // Exclude India from the list
-                      .map((code, index) => (
-                        <MenuItem key={code} value={code}>
-                          {countryNames[index]}
-                        </MenuItem>
-                      ))}
-                  </Select>
-                  {errors?.country && (
-                    <Typography variant="caption" color="error">
-                      {errors.country}
-                    </Typography>
-                  )}
+                    options={['India', ...countryNames.filter((name) => name !== 'India')]}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Country*"
+                        error={Boolean(errors?.country)}
+                        helperText={errors?.country}
+                      />
+                    )}
+                    getOptionLabel={(option) => option || ''}
+                    sx={{
+                      '& .MuiInput-root': {
+                        marginTop: '18px',
+                        backgroundColor: 'white',
+                        paddingRight: '5px',
+                        paddingLeft: '5px',
+                      },
+                    }}
+                  />
                 </FormControl>
 
                 <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
-                  <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
-                    Language*
-                  </InputLabel>
-                  <Select
-                    value={formData.language}
-                    onChange={handleChange('language')}
-                    error={Boolean(errors?.language)} // Error handling for language
-                    labelId="language"
-                    id="language"
-                    label="language"
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: '200px', // Set your desired height
-                          width: '150px', // Set your desired width
-                        },
-                      },
-                      anchorOrigin: {
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                      },
-                      transformOrigin: {
-                        vertical: 'top',
-                        horizontal: 'left',
-                      },
-                      getContentAnchorEl: null,
+                  <Autocomplete
+                    value={languageNames.find((name) => iso6391.getName(formData.language) === name)}
+                    onChange={(event, newValue) => {
+                      const languageCode = languageCodes.find((code) => iso6391.getName(code) === newValue);
+                      handleChange('language')({ target: { value: languageCode } });
                     }}
-                  >
-                    {languageCodes.map((code, index) => (
-                      <MenuItem key={code} value={code}>
-                        {languageNames[index]}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  {errors?.language && ( // Display error message if present
-                    <Typography variant="caption" color="error">
-                      {errors.language}
-                    </Typography>
-                  )}
+                    options={languageNames}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Language*"
+                        error={Boolean(errors?.language)}
+                        helperText={errors?.language}
+                      />
+                    )}
+                    getOptionLabel={(option) => option || ''}
+                    sx={{
+                      '& .MuiInput-root': {
+                        marginTop: '18px',
+                        backgroundColor: 'white',
+                        paddingRight: '5px',
+                        paddingLeft: '5px',
+                      },
+                    }}
+                  />
                 </FormControl>
 
                 <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>

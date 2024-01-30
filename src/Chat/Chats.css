@@ -6,10 +6,36 @@
 
 /* Small devices (phones) */
 @media only screen and (max-width: 600px) {
-  body {
-    font-size: 14px;
+  .hide-user-list {
+    display: none;
+  }
+
+  .show-user-list {
+    display: block;
+  }
+
+  .hide-chat {
+    display: none;
+  }
+
+  .show-chat {
+    display: block;
   }
 }
+
+@media only screen and (max-width: 600px) {
+  .back-to-list-button {
+    display: block;
+  }
+}
+
+/* Hide the button when the screen width is more than 600px */
+@media only screen and (min-width: 601px) {
+  .back-to-list-button {
+    display: none;
+  }
+}
+
 
 /* Medium devices (tablets) */
 @media only screen and (min-width: 601px) and (max-width: 768px) {

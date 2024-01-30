@@ -6,7 +6,7 @@ import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton } from '@
 // components
 import MenuPopover from '../../components/MenuPopover';
 // mocks_
-import account from '../../_mock/account';
+// import account from '../../_mock/account';
 
 // ----------------------------------------------------------------------
 
@@ -94,7 +94,8 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src={account.photoURL} alt="photoURL" />
+        <Avatar src={'/static/mock-images/avatars/avatar_25.jpg'} alt="photoURL" />
+        
       </IconButton>
 
       <MenuPopover

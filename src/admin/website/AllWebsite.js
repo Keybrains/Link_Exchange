@@ -137,7 +137,7 @@ export default function AllWebsite() {
   );
 
   return (
-    <Page title="Approve Request" sx={{ padding: '25px', overflow: 'hidden' }}>
+    <Page title="Approve Request" sx={{ paddingX: '10px', overflow: 'hidden' }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />

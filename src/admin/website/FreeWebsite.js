@@ -146,7 +146,7 @@ export default function FreeWebsite() {
   );
 
   return (
-    <Page title="Free Websites" sx={{ padding: '10px', overflow: 'hidden' }}>
+    <Page title="Free Websites" sx={{ paddingX: '10px', overflow: 'hidden' }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />

@@ -26,6 +26,7 @@ import {
   FormControlLabel,
   Checkbox,
   FormGroup,
+  Autocomplete,
 } from '@mui/material';
 import { differenceInDays, parseISO } from 'date-fns';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -228,7 +229,7 @@ export default function UsersWebsite() {
   const navigate = useNavigate();
 
   return (
-    <Page title="Paid Website URL" sx={{ padding: '25px', overflow: 'hidden' }}>
+    <Page title="Purchase Paid Website" sx={{ paddingX: '20px', overflow: 'hidden' }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />
@@ -240,28 +241,31 @@ export default function UsersWebsite() {
           </Typography>
 
           <Grid container spacing={1} alignItems="center">
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={6} sm={4}>
               <TextField
                 label="Monthly Visits"
                 value={filters.monthlyVisits}
                 onChange={(e) => handleFilterChange('monthlyVisits', e.target.value)}
                 fullWidth
+                sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
               />
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={6} sm={4}>
               <TextField
                 label="Domain Authority"
                 value={filters.DA}
                 onChange={(e) => handleFilterChange('DA', e.target.value)}
                 fullWidth
+                sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
               />
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={6} sm={4}>
               <TextField
                 label="Spam Score"
                 value={filters.spamScore}
                 onChange={(e) => handleFilterChange('spamScore', e.target.value)}
                 fullWidth
+                sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
               />
             </Grid>
             {/* <Grid item xs={12} sm={4}>
@@ -279,78 +283,52 @@ export default function UsersWebsite() {
                 </Select>
               </FormControl>
             </Grid> */}
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={6} sm={4}>
               <FormControl fullWidth>
-                <InputLabel>Country</InputLabel>
-                <Select
+                <Autocomplete
+                  fullWidth
                   value={filters.country}
-                  onChange={(e) => handleFilterChange('country', e.target.value)}
-                  labelId="country"
-                  id="country"
-                  label="Country"
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: '200px', // Set your desired height
-                        width: '150px', // Set your desired width
-                      },
-                    },
-                    anchorOrigin: {
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    },
-                    transformOrigin: {
-                      vertical: 'top',
-                      horizontal: 'left',
-                    },
-                    getContentAnchorEl: null,
+                  onChange={(event, newValue) => {
+                    handleFilterChange('country', newValue);
                   }}
-                >
-                  {countryCodes.map((code) => (
-                    <MenuItem key={code} value={code}>
-                      {countries[code].name}
-                    </MenuItem>
-                  ))}
-                </Select>
+                  id="country-autocomplete"
+                  options={countryCodes.map((code) => countries[code].name)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Country"
+                      variant="outlined"
+                      fullWidth
+                      sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
+                    />
+                  )}
+                />
               </FormControl>
             </Grid>
 
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={6} sm={4}>
               <FormControl fullWidth>
-                <InputLabel>Language</InputLabel>
-                <Select
+                <Autocomplete
+                  fullWidth
                   value={filters.language}
-                  onChange={(e) => handleFilterChange('language', e.target.value)}
-                  labelId="language"
-                  id="language"
-                  label="Language"
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: '200px', // Set your desired height
-                        width: '150px', // Set your desired width
-                      },
-                    },
-                    anchorOrigin: {
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    },
-                    transformOrigin: {
-                      vertical: 'top',
-                      horizontal: 'left',
-                    },
-                    getContentAnchorEl: null,
+                  onChange={(event, newValue) => {
+                    handleFilterChange('language', newValue);
                   }}
-                >
-                  {languageCodes.map((code) => (
-                    <MenuItem key={code} value={code}>
-                      {iso6391.getName(code)}
-                    </MenuItem>
-                  ))}
-                </Select>
+                  id="language-autocomplete"
+                  options={languageCodes.map((code) => iso6391.getName(code))}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Language"
+                      variant="outlined"
+                      fullWidth
+                      sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
+                    />
+                  )}
+                />
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={6} sm={4}>
               <FormControl fullWidth>
                 <InputLabel>Link Type</InputLabel>
                 <Select
@@ -359,13 +337,14 @@ export default function UsersWebsite() {
                   labelId="linkType"
                   id="linkType"
                   label="link Type"
+                  sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
                 >
                   <MenuItem value="DoFollow">Do Follow</MenuItem>
                   <MenuItem value="NoFollow">No Follow</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={6} sm={4}>
               <FormControl fullWidth>
                 <InputLabel>Categories</InputLabel>
                 <Select
@@ -374,6 +353,7 @@ export default function UsersWebsite() {
                   onChange={(e) => handleFilterChange('categories', e.target.value)}
                   renderValue={(selected) => selected.join(', ')}
                   label="Categories"
+                  sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
                 >
                   {/* Add your categories here */}
                   <MenuItem value="Category1">Category 1</MenuItem>
@@ -382,7 +362,7 @@ export default function UsersWebsite() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={6} sm={4}>
               <FormControl fullWidth>
                 <InputLabel>Surface In Google News</InputLabel>
                 <Select
@@ -391,6 +371,7 @@ export default function UsersWebsite() {
                   labelId="surfaceInGoogleNews"
                   id="surfaceInGoogleNews"
                   label="surface In Google News"
+                  sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
                 >
                   <MenuItem value="Yes">Yes</MenuItem>
                   <MenuItem value="No">No</MenuItem>
@@ -398,7 +379,7 @@ export default function UsersWebsite() {
               </FormControl>
             </Grid>
           </Grid>
-          <Grid item xs={12} sm={4} className="pt-2">
+          <Grid item xs={6} sm={4} className="pt-2">
             <FormControl fullWidth>
               {/* <InputLabel>New Websites</InputLabel> */}
               <FormGroup>

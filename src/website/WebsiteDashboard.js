@@ -30,7 +30,7 @@ export default function WebsiteDashboard() {
   };
 
   return (
-    <Page title="Add Web Site" sx={{ padding: '25px', overflow: 'hidden' }}>
+    <Page title="Add Web Site" sx={{ paddingX: '20px', overflow: 'hidden' }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
         My Platforms
       </Typography>
@@ -59,87 +59,44 @@ export default function WebsiteDashboard() {
 
       {isContentOpen && (
         <Card sx={{ padding: '15px', overflow: 'hidden' }}>
-          <Typography variant="body1" style={{ marginBottom: '10px' }}>
-            There are two major statuses - either a site owner or a contributor. By default, publishers are allowed to
-            work with sites only in the site owner status. If you want to continue working as a contributor you have to{' '}
-            <a style={{ color: '#0000FF' }}>pass moderation.</a>
+          <Typography variant="h6" gutterBottom>
+            Here is how you can add your website in a few simple steps:
           </Typography>
-          <Typography variant="body1">
-            <b>On this page you can:</b>
-          </Typography>
-          <Typography variant="body1" style={{ paddingLeft: '20px', marginBottom: '20px' }}>
-            <ul style={{ listStyleType: 'none', padding: '0' }}>
-              <li>
-                <a style={{ color: '#0000FF' }}>Add a website</a>
-              </li>
-              <li>
-                <a style={{ color: '#0000FF' }}>
-                  Read Link Exchange's requirements to the website (see clause 5.21 - 11)
-                </a>
-              </li>
-              <li>See the brief overview of your websites and their statuses</li>
-              <li>Check the detailed information about your website and update it</li>
-              <li>
-                Activate/deactivate the website <br />
-                <small style={{ color: 'blue' }}>(i.e. put on hold the acceptance of tasks from buyers)</small>
-              </li>
-            </ul>
-          </Typography>
-          <Typography variant="body1" style={{ backgroundColor: '#f0f0f0', padding: '10px', marginBottom: '20px' }}>
-            Reveal more details about Publisher’s Interface in{' '}
-            <a style={{ color: '#0000FF' }}>Link Exchange Content Creation and Placement Tutorial.</a>
-          </Typography>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '20px',
-            }}
-          >
-            <div style={{ marginBottom: '15px' }}>
-              <Typography variant="body1">
-              <b><FontAwesomeIcon icon={faPlus} /> Add a website</b>
-              </Typography>
-              <Typography variant="body1">
-                Want to monetize your site while placing or creating unique and relevant content? Just add your website
-                to our inventory, get tasks from buyers and enjoy profit!
-              </Typography>
-              <Typography variant="body1">
-                N.B. Don’t forget to <a style={{ color: '#0000FF' }}>work on your metrics</a> to grow them constantly.
-                That increases your chances of receiving more tasks from buyers.
-              </Typography>
-            </div>
-            <div style={{ marginBottom: '15px' }}>
-              <Typography variant="body1">
-              <b><FontAwesomeIcon icon={faFileAlt} /> Service type</b>
-              </Typography>
-              <Typography variant="body1">
-                What are you going to do? You have 2 options:
-                <ul style={{ listStyleType: 'none', paddingLeft: '20px', marginBottom: '0' }}>
-                  <li>
-                    Place content provided by buyers on your website. Please set the price you’d like to get for content
-                    placement.
-                  </li>
-                  <li>
-                    Create different types of content (mini-post, article, long article) for buyers, and place it on
-                    your site. Please set the price you’d like to get for content creation and placement.
-                  </li>
-                </ul>
-              </Typography>
-            </div>
-            <div>
-              <Typography variant="body1">
-              <b><FontAwesomeIcon icon={faEye} /> Results</b>
-              </Typography>
-              <ul style={{ listStyleType: 'none', marginBottom: '0', padding: '0' }}>
-                <li>Monetizing your site</li>
-                <li>100% reliable payouts</li>
-                <li>Higher Google rank for quality content</li>
-                <li>100% control over the content placed on your site</li>
-                <li>Sponsorship disclosure to keep your readers' trust</li>
-              </ul>
-            </div>
-          </div>
+          <ol style={{ paddingLeft: '20px' }}>
+            <li>Click the 'Add a website' button.</li>
+            <li>Agree to the terms and conditions and click the 'Agree and Continue' button.</li>
+            <li>
+              Enter the URL or the domain of your website. No domain extension is allowed in the first step. Click the
+              'Add' button. A new box will appear.
+            </li>
+            <li>
+              In this box, enter the URL where you inserted our backlink. For example, you can add our backlink on the
+              page www.mydomain.com/linkpage. Once adding the correct page URL, click the 'Submit' button.
+            </li>
+            <li>
+              Carefully enter the information required, such as Monthly Organic Visits, the category of your website
+              (you can select multiple categories), Domain Authority, what type of link you will provide (do-follow or
+              no-follow), and more.
+            </li>
+            <li>
+              Specify the spam score of your website, which country your website is viewed the most, how many backlinks
+              you would give if anyone sends you a request, and the default language of your website.
+            </li>
+            <li>
+              Choose if you will provide a free backlink for an exchange or if you will charge some amount. Mention the
+              period that the backlink will be available (specific days or forever).
+            </li>
+            <li>Select if your website appears in Google News or not.</li>
+            <li>
+              Click the 'Submit' button. Wait for the approval by our team. We usually approve sites within 24 hours if
+              they are eligible, but it might take longer during high demand.
+            </li>
+            <li>
+              If your website is approved, it will appear in the search results. If it is not approved, our team will
+              inform you of the reason, and you can apply again. If you think that no action has been taken, then you
+              can contact the team through the 'Contact Admin' button.
+            </li>
+          </ol>
         </Card>
       )}
       <Box
@@ -176,6 +133,18 @@ export default function WebsiteDashboard() {
           Add website
         </Button>
       </Box>
+      {/* YouTube Video Embed */}
+      <Card sx={{ marginBottom: '20px' }}>
+        <iframe
+          width="100%"
+          height="315"
+          src="https://www.youtube.com/embed/NGYUJIQkXo0?autoplay=1&mute=1"
+          title="YouTube video player"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      </Card>
     </Page>
   );
 }

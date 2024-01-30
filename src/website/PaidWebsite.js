@@ -125,7 +125,6 @@ export default function FreeWebsite() {
       });
 
       if (response.status === 201) {
-   
         handleCloseReportDialog();
 
         // Update reported status for the reported URL using the PUT API
@@ -138,7 +137,6 @@ export default function FreeWebsite() {
       }
 
       if (response.status === 201) {
-     
         handleCloseReportDialog(); // Close the dialog after reporting
       } else {
         throw new Error('Failed to report website');
@@ -154,7 +152,7 @@ export default function FreeWebsite() {
   };
 
   return (
-    <Page title="Paid Website" sx={{ padding: '25px', overflow: 'hidden' }}>
+    <Page title="My Paid Website" sx={{ paddingX: '20px', overflow: 'hidden' }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
         My Paid Website
       </Typography>

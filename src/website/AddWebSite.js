@@ -95,7 +95,11 @@ export default function AddWebSite() {
               </Button>
             </Box>
             <Typography variant="body1" sx={{ marginTop: '15px', fontWeight: 'bold' }}>
-              Please enter the URL where you added our backlink.
+              Please give a do-follow backlink to our Go Program page with the URL
+              https://keybrainstech.com/go-project-by-key-brains/ (Anchor Text as Free Backlinks) . Once you add our
+              link on any page of yours please enter the page URL where the backlink has been given. This is to prove
+              that you have the authority to add or manage backlinks on your website. It should be the same website
+              which you entered for backlink. Do not remove the URL until you wish to use our system.
             </Typography>
           </>
         )}
