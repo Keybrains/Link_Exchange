@@ -34,7 +34,7 @@ export default function LanguagePopover() {
             style={{
               color: '#3498db',
               cursor: 'pointer',
-              fontWeight: 'bold', // Make the text bold
+              // fontWeight: 'bold', // Make the text bold
               fontSize: '16px', // Set the font size
               // textDecoration: 'underline', // Underline the text
               transition: 'color 0.3s ease-in-out', // Add a smooth color transition

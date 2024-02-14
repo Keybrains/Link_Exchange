@@ -36,6 +36,59 @@ const MENU_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
+  const getLightColor = () => {
+    const storedColor = localStorage.getItem('lightColor');
+    if (storedColor) {
+      return storedColor;
+    }
+
+    const letters = 'ABCDEF';
+    let lightColor = '#';
+    for (let i = 0; i < 3; i += 1) {
+      lightColor += letters[Math.floor(Math.random() * letters.length)];
+    }
+
+    localStorage.setItem('lightColor', lightColor);
+    return lightColor;
+  };
+
+  const getBrightColor = () => {
+    const storedColor = localStorage.getItem('brightColor');
+    if (storedColor) {
+      return storedColor;
+    }
+
+    const letters = '89ABCDEF';
+    let brightColor = '#';
+    for (let i = 0; i < 3; i += 1) {
+      brightColor += letters[Math.floor(Math.random() * letters.length)];
+    }
+
+    localStorage.setItem('brightColor', brightColor);
+    return brightColor;
+  };
+
+  useEffect(() => {
+    // Retrieve decodedToken from localStorage
+    const decodedToken = localStorage.getItem('decodedToken');
+    if (decodedToken) {
+      const parsedToken = JSON.parse(decodedToken);
+      const { userId } = parsedToken;
+
+      // Extracting firstname, lastname, and email from userId in decodedToken
+      setUserInfo({
+        firstname: userId.firstname,
+        lastname: userId.lastname,
+        email: userId.email,
+      });
+    }
+  }, []);
+
+  const getInitials = () => {
+    const { firstname, lastname } = userInfo || {};
+    return `${firstname ? firstname.charAt(0) : ''}${lastname ? lastname.charAt(0) : ''}`;
+  };
+
   const anchorRef = useRef(null);
 
   const [open, setOpen] = useState(null);
@@ -94,8 +147,14 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src={'/static/mock-images/avatars/avatar_25.jpg'} alt="photoURL" />
-        
+        <Avatar
+          sx={{
+            backgroundColor: getLightColor(), // Use light color for background
+            color: getBrightColor(), // Use bright color for text
+          }}
+        >
+          {getInitials()}
+        </Avatar>
       </IconButton>
 
       <MenuPopover

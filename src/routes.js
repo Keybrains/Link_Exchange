@@ -38,6 +38,7 @@ import ChatedUser from './Chat/ChatedUser';
 import ChangePassword from './admin/user/ChangePassword';
 import ReportedWebsiteDetail from './admin/website/ReportedWebsiteDetail';
 import AdminChat from './Chat/AdminChat';
+import Project from './admin/project/Project';
 
 const isAuthenticated = () => {
   const authToken = localStorage.getItem('authToken');
@@ -112,21 +113,29 @@ const Router = () => {
         { path: 'admindashboard', element: isAuthenticated() ? <AdminDashboard /> : <Navigate to="/adminlogin" /> },
         { path: 'allwebsite', element: isAuthenticated() ? <AllWebsite /> : <Navigate to="/adminlogin" /> },
         { path: 'alluser', element: isAuthenticated() ? <User /> : <Navigate to="/adminlogin" /> },
-        { path: 'freewebsite', element: isAuthenticated() ? <AdminFreeWebsite /> : <Navigate to="/login" /> },
-        { path: 'paidwebsite', element: isAuthenticated() ? <AdminPaidWebsite /> : <Navigate to="/login" /> },
-        { path: 'reportedwebsite', element: isAuthenticated() ? <AdminReportedWebsite /> : <Navigate to="/login" /> },
-        { path: 'discussions', element: isAuthenticated() ? <AdminDiscussions /> : <Navigate to="/login" /> },
+        { path: 'freewebsite', element: isAuthenticated() ? <AdminFreeWebsite /> : <Navigate to="/adminlogin" /> },
+        { path: 'paidwebsite', element: isAuthenticated() ? <AdminPaidWebsite /> : <Navigate to="/adminlogin" /> },
+        {
+          path: 'reportedwebsite',
+          element: isAuthenticated() ? <AdminReportedWebsite /> : <Navigate to="/adminlogin" />,
+        },
+        { path: 'discussions', element: isAuthenticated() ? <AdminDiscussions /> : <Navigate to="/adminlogin" /> },
+        { path: 'addproject', element: isAuthenticated() ? <Project /> : <Navigate to="/adminlogin" /> },
         {
           path: 'updatesite/:websiteId',
-          element: isAuthenticated() ? <UpdateWebSiteInfo /> : <Navigate to="/login" />,
+          element: isAuthenticated() ? <UpdateWebSiteInfo /> : <Navigate to="/adminlogin" />,
         },
-        { path: 'userdetail/:userId', element: isAuthenticated() ? <UserDetail /> : <Navigate to="/login" /> },
-        { path: 'websitedetail/:websiteId', element: isAuthenticated() ? <WebsiteDetail /> : <Navigate to="/login" /> },
+        { path: 'userdetail/:userId', element: isAuthenticated() ? <UserDetail /> : <Navigate to="/adminlogin" /> },
+        {
+          path: 'websitedetail/:websiteId',
+          element: isAuthenticated() ? <WebsiteDetail /> : <Navigate to="/adminlogin" />,
+        },
+
         {
           path: 'reportedwebsitedetail/:websiteId',
-          element: isAuthenticated() ? <ReportedWebsiteDetail /> : <Navigate to="/login" />,
+          element: isAuthenticated() ? <ReportedWebsiteDetail /> : <Navigate to="/adminlogin" />,
         },
-        { path: 'changepassword', element: isAuthenticated() ? <ChangePassword /> : <Navigate to="/login" /> },
+        { path: 'changepassword', element: isAuthenticated() ? <ChangePassword /> : <Navigate to="/adminlogin" /> },
       ],
     },
   ]);

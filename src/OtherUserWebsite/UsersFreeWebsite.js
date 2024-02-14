@@ -230,7 +230,7 @@ export default function UsersWebsite() {
   const navigate = useNavigate();
 
   return (
-    <Page title="Purchase Free Website" sx={{ paddingX: '20px', overflow: 'hidden' }}>
+    <Page title="Purchase Free Website" sx={{ paddingTop: '130px', overflow: 'hidden' }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />

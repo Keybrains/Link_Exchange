@@ -153,7 +153,7 @@ export default function FreeWebsite() {
     navigate('/user/terms');
   };
   return (
-    <Page title="My Free Website" sx={{ paddingX: '20px', overflow: 'hidden' }}>
+    <Page title="My Free Website" sx={{ paddingTop: '130px', overflow: 'hidden' }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
         My Free Website
       </Typography>

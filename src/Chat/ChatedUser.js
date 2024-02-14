@@ -283,7 +283,7 @@ export default function App() {
   };
 
   return (
-    <Page title="Chated User" style={{ overflowY: 'hidden', overflowX: 'hidden' }}>
+    <Page title="Chated User" style={{ overflowY: 'hidden', overflowX: 'hidden', paddingTop: '130px' }}>
       <div className="body-hidden-overflow">
         {loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>

@@ -45,6 +45,11 @@ const navConfig = [
     icon: getIcon('material-symbols:chat'),
   },
   {
+    title: 'Add Project',
+    path: '/admin/addproject',
+    icon: getIcon('eva:file-text-fill'),
+  },
+  {
     title: 'Change Password',
     path: '/admin/changepassword',
     icon: getIcon('mdi:password-reset'),

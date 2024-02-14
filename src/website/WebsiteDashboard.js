@@ -30,9 +30,9 @@ export default function WebsiteDashboard() {
   };
 
   return (
-    <Page title="Add Web Site" sx={{ paddingX: '20px', overflow: 'hidden' }}>
+    <Page title="Add Web Site" sx={{paddingTop: '130px', overflow: 'hidden' }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
-        My Platforms
+        Add Website
       </Typography>
 
       <Card
@@ -49,7 +49,7 @@ export default function WebsiteDashboard() {
       >
         <Typography variant="body1" style={{ color: 'white', display: 'flex', alignItems: 'center' }}>
           <FontAwesomeIcon icon={faQuestion} style={{ marginRight: '8px', fontSize: '20px' }} />
-          How to work with this page
+          How to use this system
           <FontAwesomeIcon
             icon={isContentOpen ? faMinus : faPlus}
             style={{ marginLeft: 'auto', fontSize: '20px', color: 'black' }}

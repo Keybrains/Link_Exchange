@@ -1,0 +1,30 @@
+/* DashboardStyles.css */
+
+/* Base adjustments for project images */
+.project-image {
+    width: 20%; /* Adjust width to make images smaller */
+    height: auto; /* Maintain aspect ratio */
+    display: block; /* Ensures the image is displayed as a block-level element */
+    margin: 0 auto; /* Center image horizontally within its container */
+    padding: 0; /* Remove default padding to avoid extra space */
+  }
+  
+  /* Adjustments for different screen sizes */
+  @media (max-width: 767px) {
+    .project-image {
+      width: 30%; /* Slightly larger for very small screens for visibility */
+    }
+  }
+  
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .project-image {
+      width: 25%; /* Medium size for tablet screens */
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .project-image {
+      width: 20%; /* Smaller size for large screens */
+    }
+  }
+  

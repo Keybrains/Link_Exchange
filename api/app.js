@@ -19,6 +19,8 @@ const OtherUserWebSiteRouter = require('./routes/OtherUserWebsite');
 const ReportedWebSiteRouter = require('./routes/ReportedWebsite');
 const ChatWebSiteRouter = require('./routes/ChatMessage');
 const NotificationRouter = require('./routes/Notification');
+const CdnRouter = require('./routes/cdn');
+const ProjectRouter = require('./routes/Project');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -40,6 +42,8 @@ app.use('/api/reportedwebsite', ReportedWebSiteRouter);
 app.use('/api/otheruserwebsite', OtherUserWebSiteRouter);
 app.use('/api/chatuser', ChatWebSiteRouter);
 app.use('/api/notification', NotificationRouter);
+app.use('/api/cdn', CdnRouter);
+app.use('/api/projects', ProjectRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

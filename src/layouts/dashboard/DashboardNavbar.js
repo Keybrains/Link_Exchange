@@ -1,7 +1,8 @@
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 // material
 import { alpha, styled } from '@mui/material/styles';
-import { Box, Stack, AppBar, Toolbar, IconButton } from '@mui/material';
+import { Box, Stack, AppBar, Toolbar, IconButton, Grid, Card, CardActionArea, CardMedia } from '@mui/material';
 // components
 import Iconify from '../../components/Iconify';
 //
@@ -9,7 +10,8 @@ import Searchbar from './Searchbar';
 import AccountPopover from './AccountPopover';
 import LanguagePopover from './LanguagePopover';
 import NotificationsPopover from './NotificationsPopover';
-
+import axiosInstance from '../../config/AxiosInstance';
+import './DashboardStyles.css';
 // ----------------------------------------------------------------------
 
 const DRAWER_WIDTH = 280;
@@ -41,8 +43,45 @@ DashboardNavbar.propTypes = {
 };
 
 export default function DashboardNavbar({ onOpenSidebar }) {
+  const basePath = 'http://localhost:5000/api/cdn/upload/images/';
+  const [projects, setProjects] = useState([]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await axiosInstance.get('/projects/projects');
+        setProjects(response.data);
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
   return (
     <RootStyle>
+      <Stack direction="row" alignItems="center" justifyContent="center" sx={{ mb: 2, mt: 2 }}>
+        {projects.map((project, index) => (
+          <Box
+            key={project._id} // Assuming each project has a unique _id for the key
+            component="img"
+            src={`${basePath}${project.image}`} // Use `src` instead of `image` for img elements
+            alt="Uploaded Image"
+            className="project-image"
+            sx={{
+             
+              height: 'auto', // Maintain aspect ratio
+              padding: '10px', // If you still want padding around the images, adjust as needed
+              '&:hover': {
+                opacity: 0.7, // Example hover effect, adjust or remove as needed
+              },
+            }}
+            onClick={() => window.open(project.url, '_blank')}
+          />
+        ))}
+      </Stack>
+
       <ToolbarStyle>
         <IconButton onClick={onOpenSidebar} sx={{ mr: 1, color: 'text.primary', display: { lg: 'none' } }}>
           <Iconify icon="eva:menu-2-fill" />
