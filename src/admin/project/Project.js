@@ -83,7 +83,7 @@ const UploadForm = () => {
       setUploadError('Error saving the data');
     }
   };
-  const basePath = 'http://localhost:5000/api/cdn/upload/images/';
+  const basePath = 'https://link-exchange-server.vercel.app/api/cdn/upload/images/';
   const [projects, setProjects] = useState([]);
 
   const fetchProjects = async () => {

@@ -20,7 +20,7 @@ function getCurrentDateAndTime() {
 //defined storage path
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    let destinationFolder = '../../../../vaibhav/LES/api/files/';
+    let destinationFolder = '../files/';
 
     // Define the destination folder based on file type
     if (file.mimetype === 'application/pdf') {
@@ -113,7 +113,7 @@ router.get('/upload/:filetype/:filename', async (req, res) => {
 
     // Check if the file exists
     if (filetype === 'images') {
-      const filePath = path.join('../../../../vaibhav/LES/api/files/', filetype, filename);
+      const filePath = path.join('../files/', filetype, filename);
       console.log(filePath);
       if (fs.existsSync(filePath)) {
         // Read the file and send it in the response
@@ -124,7 +124,7 @@ router.get('/upload/:filetype/:filename', async (req, res) => {
         res.status(404).json({ status: 'error', message: 'Image not found' });
       }
     } else if (filetype === 'pdf') {
-      const filePath = path.join('../../../../vaibhav/LES/api/files/', filetype, filename);
+      const filePath = path.join('../files/', filetype, filename);
       if (fs.existsSync(filePath)) {
         // Read the file and send it in the response
         const fileBuffer = fs.readFileSync(filePath);
@@ -134,7 +134,7 @@ router.get('/upload/:filetype/:filename', async (req, res) => {
         res.status(404).json({ status: 'error', message: 'Pdf not found' });
       }
     } else {
-      const filePath = path.join('../../../../vaibhav/LES/api/files/', filetype, filename);
+      const filePath = path.join('../files/', filetype, filename);
       if (fs.existsSync(filePath)) {
         // Read the file and send it in the response
         const fileBuffer = fs.readFileSync(filePath);
@@ -158,7 +158,7 @@ router.delete('/upload/:filetype/:filename', async (req, res) => {
     const filetype = req.params.filetype;
 
     // Construct the file path
-    const filePath = path.join('../../../../vaibhav/LES/api/files/', filetype, filename);
+    const filePath = path.join('../files/', filetype, filename);
 
     if (fs.existsSync(filePath)) {
       // Delete the file
@@ -178,7 +178,7 @@ router.put('/upload/:filetype/:filename', upload.single('files'), async (req, re
     const filetype = req.params.filetype;
 
     // Construct the file path
-    const filePath = path.join('../../../../vaibhav/LES/api/files/', filetype, filename);
+    const filePath = path.join('../files/', filetype, filename);
 
     // Check if the file exists
     if (fs.existsSync(filePath)) {
