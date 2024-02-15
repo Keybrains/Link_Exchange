@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import { faDotCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { countries } from 'countries-list';
 import iso6391 from 'iso-639-1';
 import {
@@ -26,7 +26,7 @@ import {
   FormControlLabel,
   Checkbox,
   FormGroup,
-  Autocomplete
+  Autocomplete,
 } from '@mui/material';
 import { differenceInDays, parseISO } from 'date-fns';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -210,7 +210,6 @@ export default function UsersWebsite() {
       });
 
       if (response.status === 201) {
-     
         handleCloseReportDialog();
         await axiosInstance.put(`website/updateReportedStatus/${websiteToReport.website_id}`);
         setAllWebsites((prevWebsites) => prevWebsites.filter((website) => website.url !== reportedURL));
@@ -230,7 +229,7 @@ export default function UsersWebsite() {
   const navigate = useNavigate();
 
   return (
-    <Page title="Purchase Free Website" sx={{ paddingTop: '130px', overflow: 'hidden' }}>
+    <Page title="Purchase Free Website">
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />

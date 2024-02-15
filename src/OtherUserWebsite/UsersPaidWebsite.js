@@ -229,7 +229,7 @@ export default function UsersWebsite() {
   const navigate = useNavigate();
 
   return (
-    <Page title="Purchase Paid Website" sx={{ paddingTop: '130px', overflow: 'hidden' }}>
+    <Page title="Purchase Paid Website" >
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />

@@ -25,6 +25,7 @@ import {
 import { PhotoCamera } from '@mui/icons-material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 
 import axiosInstance from '../config/AxiosInstanceAdmin';
 
@@ -59,7 +60,7 @@ const UploadForm = () => {
     formData.append('files', file);
 
     try {
-      const uploadResponse = await axiosInstance.post('/cdn/upload', formData, {
+      const uploadResponse = await axios.post('https://propertymanager.cloudpress.host/api/cdn/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -83,7 +84,7 @@ const UploadForm = () => {
       setUploadError('Error saving the data');
     }
   };
-  const basePath = 'https://link-exchange-server.vercel.app/api/cdn/upload/images/';
+  const basePath = 'https://propertymanager.cloudpress.host/api/images/upload/images/';
   const [projects, setProjects] = useState([]);
 
   const fetchProjects = async () => {

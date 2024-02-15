@@ -152,7 +152,7 @@ export default function FreeWebsite() {
   };
 
   return (
-    <Page title="My Paid Website" sx={{ paddingTop: '130px', overflow: 'hidden' }}>
+    <Page title="My Paid Website" >
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
         My Paid Website
       </Typography>
