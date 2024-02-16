@@ -20,7 +20,6 @@ const SearchbarStyle = styled('div')(({ theme }) => ({
   },
 }));
 
-
 export default function Searchbar() {
   const basePath = 'https://propertymanager.cloudpress.host/api/images/upload/images/';
   const [projects, setProjects] = useState([]);
@@ -45,8 +44,8 @@ export default function Searchbar() {
           <button
             key={project.id}
             style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'inline-flex' }}
-            onClick={() => window.open(`${basePath}${project.image}`, '_blank')}
-            onKeyPress={(event) => event.key === 'Enter' && window.open(`${basePath}${project.image}`, '_blank')}
+            onClick={() => window.open(project.url, '_blank')} // Use project.url here
+            onKeyPress={(event) => event.key === 'Enter' && window.open(project.url, '_blank')} // And here
           >
             <img
               src={`${basePath}${project.image}`}

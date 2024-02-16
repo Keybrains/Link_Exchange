@@ -196,7 +196,7 @@ const UploadForm = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {projects.map((project) => (
+            {projects.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((project) => (
               <TableRow key={project._id}>
                 <TableCell component="th" scope="row">
                   <img src={`${basePath}${project.image}`} alt="Project" style={{ width: '100px', height: 'auto' }} />
