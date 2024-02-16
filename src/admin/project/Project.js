@@ -24,9 +24,8 @@ import {
 } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-
 import axiosInstance from '../config/AxiosInstanceAdmin';
 
 const UploadForm = () => {
@@ -58,9 +57,8 @@ const UploadForm = () => {
 
     const formData = new FormData();
     formData.append('files', file);
-
     try {
-      const uploadResponse = await axios.post('https://propertymanager.cloudpress.host/api/cdn/upload', formData, {
+      const uploadResponse = await axios.post('https://propertymanager.cloudpress.host/api/images/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

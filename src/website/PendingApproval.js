@@ -110,7 +110,7 @@ export default function PendingApproval() {
   };
 
   return (
-    <Page title="My Pending Approval" >
+    <Page title="My Pending Approval" style={{ paddingLeft: "10px", paddingRight: "10px" }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />

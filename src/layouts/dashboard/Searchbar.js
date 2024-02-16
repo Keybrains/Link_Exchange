@@ -1,77 +1,61 @@
-import { useState } from 'react';
-// material
-import { styled, alpha } from '@mui/material/styles';
-import { Input, Slide, Button, IconButton, InputAdornment, ClickAwayListener } from '@mui/material';
-// component
-import Iconify from '../../components/Iconify';
-
-// ----------------------------------------------------------------------
-
-const APPBAR_MOBILE = 64;
-const APPBAR_DESKTOP = 92;
+import React, { useState, useEffect } from 'react';
+import { styled } from '@mui/material/styles';
+import { Grid } from '@mui/material';
+import axiosInstance from '../../config/AxiosInstance';
 
 const SearchbarStyle = styled('div')(({ theme }) => ({
-  top: 0,
-  left: 0,
-  zIndex: 99,
-  width: '100%',
-  display: 'flex',
-  position: 'absolute',
-  alignItems: 'center',
-  height: APPBAR_MOBILE,
-  backdropFilter: 'blur(6px)',
-  WebkitBackdropFilter: 'blur(6px)',
-  padding: theme.spacing(0, 3),
-  boxShadow: theme.customShadows.z8,
-  backgroundColor: `${alpha(theme.palette.background.default, 0.72)}`,
-  [theme.breakpoints.up('md')]: {
-    height: APPBAR_DESKTOP,
-    padding: theme.spacing(0, 5),
+  display: 'contents',
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  justifyContent: 'center',
+  gap: theme.spacing(2),
+  padding: theme.spacing(2),
+  [theme.breakpoints.down('sm')]: {
+    gap: theme.spacing(1),
+    padding: theme.spacing(1),
+  },
+  [theme.breakpoints.down('xs')]: {
+    flexDirection: 'column',
+    alignItems: 'center',
   },
 }));
 
-// ----------------------------------------------------------------------
 
 export default function Searchbar() {
-  const [isOpen, setOpen] = useState(false);
+  const basePath = 'https://propertymanager.cloudpress.host/api/images/upload/images/';
+  const [projects, setProjects] = useState([]);
 
-  const handleOpen = () => {
-    setOpen((prev) => !prev);
-  };
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await axiosInstance.get('/projects/projects');
+        setProjects(response.data);
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
+    };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+    fetchProjects();
+  }, []);
 
   return (
-    <ClickAwayListener onClickAway={handleClose}>
-      <div>
-        {!isOpen && (
-          <IconButton onClick={handleOpen}>
-            <Iconify icon="eva:search-fill" width={20} height={20} />
-          </IconButton>
-        )}
-
-        <Slide direction="down" in={isOpen} mountOnEnter unmountOnExit>
-          <SearchbarStyle>
-            <Input
-              autoFocus
-              fullWidth
-              disableUnderline
-              placeholder="Search…"
-              startAdornment={
-                <InputAdornment position="start">
-                  <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled', width: 20, height: 20 }} />
-                </InputAdornment>
-              }
-              sx={{ mr: 1, fontWeight: 'fontWeightBold' }}
+    <>
+      <SearchbarStyle>
+        {projects.map((project) => (
+          <button
+            key={project.id}
+            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'inline-flex' }}
+            onClick={() => window.open(`${basePath}${project.image}`, '_blank')}
+            onKeyPress={(event) => event.key === 'Enter' && window.open(`${basePath}${project.image}`, '_blank')}
+          >
+            <img
+              src={`${basePath}${project.image}`}
+              alt={project.name}
+              style={{ width: '100px', height: '70px', objectFit: 'contain' }}
             />
-            <Button variant="contained" onClick={handleClose}>
-              Search
-            </Button>
-          </SearchbarStyle>
-        </Slide>
-      </div>
-    </ClickAwayListener>
+          </button>
+        ))}
+      </SearchbarStyle>
+    </>
   );
 }

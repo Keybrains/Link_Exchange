@@ -27,6 +27,7 @@ import {
   Checkbox,
   FormGroup,
   Autocomplete,
+  Container,
 } from '@mui/material';
 import { differenceInDays, parseISO } from 'date-fns';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -229,7 +230,8 @@ export default function UsersWebsite() {
   const navigate = useNavigate();
 
   return (
-    <Page title="Purchase Website">
+    <Page title="Purchase Website" style={{ paddingLeft: "10px", paddingRight: "10px" }}>
+
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />
