@@ -15,8 +15,8 @@ export default function AddWebSite() {
   const handleInputChange = (event) => {
     let inputUrl = event.target.value;
 
-    if (!inputUrl.startsWith('http://') && !inputUrl.startsWith('http://')) {
-      inputUrl = `http://${inputUrl}`;
+    if (!inputUrl.startsWith('https://') && !inputUrl.startsWith('https://')) {
+      inputUrl = `https://${inputUrl}`;
     }
 
     setWebsiteUrl(inputUrl);
@@ -29,39 +29,34 @@ export default function AddWebSite() {
   };
 
   const handleAddClick = () => {
-    // Validate websiteUrl
     if (!validateUrl(websiteUrl)) {
       toast.error('Please enter a valid main domain URL (e.g., https://www.mydomain.com)', { position: 'top-center' });
-      return; // Stop execution if websiteUrl is invalid
+      return; 
     }
-
     setShowBacklinkBox(true);
   };
 
   const handleSubmit = () => {
-    // Validate websiteUrl
     const urlRegex = /^(ftp|http|https):\/\/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     if (!urlRegex.test(websiteUrl)) {
       toast.error('Please enter a valid main domain URL (e.g., https://www.mydomain.com)', { position: 'top-center' });
-      return; // Stop execution if websiteUrl is invalid
+      return;
     }
 
-    // Validate backlink (general URL pattern)
     const backlinkRegex = /^(ftp|http|https):\/\/[^ "]+$/;
 
     if (!backlinkRegex.test(backlink)) {
       toast.error('Please enter a valid backlink URL', { position: 'top-center' });
-      return; // Stop execution if backlink is invalid
+      return;
     }
 
-    // Proceed with navigation
     navigate(`/user/websiteinfo`, { state: { websiteUrl, backlink } });
   };
 
   return (
     <>
-      <Page title="Add URL" style={{ paddingLeft: "10px", paddingRight: "10px" }}>
+      <Page title="Add URL" style={{ paddingLeft: '10px', paddingRight: '10px' }}>
         <Typography variant="h4" gutterBottom>
           Add Website's
         </Typography>

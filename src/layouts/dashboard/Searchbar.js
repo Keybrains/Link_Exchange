@@ -43,9 +43,16 @@ export default function Searchbar() {
         {projects.map((project) => (
           <button
             key={project.id}
-            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'inline-flex' }}
-            onClick={() => window.open(project.url, '_blank')} // Use project.url here
-            onKeyPress={(event) => event.key === 'Enter' && window.open(project.url, '_blank')} // And here
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              margin: '8px', // Adjust this value as needed to create space between buttons
+            }}
+            onClick={() => window.open(project.url, '_blank')}
+            onKeyPress={(event) => event.key === 'Enter' && window.open(project.url, '_blank')}
           >
             <img
               src={`${basePath}${project.image}`}

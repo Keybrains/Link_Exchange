@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Tooltip, Button, Stack, Chip } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Tooltip, Button, Stack, Chip, Box } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faUser,
@@ -10,16 +10,18 @@ import {
   faLink,
   faBug,
   faImage,
+  faComment,
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBTypography } from 'mdb-react-ui-kit';
 import CircularProgress from '@mui/material/CircularProgress';
 import { PhotoCamera } from '@mui/icons-material';
 import Page from '../components/Page';
-import axiosInstance from '../config/AxiosInstanceAdmin';
+import axiosInstance from '../config/AxiosInstance';
 
-export default function WebsiteDetail() {
+export default function UserWebsiteDetail() {
   const { websiteId } = useParams();
+  const navigate = useNavigate();
   const [websiteDetail, setWebsiteDetail] = useState({});
   const [loading, setLoading] = useState(true);
   const [file, setFile] = useState(null);
@@ -122,7 +124,7 @@ export default function WebsiteDetail() {
                                   paddingRight: '5px',
                                 }}
                               />
-                              User Detail
+                              Owner Detail
                             </MDBTypography>
 
                             <hr className="mt-0 mb-3" />
@@ -135,14 +137,14 @@ export default function WebsiteDetail() {
                                   {websiteDetail.user?.firstname} {websiteDetail.user?.lastname}
                                 </MDBCardText>
                               </MDBCol>
-                              <MDBCol size="12" lg="6" className="mb-3 d-flex">
+                              {/* <MDBCol size="12" lg="6" className="mb-3 d-flex">
                                 <MDBTypography tag="h6" className="me-2">
                                   Username:
                                 </MDBTypography>
                                 <MDBCardText className="text-muted">{websiteDetail.user?.username}</MDBCardText>
-                              </MDBCol>
+                              </MDBCol> */}
                             </MDBRow>
-                            <MDBRow>
+                            {/* <MDBRow>
                               <MDBCol size="12" lg="6" className="mb-3 d-flex">
                                 <MDBTypography tag="h6" className="me-2">
                                   Phone Number :
@@ -155,9 +157,9 @@ export default function WebsiteDetail() {
                                 </MDBTypography>
                                 <MDBCardText className="text-muted">{websiteDetail.user?.email}</MDBCardText>
                               </MDBCol>
-                            </MDBRow>
+                            </MDBRow> */}
 
-                            {websiteDetail.reportedWebsites && (
+                            {/* {websiteDetail.reportedWebsites && (
                               <>
                                 <MDBTypography tag="h5" className="pb-2 pt-2" style={{ color: 'red' }}>
                                   <FontAwesomeIcon
@@ -181,7 +183,7 @@ export default function WebsiteDetail() {
                                   </MDBCol>
                                 </MDBRow>
                               </>
-                            )}
+                            )} */}
 
                             <MDBTypography tag="h5" className="pb-2 pt-2" style={{ color: '#145DA0' }}>
                               <FontAwesomeIcon
@@ -351,7 +353,7 @@ export default function WebsiteDetail() {
                               </MDBCol>
                             </MDBRow>
 
-                            <MDBTypography tag="h5" className="pt-2" style={{ color: '#145DA0' }}>
+                            {/* <MDBTypography tag="h5" className="pt-2" style={{ color: '#145DA0' }}>
                               <FontAwesomeIcon
                                 icon={faBarsProgress}
                                 style={{
@@ -367,27 +369,39 @@ export default function WebsiteDetail() {
                                   switch (websiteDetail.website?.status) {
                                     case 'deactivate':
                                       return (
-                                        <MDBCardText variant="outlined" color="error">
-                                          Deactivated
-                                        </MDBCardText>
+                                        <Tooltip title="To Activate URL - Click Here">
+                                          <MDBCardText variant="outlined" color="error">
+                                            Deactivated
+                                          </MDBCardText>
+                                        </Tooltip>
                                       );
                                     case 'activate':
                                       return (
-                                        <MDBCardText
-                                          variant="outlined"
-                                          style={{ color: 'green', borderColor: 'green' }}
-                                        >
-                                          Activate
-                                        </MDBCardText>
+                                        <Tooltip title="To Deactivate URL - Click Here">
+                                          <MDBCardText
+                                            variant="outlined"
+                                            style={{ color: 'green', borderColor: 'green' }}
+                                          >
+                                            Activate
+                                          </MDBCardText>
+                                        </Tooltip>
                                       );
                                     case 'rejected':
-                                      return <MDBCardText style={{ color: 'red' }}>Rejected</MDBCardText>;
+                                      return (
+                                        <Tooltip title="This URL is rejected">
+                                          <MDBCardText style={{ color: 'red' }}>Rejected</MDBCardText>
+                                        </Tooltip>
+                                      );
                                     default:
-                                      return <MDBCardText style={{ color: 'gray' }}>Pending</MDBCardText>;
+                                      return (
+                                        <Tooltip title="This URL is not approved by admin">
+                                          <MDBCardText style={{ color: 'gray' }}>Pending</MDBCardText>
+                                        </Tooltip>
+                                      );
                                   }
                                 })()}
                               </MDBCol>
-                            </MDBRow>
+                            </MDBRow> */}
 
                             <MDBTypography tag="h5" className="pt-3" style={{ color: '#145DA0' }}>
                               <FontAwesomeIcon
@@ -401,60 +415,52 @@ export default function WebsiteDetail() {
                             <hr className="" />
                             <MDBRow>
                               <MDBCol md="12" sm="12">
-                                <Stack
-                                  direction={{ xs: 'column', sm: 'row' }}
-                                  spacing={2}
-                                  alignItems="center"
-                                  justifyContent="flex-start"
-                                >
-                                  <Button
-                                    variant="outlined"
-                                    component="label"
-                                    fullWidth={{ xs: true, sm: false }}
-                                    sx={{
-                                      margin: '0px 0',
-                                      borderColor: 'action.active',
-                                      width: { sm: 'auto' },
-                                    }}
+                                {websiteDetail.website?.image ? (
+                                  <a
+                                    href={`${basePath}${websiteDetail.website.image}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer" // Helps prevent potential security issues
                                   >
-                                    <PhotoCamera sx={{ ml: 0 }} />
-                                    Image
-                                    <input type="file" hidden onChange={handleFileChange} />
-                                  </Button>
-                                  {fileName && (
-                                    <div>
-                                      <img
-                                        src={URL.createObjectURL(file)}
-                                        alt="Preview"
-                                        style={{ width: '50%', height: 'auto' }}
-                                      />
-                                      <Chip
-                                        label={fileName}
-                                        onDelete={() => {
-                                          setFileName('');
-                                          setFile(null);
-                                          URL.revokeObjectURL(file);
-                                          handleFileRemoval();
-                                        }}
-                                        color="primary"
-                                      />
-                                    </div>
-                                  )}
-                                  {!fileName && websiteDetail.website?.image && (
-                                    <a
-                                      href={`${basePath}${websiteDetail.website.image}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    >
-                                      <img
-                                        src={`${basePath}${websiteDetail.website.image}`}
-                                        alt="Website"
-                                        style={{ width: '25%', height: '25%' }} // Adjusted width and height
-                                      />
-                                    </a>
-                                  )}
-                                  {!websiteDetail.website?.image && !fileName && <div>No Image Available</div>}
-                                </Stack>
+                                    <img
+                                      src={`${basePath}${websiteDetail.website.image}`}
+                                      alt="Website"
+                                      style={{ width: '50%', height: '100%' }} // Adjusted width and height
+                                    />
+                                  </a>
+                                ) : (
+                                  <div>No Image Available</div> // Placeholder for when there's no image
+                                )}
+                              </MDBCol>
+                            </MDBRow>
+                            <MDBTypography tag="h5" className="pt-3" style={{ color: '#145DA0' }}>
+                              <FontAwesomeIcon
+                                icon={faComment}
+                                style={{
+                                  paddingRight: '5px',
+                                }}
+                              />
+                              Contact
+                            </MDBTypography>
+                            <hr className="" />
+                            <MDBRow>
+                              <MDBCol md="12" sm="12">
+                                <Button
+                                  variant="contained"
+                                  color="primary"
+                                  sx={{ marginRight: '5px' }}
+                                  onClick={() => {
+                                    navigate(
+                                      `/user/chat/${websiteDetail.user?.user_id}?url=${encodeURIComponent(
+                                        websiteDetail.website?.url
+                                      )}`,
+                                      {
+                                        state: { website_id: websiteDetail.website?.website_id },
+                                      }
+                                    );
+                                  }}
+                                >
+                                  Contact
+                                </Button>
                               </MDBCol>
                             </MDBRow>
                           </MDBCardBody>

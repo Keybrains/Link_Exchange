@@ -39,6 +39,7 @@ import ChangePassword from './admin/user/ChangePassword';
 import ReportedWebsiteDetail from './admin/website/ReportedWebsiteDetail';
 import AdminChat from './Chat/AdminChat';
 import Project from './admin/project/Project';
+import UserWebsiteDetail from './OtherUserWebsite/UserWebsiteDetail';
 
 const isAuthenticated = () => {
   const authToken = localStorage.getItem('authToken');
@@ -61,6 +62,10 @@ const Router = () => {
         {
           path: 'discussions',
           element: isAuthenticated() ? <Discussions /> : <Navigate to="/login" />,
+        },
+        {
+          path: 'userwebsitedetail/:websiteId',
+          element: isAuthenticated() ? <UserWebsiteDetail /> : <Navigate to="/login" />,
         },
         { path: 'pendingapproval', element: isAuthenticated() ? <PendingApproval /> : <Navigate to="/login" /> },
         { path: 'alluserwebsite', element: isAuthenticated() ? <UsersWebsite /> : <Navigate to="/login" /> },

@@ -27,7 +27,7 @@ import {
   Checkbox,
   FormGroup,
   Autocomplete,
-  Container,
+  Box,
 } from '@mui/material';
 import { differenceInDays, parseISO } from 'date-fns';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -36,20 +36,15 @@ import Page from '../admin/components/Page';
 
 export default function UsersWebsite() {
   const countryCodes = Object.keys(countries);
-  // const countryNames = countryCodes.map((code) => countries[code].name);
   const languageCodes = iso6391.getAllCodes();
-  // const languageNames = languageCodes.map((code) => iso6391.getName(code));
-
   const [AllWebsites, setAllWebsites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
-
   const [openReportDialog, setOpenReportDialog] = useState(false);
   const [reportedURL, setReportedURL] = useState('');
   const [reportMessage, setReportMessage] = useState('');
-
   const [filters, setFilters] = useState({
     country: '',
     language: '',
@@ -230,8 +225,7 @@ export default function UsersWebsite() {
   const navigate = useNavigate();
 
   return (
-    <Page title="Purchase Website" style={{ paddingLeft: "10px", paddingRight: "10px" }}>
-
+    <Page title="Purchase Website" style={{ paddingLeft: '10px', paddingRight: '10px' }} sx={{ mt: 0.2, pt: 0.2 }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />
@@ -396,7 +390,7 @@ export default function UsersWebsite() {
                             fontSize: '1.5rem',
                           },
                           '&.Mui-checked': {
-                            color: '#2ecc71', // Color when checked
+                            color: '#2ecc71',
                           },
                         }}
                       />
@@ -426,91 +420,49 @@ export default function UsersWebsite() {
                   >
                     <Grid>
                       <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                        <Typography style={{ paddingBottom: '10px' }}>
-                          {isNewWebsite(website.createAt) && (
-                            <div
-                              style={{
-                                position: 'absolute',
-                                top: '10px',
-                                right: '10px',
-                                background: 'lightgreen',
-                                color: 'white',
-                                padding: '5px',
-                                borderRadius: '5px',
-                              }}
-                            >
-                              NEW
-                            </div>
-                          )}
-                          <FontAwesomeIcon
-                            icon={faDotCircle}
-                            style={{
-                              color: website.status === 'activate' ? 'green' : 'red',
-                              fontSize: '0.9em',
-                              marginRight: '5px',
-                            }}
-                          />
-                          <span style={{ color: website.status === 'activate' ? 'green' : 'red' }}>
-                            {website.status === 'activate' ? 'Active' : 'Inactive'}
-                          </span>
-                        </Typography>
-                        <Typography style={{ fontSize: '1.2em' }}>
-                          <span style={{ fontWeight: 'bold' }}>URL: </span>
-                          {website.url}
-                        </Typography>
-                        <Typography style={{ color: '#0E86D4', paddingTop: '10px' }}>
-                          {website.costOfAddingBacklink} Cost: ${website.charges || 0}
-                        </Typography>
-                      </Grid>
-                      <Grid container spacing={2} sx={{ marginTop: '10px' }}>
-                        <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
-                          <Typography style={{ marginBottom: '10px' }}>
-                            <span style={{ fontWeight: 'bold', Bottom: '50px' }}>Organic Visits : </span>
-                            {website.monthlyVisits}
-                          </Typography>
-                          <Typography style={{ marginBottom: '10px' }}>
-                            <span style={{ fontWeight: 'bold' }}>Domain Authority : </span>
-                            {website.DA}
-                          </Typography>
-                          <Typography style={{ marginBottom: '10px' }}>
-                            <span style={{ fontWeight: 'bold' }}>Spam Score : </span>
-                            {website.spamScore}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
-                          <Typography style={{ marginBottom: '10px' }}>
-                            <span style={{ fontWeight: 'bold' }}>Link Period : </span>
-                            {website.linkTime}
-                          </Typography>
-                          <Typography style={{ marginBottom: '10px' }}>
-                            <span style={{ fontWeight: 'bold' }}>Link Type : </span>
-                            {website.linkType}
-                          </Typography>
-                          <Typography style={{ marginBottom: '10px' }}>
-                            <span style={{ fontWeight: 'bold' }}>Link Quantity : </span>
-                            {website.backlinksAllowed}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
-                          <Typography style={{ marginBottom: '10px' }}>
-                            <span style={{ fontWeight: 'bold' }}>Country : </span>
-                            {website.country}
-                          </Typography>
-                          <Typography style={{ marginBottom: '10px' }}>
-                            <span style={{ fontWeight: 'bold' }}>Language : </span>
-                            {website.language}
-                          </Typography>
-                          <Typography style={{ marginBottom: '10px' }}>
-                            <span style={{ fontWeight: 'bold' }}>Google News : </span>
-                            {website.surfaceInGoogleNews ? 'Yes' : 'No'}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
-                          <div style={{ margin: '15px' }}>
+                        <Box display="flex" flexDirection="column" justifyContent="space-between" height="100%">
+                          <div>
+                            {isNewWebsite(website.createAt) && (
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  top: '10px',
+                                  right: '10px',
+                                  background: 'lightgreen',
+                                  color: 'white',
+                                  padding: '5px',
+                                  borderRadius: '5px',
+                                }}
+                              >
+                                NEW
+                              </div>
+                            )}
+                            <Typography style={{ paddingBottom: '10px' }}>
+                              <FontAwesomeIcon
+                                icon={faDotCircle}
+                                style={{
+                                  color: website.status === 'activate' ? 'green' : 'red',
+                                  fontSize: '0.9em',
+                                  marginRight: '5px',
+                                }}
+                              />
+                              <span style={{ color: website.status === 'activate' ? 'green' : 'red' }}>
+                                {website.status === 'activate' ? 'Active' : 'Inactive'}
+                              </span>
+                            </Typography>
+                            <Typography style={{ fontSize: '1.2em' }}>
+                              <span style={{ fontWeight: 'bold' }}>URL: </span>
+                              {website.url}
+                            </Typography>
+                            <Typography style={{ color: '#0E86D4', paddingTop: '10px' }}>
+                              {website.costOfAddingBacklink} Cost: ${website.charges || 0}
+                            </Typography>
+                          </div>
+                          <Box display="flex" justifyContent="flex-end" alignItems="center">
                             <Button
                               variant="contained"
                               color="primary"
-                              sx={{ marginRight: '10px' }}
+                              sx={{ marginRight: '5px' }}
                               onClick={() => {
                                 navigate(`/user/chat/${website.user_id}?url=${encodeURIComponent(website.url)}`, {
                                   state: { website_id: website.website_id },
@@ -522,13 +474,23 @@ export default function UsersWebsite() {
                             <Button
                               variant="contained"
                               color="secondary"
-                              sx={{ backgroundColor: '#FF7F7F' }}
+                              sx={{ backgroundColor: '#FF7F7F', marginRight: '5px' }}
                               onClick={() => handleOpenReportDialog(website.url)}
                             >
                               Report
                             </Button>
-                          </div>
-                        </Grid>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              sx={{ marginRight: '10px' }}
+                              onClick={() => {
+                                navigate(`/user/userwebsitedetail/${website.website_id}`, {});
+                              }}
+                            >
+                              Detail
+                            </Button>
+                          </Box>
+                        </Box>
                       </Grid>
                     </Grid>
                   </CardContent>

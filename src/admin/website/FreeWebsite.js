@@ -144,7 +144,7 @@ export default function FreeWebsite() {
       website.reported.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
       website.status.toString().toLowerCase().includes(searchQuery.toLowerCase())
   );
-
+    
   return (
     <Page title="Free Websites" sx={{ paddingX: '10px', overflow: 'hidden' }}>
       {loading ? (

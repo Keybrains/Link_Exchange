@@ -82,6 +82,7 @@ const UploadForm = () => {
       setUploadError('Error saving the data');
     }
   };
+  
   const basePath = 'https://propertymanager.cloudpress.host/api/images/upload/images/';
   const [projects, setProjects] = useState([]);
 

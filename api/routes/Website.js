@@ -522,12 +522,17 @@ router.delete('/websites/paid/:id', async (req, res) => {
 // Update a free or paid website by ID
 router.put('/websites/:id', async (req, res) => {
   try {
+    // Correctly access the 'id' parameter from the request.
     const websiteId = req.params.id;
     const updatedWebsiteData = req.body;
 
-    const isPaidWebsite = updatedWebsiteData.isPaid;
-
-    const updatedWebsite = await Website.findByIdAndUpdate(websiteId, updatedWebsiteData, { new: true });
+    // Assuming you want to update based on 'website_id' instead of MongoDB's '_id',
+    // use 'findOneAndUpdate' with 'website_id' as the search criterion.
+    const updatedWebsite = await Website.findOneAndUpdate(
+      { website_id: websiteId }, // Use the 'website_id' field to filter.
+      updatedWebsiteData,
+      { new: true } // Return the updated document.
+    );
 
     if (!updatedWebsite) {
       return res.status(404).json({
@@ -550,6 +555,7 @@ router.put('/websites/:id', async (req, res) => {
     });
   }
 });
+
 
 // Get a particular website data by ID
 router.get('/websites/:id', async (req, res) => {

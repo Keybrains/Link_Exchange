@@ -18,7 +18,7 @@ import {
   DialogContent,
   DialogTitle,
   Dialog,
-  Autocomplete
+  Autocomplete,
 } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 
@@ -115,6 +115,7 @@ export default function UpdateWebSiteInfo() {
   const handleCancel = () => {
     navigate(-1); // Navigate back to the previous location
   };
+
 
   return (
     <Page title="Update Web Site" sx={{ padding: '25px', overflow: 'hidden' }}>
@@ -222,33 +223,32 @@ export default function UpdateWebSiteInfo() {
               </Select>
             </FormControl>
             <FormControl fullWidth margin="normal">
-  <Autocomplete
-    value={formData.country}
-    onChange={(event, newValue) => {
-      setFormData({ ...formData, country: newValue });
-    }}
-    id="country-combo-box"
-    options={countryCodes}
-    getOptionLabel={(option) => countries[option].name}
-    renderInput={(params) => <TextField {...params} label="Country" />}
-    sx={{ '& .MuiInput-root': { marginTop: '18px' } }}
-  />
-</FormControl>
+              <Autocomplete
+                value={formData.country}
+                onChange={(event, newValue) => {
+                  setFormData({ ...formData, country: newValue });
+                }}
+                id="country-combo-box"
+                options={countryCodes}
+                getOptionLabel={(option) => countries[option].name}
+                renderInput={(params) => <TextField {...params} label="Country" />}
+                sx={{ '& .MuiInput-root': { marginTop: '18px' } }}
+              />
+            </FormControl>
 
-<FormControl fullWidth margin="normal">
-  <Autocomplete
-    value={formData.language}
-    onChange={(event, newValue) => {
-      setFormData({ ...formData, language: newValue });
-    }}
-    id="language-combo-box"
-    options={languageCodes}
-    getOptionLabel={(option) => iso6391.getName(option)}
-    renderInput={(params) => <TextField {...params} label="Language" />}
-    sx={{ '& .MuiInput-root': { marginTop: '18px' } }}
-  />
-</FormControl>
-
+            <FormControl fullWidth margin="normal">
+              <Autocomplete
+                value={formData.language}
+                onChange={(event, newValue) => {
+                  setFormData({ ...formData, language: newValue });
+                }}
+                id="language-combo-box"
+                options={languageCodes}
+                getOptionLabel={(option) => iso6391.getName(option)}
+                renderInput={(params) => <TextField {...params} label="Language" />}
+                sx={{ '& .MuiInput-root': { marginTop: '18px' } }}
+              />
+            </FormControl>
 
             {/* ... (other form fields) */}
             <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
