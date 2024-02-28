@@ -40,6 +40,8 @@ import ReportedWebsiteDetail from './admin/website/ReportedWebsiteDetail';
 import AdminChat from './Chat/AdminChat';
 import Project from './admin/project/Project';
 import UserWebsiteDetail from './OtherUserWebsite/UserWebsiteDetail';
+import MyWebsiteDetail from './website/MyWebsiteDetail';
+import Category from './admin/category/Category';
 
 const isAuthenticated = () => {
   const authToken = localStorage.getItem('authToken');
@@ -66,6 +68,10 @@ const Router = () => {
         {
           path: 'userwebsitedetail/:websiteId',
           element: isAuthenticated() ? <UserWebsiteDetail /> : <Navigate to="/login" />,
+        },
+        {
+          path: 'mywebsitedetail/:websiteId',
+          element: isAuthenticated() ? <MyWebsiteDetail /> : <Navigate to="/login" />,
         },
         { path: 'pendingapproval', element: isAuthenticated() ? <PendingApproval /> : <Navigate to="/login" /> },
         { path: 'alluserwebsite', element: isAuthenticated() ? <UsersWebsite /> : <Navigate to="/login" /> },
@@ -141,6 +147,7 @@ const Router = () => {
           element: isAuthenticated() ? <ReportedWebsiteDetail /> : <Navigate to="/adminlogin" />,
         },
         { path: 'changepassword', element: isAuthenticated() ? <ChangePassword /> : <Navigate to="/adminlogin" /> },
+        { path: 'category', element: isAuthenticated() ? <Category /> : <Navigate to="/adminlogin" /> },
       ],
     },
   ]);

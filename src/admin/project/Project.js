@@ -58,7 +58,7 @@ const UploadForm = () => {
     const formData = new FormData();
     formData.append('files', file);
     try {
-      const uploadResponse = await axios.post('https://propertymanager.cloudpress.host/api/images/upload', formData, {
+      const uploadResponse = await axios.post('https://propertymanager.cloudpress.host/api/images/upload/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -82,8 +82,8 @@ const UploadForm = () => {
       setUploadError('Error saving the data');
     }
   };
-  
-  const basePath = 'https://propertymanager.cloudpress.host/api/images/upload/images/';
+
+  const basePath = 'https://propertymanager.cloudpress.host/api/images/get-file/';
   const [projects, setProjects] = useState([]);
 
   const fetchProjects = async () => {

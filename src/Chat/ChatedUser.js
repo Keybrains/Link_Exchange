@@ -11,9 +11,7 @@ import axiosInstance from '../config/AxiosInstance';
 
 export default function App() {
   const { state } = useLocation();
-  console.log('state', state);
   const [chatedUsers, setChatedUsers] = useState([]);
-  console.log('chatedUsers', chatedUsers);
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
@@ -148,8 +146,8 @@ export default function App() {
           sender_id: loggedInUserId,
         };
 
-        const responce = await axiosInstance.post('/notification/notifications', notificationPayload);
-        console.log('responce', responce);
+        await axiosInstance.post('/notification/notifications', notificationPayload);
+
       } else {
         console.error('No messages available to reply to.');
       }
@@ -283,7 +281,7 @@ export default function App() {
   };
 
   return (
-    <Page title="Chated User" >
+    <Page title="Chated User">
       <div className="body-hidden-overflow">
         {loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
@@ -503,23 +501,33 @@ export default function App() {
                                               maxWidth: '70%',
                                               borderRadius: '10px',
                                               backgroundColor:
-                                                message.sender_id === loggedInUserId ? '#DCF8C6' : 'lightgray ',
+                                                message.sender_id === loggedInUserId ? '#DCF8C6' : 'lightgray',
                                               padding: '8px',
                                               marginLeft: message.sender_id === loggedInUserId ? 'auto' : '0',
                                             }}
                                           >
-                                            <div style={{ display: 'flex', flexDirection: 'row' }}>
-                                              <p className="mb-0">{message.message}</p>
-                                              <p
+                                            <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                                              <p className="mb-1" style={{ overflow: 'auto' }}>
+                                                {message.message}
+                                              </p>
+                                              <div
                                                 style={{
-                                                  fontSize: '0.8rem',
-                                                  color: '#7777',
-                                                  marginLeft: '15px',
-                                                  marginTop: '10px',
+                                                  display: 'flex',
+                                                  justifyContent: 'flex-end',
+                                                  marginTop: 'auto',
                                                 }}
                                               >
-                                                {formatTime(message.createAt)}
-                                              </p>
+                                                <p
+                                                  style={{
+                                                    fontSize: '0.8rem',
+                                                    color: '#777',
+                                                    marginTop: '0px',
+                                                    paddingLeft:'40px'
+                                                  }}
+                                                >
+                                                  {formatTime(message.createAt)}
+                                                </p>
+                                              </div>
                                             </div>
                                           </div>
                                         </div>

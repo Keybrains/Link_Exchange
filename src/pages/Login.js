@@ -63,7 +63,6 @@ export default function Login() {
   const navigate = useNavigate();
   // const [open, setOpen] = useState(false);
   // const [userType, setUserType] = useState('');
-  // console.log('userType', userType)
   // const handleUserTypeSelection = (selectedType) => {
   //   setUserType(selectedType);
   //   setOpen(false);
@@ -175,7 +174,7 @@ export default function Login() {
               <Typography variant="h3" sx={{ px: 5, mt: 15, mb: 5 }}>
                 Hi, Welcome Back
               </Typography>
-              <img src="/static/illustrations/illustration_login.png" alt="login" />
+              <img src="/static/illustrations/illustration_adminlogin.png" alt="login" />
             </SectionStyle>
           )}
 

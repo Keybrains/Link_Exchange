@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Tooltip, Button, Stack, Chip } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faUser,
@@ -16,6 +16,7 @@ import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBTyp
 import CircularProgress from '@mui/material/CircularProgress';
 import { PhotoCamera } from '@mui/icons-material';
 import Page from '../components/Page';
+import { OpenImageDialog } from '../../OtherUserWebsite/OpenImageDialog';
 import axiosInstance from '../config/AxiosInstanceAdmin';
 
 export default function WebsiteDetail() {
@@ -24,12 +25,18 @@ export default function WebsiteDetail() {
   const [loading, setLoading] = useState(true);
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
+  const [open, setOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState('');
+  const handleOpenDialog = (image) => {
+    setSelectedImage(`${basePath}${image}`);
+    setOpen(true);
+  };
+
   const fetchWebsiteDetail = async (websiteId) => {
     try {
       const response = await axiosInstance.get(`/website/websitesdetail?website_id=${websiteId}`);
       if (response.data && response.data.success) {
         setWebsiteDetail(response.data.data);
-        console.log('response', response);
         setLoading(false);
       } else {
         console.error('No data found in response:', response);
@@ -49,14 +56,12 @@ export default function WebsiteDetail() {
     const selectedFile = event.target.files[0];
     if (!selectedFile) return;
 
-    console.log(selectedFile);
     setFile(selectedFile);
     setFileName(selectedFile.name);
 
     await handleUpload(selectedFile);
   };
 
-  // Adjust handleUpload to accept a file parameter
   const handleUpload = async (selectedFile) => {
     const formData = new FormData();
     formData.append('files', selectedFile);
@@ -71,32 +76,16 @@ export default function WebsiteDetail() {
       const imagePath = uploadResponse.data.files[0].url;
       const imageName = imagePath.split('/').pop();
 
-      // Ensure `websiteId` is correctly defined and accessible
-      const response = await axiosInstance.put(`/website/websites/${websiteId}`, {
+      await axiosInstance.put(`/website/websites/${websiteId}`, {
         image: imageName,
       });
-      console.log('Upload successful', response);
-
       setFileName('');
       setFile(null);
     } catch (error) {
       console.error('Error uploading file:', error);
     }
   };
-  const basePath = 'https://propertymanager.cloudpress.host/api/images/upload/images/';
-
-  const handleFileRemoval = async () => {
-    if (!fileName) return;
-
-    try {
-      const response = await axiosInstance.put(`/website/websites/${websiteId}`, {
-        image: null,
-      });
-      console.log('File removal response:', response);
-    } catch (error) {
-      console.error('Error during file removal:', error.response || error);
-    }
-  };
+  const basePath = 'https://propertymanager.cloudpress.host/api/images/get-file/';
 
   return (
     <Page title="User Detail">
@@ -428,30 +417,20 @@ export default function WebsiteDetail() {
                                         alt="Preview"
                                         style={{ width: '50%', height: 'auto' }}
                                       />
-                                      <Chip
-                                        label={fileName}
-                                        onDelete={() => {
-                                          setFileName('');
-                                          setFile(null);
-                                          URL.revokeObjectURL(file);
-                                          handleFileRemoval();
-                                        }}
-                                        color="primary"
-                                      />
                                     </div>
                                   )}
                                   {!fileName && websiteDetail.website?.image && (
-                                    <a
-                                      href={`${basePath}${websiteDetail.website.image}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
+                                    <button
+                                      style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+                                      onClick={() => handleOpenDialog(websiteDetail.website.image)}
+                                      title="View Image"
                                     >
                                       <img
                                         src={`${basePath}${websiteDetail.website.image}`}
                                         alt="Website"
-                                        style={{ width: '25%', height: '25%' }} // Adjusted width and height
+                                        style={{ width: '50%', height: '100%' }}
                                       />
-                                    </a>
+                                    </button>
                                   )}
                                   {!websiteDetail.website?.image && !fileName && <div>No Image Available</div>}
                                 </Stack>
@@ -466,6 +445,7 @@ export default function WebsiteDetail() {
               </MDBContainer>
             </section>
           )}
+          <OpenImageDialog open={open} setOpen={setOpen} selectedImage={selectedImage} />
         </>
       )}
     </Page>

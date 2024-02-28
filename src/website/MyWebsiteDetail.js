@@ -5,11 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faMoneyBill, faCircleInfo, faLink, faImage, faComment } from '@fortawesome/free-solid-svg-icons';
 import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBTypography } from 'mdb-react-ui-kit';
 import CircularProgress from '@mui/material/CircularProgress';
-import { OpenImageDialog } from './OpenImageDialog';
+import { OpenImageDialog } from '../OtherUserWebsite/OpenImageDialog';
 import Page from '../components/Page';
 import axiosInstance from '../config/AxiosInstance';
 
-export default function UserWebsiteDetail() {
+export default function MyWebsiteDetail() {
   const { websiteId } = useParams();
   const navigate = useNavigate();
   const [websiteDetail, setWebsiteDetail] = useState({});
@@ -17,6 +17,7 @@ export default function UserWebsiteDetail() {
   const basePath = 'https://propertymanager.cloudpress.host/api/images/get-file/';
   const [open, setOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
+  const staticUserId = '1703861822774ebrhy1rn2626664125';
 
   const handleOpenDialog = (image) => {
     setSelectedImage(`${basePath}${image}`);
@@ -255,6 +256,7 @@ export default function UserWebsiteDetail() {
                                     onClick={() => handleOpenDialog(websiteDetail.website.image)}
                                     title="View Image"
                                   >
+                                  
                                     <img
                                       src={`${basePath}${websiteDetail.website.image}`}
                                       alt="Website"
@@ -284,16 +286,16 @@ export default function UserWebsiteDetail() {
                                   sx={{ marginRight: '5px' }}
                                   onClick={() => {
                                     navigate(
-                                      `/user/chat/${websiteDetail.user?.user_id}?url=${encodeURIComponent(
-                                        websiteDetail.website?.url
+                                      `/user/adminchat/${staticUserId}?url=${encodeURIComponent(
+                                        websiteDetail.website.url
                                       )}`,
                                       {
-                                        state: { website_id: websiteDetail.website?.website_id },
+                                        state: { website_id: websiteDetail.website.website_id },
                                       }
                                     );
                                   }}
                                 >
-                                  Contact
+                                  Contact Admin
                                 </Button>
                               </MDBCol>
                             </MDBRow>

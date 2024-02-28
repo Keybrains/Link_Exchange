@@ -36,7 +36,7 @@ export default function FreeWebsite() {
   const [actionType, setActionType] = useState('');
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
   const [searchQuery, setSearchQuery] = useState(''); // New state for search query
 
   useEffect(() => {
@@ -339,7 +339,7 @@ export default function FreeWebsite() {
                 page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
-                rowsPerPageOptions={[5, 10, 15, 25, { label: 'All', value: -1 }]}
+                rowsPerPageOptions={[5, 10, 15, 20, 25, { label: 'All', value: -1 }]}s
                 labelRowsPerPage="Rows per page:"
                 labelDisplayedRows={({ from, to, count }) => (
                   <div style={{ fontSize: '14px', fontStyle: 'italic', marginTop: '5px' }}>

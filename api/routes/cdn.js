@@ -53,7 +53,6 @@ const upload = multer({ storage: storage });
 
 //upload sinle and multiple files
 router.post('/upload', upload.array('files', 12), async (req, res) => {
-  console.log(req.files);
   try {
     const uploadedFiles = req.files.map((file, index) => {
       if (
@@ -113,7 +112,6 @@ router.get('/upload/:filetype/:filename', async (req, res) => {
     // Check if the file exists
     if (filetype === 'images') {
       const filePath = path.join('../files/', filetype, filename);
-      console.log(filePath);
       if (fs.existsSync(filePath)) {
         // Read the file and send it in the response
         const fileBuffer = fs.readFileSync(filePath);

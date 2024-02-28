@@ -75,7 +75,7 @@ export default function ReportedWebsite() {
   };
 
   return (
-    <Page title="Reported Website" style={{ paddingLeft: "10px", paddingRight: "10px" }}>
+    <Page title="Reported Website" style={{ paddingLeft: '10px', paddingRight: '10px' }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />
@@ -164,7 +164,7 @@ export default function ReportedWebsite() {
                       </Grid>
                       <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
                         <div style={{ margin: '15px' }}>
-                          <Button variant="contained" color="primary" sx={{ marginRight: '10px' }} >
+                          <Button variant="contained" color="primary" sx={{ marginRight: '10px' }}>
                             Contact
                           </Button>
                           {/* <Button variant="contained" color="secondary" sx={{ backgroundColor: '#FF7F7F' }}>

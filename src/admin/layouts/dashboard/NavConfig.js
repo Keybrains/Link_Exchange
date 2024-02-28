@@ -45,7 +45,12 @@ const navConfig = [
     icon: getIcon('material-symbols:chat'),
   },
   {
-    title: 'Ads',
+    title: 'Add category',
+    path: '/admin/category',
+    icon: getIcon('material-symbols:category'),
+  },
+  {
+    title: 'Add Ads',
     path: '/admin/addproject',
     icon: getIcon('eva:file-text-fill'),
   },

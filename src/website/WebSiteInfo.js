@@ -27,7 +27,6 @@ import Page from '../admin/components/Page';
 
 export default function WebSiteInfo() {
   const { state } = useLocation();
-  console.log('state', state);
   const countryCodes = Object.keys(countries);
   const countryNames = countryCodes.map((code) => countries[code].name);
   const languageCodes = iso6391.getAllCodes();
@@ -35,6 +34,7 @@ export default function WebSiteInfo() {
   const navigate = useNavigate();
   const location = useLocation();
   const [errors, setErrors] = useState({});
+  const [categoriesList, setCategoriesList] = useState([]);
   const [formData, setFormData] = useState({
     user_id: '',
     url: '',
@@ -138,7 +138,6 @@ export default function WebSiteInfo() {
         if (axios.isAxiosError(error) && error.response && error.response.status === 400) {
           toast.error(`The URL is already exists`);
         } else {
-          toast.error('Error occurred');
           console.error('Error:', error);
         }
       }
@@ -182,7 +181,20 @@ export default function WebSiteInfo() {
     setFormData({ ...formData, linkTime: specificTimeInDays });
     setDaysInput('');
   };
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axiosInstance.get('/categorys/categories');
+        setCategoriesList(response.data);
+      } catch (error) {
+        console.error('Failed to fetch categories', error);
+        toast.error('Failed to load categories');
+      }
+    };
 
+    fetchCategories();
+  }, []); 
+  
   return (
     <>
       <Page title="Other Detail" sx={{ paddingX: '15px', overflow: 'hidden' }}>
@@ -259,7 +271,7 @@ export default function WebSiteInfo() {
                   <Select
                     value={formData.costOfAddingBacklink}
                     onChange={handleChange('costOfAddingBacklink')}
-                    error={Boolean(errors?.costOfAddingBacklink)} // Add error handling
+                    error={Boolean(errors?.costOfAddingBacklink)}
                     labelId="costOfAddingBacklink"
                     id="costOfAddingBacklink"
                     label="costOfAddingBacklink"
@@ -267,7 +279,7 @@ export default function WebSiteInfo() {
                     <MenuItem value="Free">Free</MenuItem>
                     <MenuItem value="Paid">Paid</MenuItem>
                   </Select>
-                  {errors?.costOfAddingBacklink && ( // Display error message if present
+                  {errors?.costOfAddingBacklink && (
                     <Typography variant="caption" color="error">
                       {errors.costOfAddingBacklink}
                     </Typography>
@@ -280,8 +292,8 @@ export default function WebSiteInfo() {
                     onChange={handleChange('charges')}
                     fullWidth
                     margin="normal"
-                    error={Boolean(errors?.charges)} // Add error handling
-                    helperText={errors?.charges || ''} // Display helper text for the error
+                    error={Boolean(errors?.charges)}
+                    helperText={errors?.charges || ''}
                   />
                 )}
               </Grid>
@@ -294,21 +306,24 @@ export default function WebSiteInfo() {
                     value={formData.categories}
                     onChange={handleChange('categories')}
                     multiple
-                    error={Boolean(errors?.categories)} // Add error handling for categories
+                    error={Boolean(errors?.categories)}
                     labelId="categories"
                     id="categories"
-                    label="categories"
+                    label="Category"
                   >
-                    <MenuItem value="Category1">Category1</MenuItem>
-                    <MenuItem value="Category2">Category2</MenuItem>
-                    {/* Add more categories */}
+                    {categoriesList.map((category) => (
+                      <MenuItem key={category.id} value={category.category}>
+                        {category.category}
+                      </MenuItem>
+                    ))}
                   </Select>
-                  {errors?.categories && ( // Display error message if present
+                  {errors?.categories && (
                     <Typography variant="caption" color="error">
                       {errors.categories}
                     </Typography>
                   )}
                 </FormControl>
+
                 <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
                   <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
                     Link Type*
@@ -316,7 +331,7 @@ export default function WebSiteInfo() {
                   <Select
                     value={formData.linkType}
                     onChange={handleChange('linkType')}
-                    error={Boolean(errors?.linkType)} // Error handling for linkType
+                    error={Boolean(errors?.linkType)}
                     labelId="linkType"
                     id="linkType"
                     label="linkType"
@@ -324,7 +339,7 @@ export default function WebSiteInfo() {
                     <MenuItem value="DoFollow">Do Follow</MenuItem>
                     <MenuItem value="NoFollow">No Follow</MenuItem>
                   </Select>
-                  {errors?.linkType && ( // Display error message if present
+                  {errors?.linkType && (
                     <Typography variant="caption" color="error">
                       {errors.linkType}
                     </Typography>
@@ -357,7 +372,6 @@ export default function WebSiteInfo() {
                     }}
                   />
                 </FormControl>
-
                 <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
                   <Autocomplete
                     value={languageNames.find((name) => iso6391.getName(formData.language) === name)}
@@ -385,7 +399,6 @@ export default function WebSiteInfo() {
                     }}
                   />
                 </FormControl>
-
                 <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
                   <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
                     Link time*
@@ -468,7 +481,6 @@ export default function WebSiteInfo() {
                 justifyContent: 'center',
               }}
             >
-              {/* Payment related components */}
               <Typography>Please proceed to payment of ${formData.charges}</Typography>
               <Button variant="contained" onClick={handlePayment}>
                 Proceed to Payment

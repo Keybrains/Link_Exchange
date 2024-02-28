@@ -19,7 +19,6 @@ const NotificationsPopover = () => {
     try {
       const response = await axiosInstance.get(`notification/unread-notifications/${loggedInUserId}`);
       const data = response.data;
-      console.log('data', data);
       setNotificationsData(data);
     } catch (error) {
       console.error('Error fetching notifications:', error);

@@ -1,4 +1,3 @@
-// AddWebSite.js
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Typography, Box, Button, TextField } from '@mui/material';
@@ -13,13 +12,7 @@ export default function AddWebSite() {
   const [showBacklinkBox, setShowBacklinkBox] = useState(false);
 
   const handleInputChange = (event) => {
-    let inputUrl = event.target.value;
-
-    if (!inputUrl.startsWith('https://') && !inputUrl.startsWith('https://')) {
-      inputUrl = `https://${inputUrl}`;
-    }
-
-    setWebsiteUrl(inputUrl);
+    setWebsiteUrl(event.target.value);
   };
 
   const validateUrl = (url) => {
@@ -29,10 +22,17 @@ export default function AddWebSite() {
   };
 
   const handleAddClick = () => {
-    if (!validateUrl(websiteUrl)) {
-      toast.error('Please enter a valid main domain URL (e.g., https://www.mydomain.com)', { position: 'top-center' });
-      return; 
+    let inputUrl = websiteUrl;
+    if (!inputUrl.startsWith('http://') && !inputUrl.startsWith('https://')) {
+      inputUrl = `https://${inputUrl}`;
     }
+
+    if (!validateUrl(inputUrl)) {
+      toast.error('Please enter a valid main domain URL (e.g., https://www.mydomain.com)', { position: 'top-center' });
+      return;
+    }
+
+    setWebsiteUrl(inputUrl);
     setShowBacklinkBox(true);
   };
 

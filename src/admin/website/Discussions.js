@@ -509,7 +509,9 @@ export default function Discussions() {
                                             }}
                                           >
                                             <div style={{ display: 'flex', flexDirection: 'row' }}>
-                                              <p className="mb-0">{message.message}</p>
+                                              <p className="mb-0" style={{ overflow: 'auto' }}>
+                                                {message.message}
+                                              </p>
                                               <p
                                                 style={{
                                                   fontSize: '0.8rem',

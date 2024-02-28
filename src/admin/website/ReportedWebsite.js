@@ -35,7 +35,7 @@ export default function ReportedWebsite() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
 
   useEffect(() => {
     async function fetchWebsites() {
@@ -197,7 +197,7 @@ export default function ReportedWebsite() {
                 page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
-                rowsPerPageOptions={[5, 10, 15, 25, { label: 'All', value: -1 }]}
+                rowsPerPageOptions={[5, 10, 15, 20, 25, { label: 'All', value: -1 }]}
                 labelRowsPerPage="Rows per page:"
                 labelDisplayedRows={({ from, to, count }) => (
                   <div style={{ fontSize: '14px', fontStyle: 'italic', marginTop: '5px' }}>

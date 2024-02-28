@@ -12,8 +12,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Container,
-  Grid,
   DialogActions,
   DialogContent,
   DialogTitle,
@@ -21,9 +19,7 @@ import {
   Autocomplete,
 } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
-
 import axiosInstance from '../config/AxiosInstanceAdmin';
-
 import Page from '../../components/Page';
 
 export default function UpdateWebSiteInfo() {
@@ -34,6 +30,7 @@ export default function UpdateWebSiteInfo() {
   const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [daysInput, setDaysInput] = useState('');
+  const [categoriesList, setCategoriesList] = useState([]);
   const [formData, setFormData] = useState({
     _id: '',
     user_id: '',
@@ -45,8 +42,8 @@ export default function UpdateWebSiteInfo() {
     spamScore: '',
     categories: [],
     linkType: '',
-    country: '', // Use short name (code) for country
-    language: '', // Use short name (code) for language
+    country: '',
+    language: '',
     surfaceInGoogleNews: false,
     backlinksAllowed: '',
     costOfAddingBacklink: '',
@@ -64,7 +61,6 @@ export default function UpdateWebSiteInfo() {
       try {
         const response = await axiosInstance.get(`website/websites/${websiteId}`);
         if (response.status === 200) {
-          // Update country and language to short names (codes)
           const countryShortName = Object.keys(countries).find(
             (code) => countries[code].name === response.data.data.country
           );
@@ -91,7 +87,6 @@ export default function UpdateWebSiteInfo() {
 
   const handleUpdate = async () => {
     try {
-      // Convert country and language to full names before sending to the backend
       const countryFullName = countries[formData.country].name;
       const languageFullName = iso6391.getName(formData.language);
 
@@ -113,10 +108,21 @@ export default function UpdateWebSiteInfo() {
   };
 
   const handleCancel = () => {
-    navigate(-1); // Navigate back to the previous location
+    navigate(-1);
   };
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axiosInstance.get('/categorys/categories');
+        setCategoriesList(response.data);
+      } catch (error) {
+        console.error('Failed to fetch categories', error);
+      }
+    };
 
+    fetchCategories();
+  }, []);
   return (
     <Page title="Update Web Site" sx={{ padding: '25px', overflow: 'hidden' }}>
       {loading ? (
@@ -164,7 +170,6 @@ export default function UpdateWebSiteInfo() {
               fullWidth
               margin="normal"
             />
-            {/* Add other form fields */}
 
             <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
               <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
@@ -250,7 +255,6 @@ export default function UpdateWebSiteInfo() {
               />
             </FormControl>
 
-            {/* ... (other form fields) */}
             <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>
               <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
                 Category*
@@ -263,9 +267,11 @@ export default function UpdateWebSiteInfo() {
                 id="categories"
                 label="categories"
               >
-                <MenuItem value="Category1">Category1</MenuItem>
-                <MenuItem value="Category2">Category2</MenuItem>
-                {/* Add more categories */}
+                {categoriesList.map((category) => (
+                  <MenuItem key={category.id} value={category.category}>
+                    {category.category}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
             <FormControl fullWidth margin="normal" sx={{ '& .MuiInput-root': { marginTop: '18px' } }}>

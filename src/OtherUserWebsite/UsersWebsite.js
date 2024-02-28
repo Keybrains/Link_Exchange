@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-
 import { faDotCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
@@ -28,8 +27,10 @@ import {
   FormGroup,
   Autocomplete,
   Box,
+  Tooltip,
 } from '@mui/material';
 import { differenceInDays, parseISO } from 'date-fns';
+
 import CircularProgress from '@mui/material/CircularProgress';
 import axiosInstance from '../config/AxiosInstance';
 import Page from '../admin/components/Page';
@@ -40,11 +41,12 @@ export default function UsersWebsite() {
   const [AllWebsites, setAllWebsites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
   const [totalPages, setTotalPages] = useState(1);
   const [openReportDialog, setOpenReportDialog] = useState(false);
   const [reportedURL, setReportedURL] = useState('');
   const [reportMessage, setReportMessage] = useState('');
+  const [categoriesList, setCategoriesList] = useState([]);
   const [filters, setFilters] = useState({
     country: '',
     language: '',
@@ -54,7 +56,6 @@ export default function UsersWebsite() {
     costOfAddingBacklink: '',
     categories: [],
     surfaceInGoogleNews: '',
-    // Add more filters as needed
   });
 
   const handleFilterChange = (fieldName, value) => {
@@ -69,38 +70,7 @@ export default function UsersWebsite() {
     setPage(1);
   };
 
-  // const handleFilterButtonClick = () => {
-  //   // Function to filter data based on entered values
-  //   const filteredData = AllWebsites.filter((website) => {
-  //     const countryFilter = !filters.country || website.country.toLowerCase() === filters.country.toLowerCase();
-  //     const languageFilter = !filters.language || website.language.toLowerCase() === filters.language.toLowerCase();
-  //     const costOfaddingbacklinkfilter =
-  //       !filters.costOfAddingBacklink ||
-  //       website.costOfAddingBacklink.toLowerCase() === filters.costOfAddingBacklink.toLowerCase();
-  //     const monthlyVisitsFilter =
-  //       !filters.monthlyVisits || website.monthlyVisits === parseInt(filters.monthlyVisits, 10);
-  //     const DAFiter = !filters.DA || website.DA === parseInt(filters.DA, 10);
-  //     const spamScoreFilter = !filters.spamScore || website.spamScore === parseInt(filters.spamScore, 10);
-
-  //     // Add more filters as needed
-
-  //     return (
-  //       costOfaddingbacklinkfilter &&
-  //       countryFilter &&
-  //       languageFilter &&
-  //       monthlyVisitsFilter &&
-  //       DAFiter &&
-  //       spamScoreFilter
-  //     );
-  //   });
-
-  //   // Set the filtered data and reset the page to 1
-  //   setAllWebsites(filteredData);
-  //   setPage(1);
-  // };
-
   useEffect(() => {
-    // Function to fetch all websites
     async function fetchAllWebsites() {
       try {
         const decodedToken = localStorage.getItem('decodedToken');
@@ -111,9 +81,7 @@ export default function UsersWebsite() {
           const response = await axiosInstance.get(`/otheruserwebsite/websites-not-matching-user/${userId}`);
 
           if (response.status === 200) {
-            // Filter data based on entered values
             const filteredData = response.data.data.filter((website) => {
-              // const countryFilter = !filters.country || website.country.toLowerCase() === filters.country.toLowerCase();
               const countryFilter =
                 !filters.country || website.country.toLowerCase().includes(filters.country.toLowerCase());
 
@@ -121,12 +89,15 @@ export default function UsersWebsite() {
                 !filters.language || website.language.toLowerCase().includes(filters.language.toLowerCase());
 
               const monthlyVisitsFilter =
-                !filters.monthlyVisits || website.monthlyVisits === parseInt(filters.monthlyVisits, 10);
-              const DAFiter = !filters.DA || website.DA === parseInt(filters.DA, 10);
-              const spamScoreFilter = !filters.spamScore || website.spamScore === parseInt(filters.spamScore, 10);
+                !filters.monthlyVisits || website.monthlyVisits <= parseInt(filters.monthlyVisits, 10);
+
+              const DAFiter = !filters.DA || website.DA <= parseInt(filters.DA, 10);
+
+              const spamScoreFilter = !filters.spamScore || website.spamScore <= parseInt(filters.spamScore, 10);
+
               const linkTypeFilter =
                 !filters.linkType || website.linkType.toLowerCase() === filters.linkType.toLowerCase();
-              // Add more filters as needed
+
               const categoryFilter =
                 filters.categories.length === 0 ||
                 filters.categories.some((category) => website.categories.includes(category));
@@ -219,11 +190,22 @@ export default function UsersWebsite() {
 
   const isNewWebsite = (createAt) => {
     const difference = differenceInDays(new Date(), parseISO(createAt));
-    return difference <= 5;
+    return difference <= 15;
   };
 
   const navigate = useNavigate();
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axiosInstance.get('/categorys/categories');
+        setCategoriesList(response.data);
+      } catch (error) {
+        console.error('Failed to fetch categories', error);
+      }
+    };
 
+    fetchCategories();
+  }, []);
   return (
     <Page title="Purchase Website" style={{ paddingLeft: '10px', paddingRight: '10px' }} sx={{ mt: 0.2, pt: 0.2 }}>
       {loading ? (
@@ -243,7 +225,7 @@ export default function UsersWebsite() {
                 value={filters.monthlyVisits}
                 onChange={(e) => handleFilterChange('monthlyVisits', e.target.value)}
                 fullWidth
-                sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }} // Replace #f0f0f0 with your desired color
+                sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
               />
             </Grid>
 
@@ -271,8 +253,6 @@ export default function UsersWebsite() {
                 <Select
                   value={filters.costOfAddingBacklink}
                   onChange={(e) => handleFilterChange('costOfAddingBacklink', e.target.value)}
-                  // labelId="costOfAddingBacklink"
-                  // id="costOfAddingBacklink"
                   label="Free Or Paid"
                   sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
                 >
@@ -353,10 +333,11 @@ export default function UsersWebsite() {
                   label="Categories"
                   sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
                 >
-                  {/* Add your categories here */}
-                  <MenuItem value="Category1">Category 1</MenuItem>
-                  <MenuItem value="Category2">Category 2</MenuItem>
-                  {/* Add more categories as needed */}
+                  {categoriesList.map((category) => (
+                    <MenuItem key={category.id} value={category.category}>
+                      {category.category}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
@@ -378,7 +359,6 @@ export default function UsersWebsite() {
             </Grid>
             <Grid item xs={6} sm={4}>
               <FormControl fullWidth>
-                {/* <InputLabel>New Websites</InputLabel> */}
                 <FormGroup>
                   <FormControlLabel
                     control={
@@ -402,67 +382,79 @@ export default function UsersWebsite() {
             </Grid>
           </Grid>
           <hr style={{ borderTop: '1px solid black', width: '100%', margin: '20px 0' }} />
-
-          {/* Filter button */}
-          {/* <Button variant="contained" color="primary" onClick={handleFilterButtonClick} className="my-4">
-            Apply Filters
-          </Button> */}
           {AllWebsites.length > 0 ? (
             <>
               {AllWebsites.map((website) => (
-                <Card key={website._id} sx={{ marginBottom: '20px' }}>
-                  <CardContent
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      padding: '30px',
-                    }}
-                  >
-                    <Grid>
-                      <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                        <Box display="flex" flexDirection="column" justifyContent="space-between" height="100%">
-                          <div>
-                            {isNewWebsite(website.createAt) && (
-                              <div
-                                style={{
-                                  position: 'absolute',
-                                  top: '10px',
-                                  right: '10px',
-                                  background: 'lightgreen',
-                                  color: 'white',
-                                  padding: '5px',
-                                  borderRadius: '5px',
-                                }}
-                              >
-                                NEW
-                              </div>
-                            )}
-                            <Typography style={{ paddingBottom: '10px' }}>
-                              <FontAwesomeIcon
-                                icon={faDotCircle}
-                                style={{
-                                  color: website.status === 'activate' ? 'green' : 'red',
-                                  fontSize: '0.9em',
-                                  marginRight: '5px',
-                                }}
-                              />
-                              <span style={{ color: website.status === 'activate' ? 'green' : 'red' }}>
-                                {website.status === 'activate' ? 'Active' : 'Inactive'}
-                              </span>
-                            </Typography>
-                            <Typography style={{ fontSize: '1.2em' }}>
-                              <span style={{ fontWeight: 'bold' }}>URL: </span>
-                              {website.url}
-                            </Typography>
-                            <Typography style={{ color: '#0E86D4', paddingTop: '10px' }}>
-                              {website.costOfAddingBacklink} Cost: ${website.charges || 0}
-                            </Typography>
-                          </div>
-                          <Box display="flex" justifyContent="flex-end" alignItems="center">
+                <Card
+                  key={website._id}
+                  sx={{
+                    marginBottom: '20px',
+                    position: 'relative',
+                    overflow: 'visible',
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                    '&:hover': {
+                      boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
+                    },
+                  }}
+                >
+                  {isNewWebsite(website.createAt) && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '-0px',
+                        right: '-10px',
+                        background: 'linear-gradient(45deg, #4CAF50, #81C784)',
+                        color: 'white',
+                        padding: '5px 15px',
+                        fontSize: '0.75rem',
+                        transform: 'rotate(25deg)',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.4)',
+                        zIndex: 2,
+                        clipPath: 'polygon(20px 0, 80% 25%, 100% 100%, 0 60%)',
+                      }}
+                    >
+                      NEW
+                    </div>
+                  )}
+                  <CardContent sx={{ position: 'relative', zIndex: '2' }}>
+                    <Grid container spacing={2} alignItems="center">
+                      <Grid item xs={12} sm={7}>
+                        <Box>
+                          <Typography
+                            variant="subtitle2"
+                            component="div"
+                            sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, fontWeight: 'medium' }}
+                          >
+                            <FontAwesomeIcon
+                              icon={faDotCircle}
+                              style={{ color: website.status === 'activate' ? '#4CAF50' : '#E57373' }}
+                            />
+                            <span style={{ color: website.status === 'activate' ? '#4CAF50' : '#E57373' }}>
+                              {website.status === 'activate' ? 'Active' : 'Inactive'}
+                            </span>
+                          </Typography>
+                          <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                            URL: {website.url}
+                          </Typography>
+                          <Typography variant="body2" sx={{ color: '#0E86D4' }}>
+                            Cost: ${website.charges || 0}
+                          </Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} sm={5}>
+                        <Box display="flex" justifyContent="flex-end" gap={1}>
+                          <Tooltip title="Contact Owner - Click Here">
                             <Button
                               variant="contained"
-                              color="primary"
-                              sx={{ marginRight: '5px' }}
+                              size="small"
+                              sx={{
+                                textTransform: 'none',
+                                fontSize: '0.7rem',
+                                backgroundColor: '#4CAF50',
+                                '&:hover': {
+                                  backgroundColor: '#388E3C',
+                                },
+                              }}
                               onClick={() => {
                                 navigate(`/user/chat/${website.user_id}?url=${encodeURIComponent(website.url)}`, {
                                   state: { website_id: website.website_id },
@@ -471,25 +463,45 @@ export default function UsersWebsite() {
                             >
                               Contact
                             </Button>
+                          </Tooltip>
+
+                          <Tooltip title="Report URL - Click Here">
                             <Button
                               variant="contained"
-                              color="secondary"
-                              sx={{ backgroundColor: '#FF7F7F', marginRight: '5px' }}
+                              size="small"
+                              sx={{
+                                textTransform: 'none',
+                                fontSize: '0.7rem',
+                                backgroundColor: '#f44336',
+                                '&:hover': {
+                                  backgroundColor: '#d32f2f',
+                                },
+                              }}
                               onClick={() => handleOpenReportDialog(website.url)}
                             >
                               Report
                             </Button>
+                          </Tooltip>
+
+                          <Tooltip title="For More Detail - Click Here">
                             <Button
                               variant="contained"
-                              color="primary"
-                              sx={{ marginRight: '10px' }}
+                              size="small"
+                              sx={{
+                                textTransform: 'none',
+                                fontSize: '0.7rem',
+                                backgroundColor: '#2196F3',
+                                '&:hover': {
+                                  backgroundColor: '#1976D2',
+                                },
+                              }}
                               onClick={() => {
                                 navigate(`/user/userwebsitedetail/${website.website_id}`, {});
                               }}
                             >
                               Detail
                             </Button>
-                          </Box>
+                          </Tooltip>
                         </Box>
                       </Grid>
                     </Grid>
@@ -498,7 +510,9 @@ export default function UsersWebsite() {
               ))}
             </>
           ) : (
-            <Typography>No Websites</Typography>
+            <Typography variant="body2" sx={{ fontSize: '0.85em', textAlign: 'center', marginTop: '20px' }}>
+              No Websites Found
+            </Typography>
           )}
           <Dialog open={openReportDialog} onClose={handleCloseReportDialog}>
             <DialogTitle>Report Website</DialogTitle>
@@ -524,21 +538,22 @@ export default function UsersWebsite() {
           </Dialog>
           <hr style={{ borderTop: '1px solid black', width: '100%', margin: '20px 0' }} />
           <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <>
-              <FormControl margin="normal" sx={{ '& .MuiInput-root': { paddingTop: '18px' } }}>
-                <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>Page</InputLabel>
-                <Select
-                  value={itemsPerPage}
-                  onChange={handleItemsPerPageChange}
-                  label="Items per Page"
-                  sx={{ fontSize: '0.9rem' }}
-                >
-                  <MenuItem value={5}>5</MenuItem>
-                  <MenuItem value={10}>10</MenuItem>
-                  <MenuItem value={15}>15</MenuItem>
-                </Select>
-              </FormControl>
-            </>
+            <FormControl margin="normal" sx={{ '& .MuiInput-root': { paddingTop: '18px' } }}>
+              <InputLabel sx={{ backgroundColor: 'white', paddingRight: '5px', paddingLeft: '5px' }}>
+                Items per Page
+              </InputLabel>
+              <Select
+                value={itemsPerPage}
+                onChange={handleItemsPerPageChange}
+                label="Items per Page"
+                sx={{ fontSize: '0.9rem' }}
+              >
+                <MenuItem value={5}>5</MenuItem>
+                <MenuItem value={10}>10</MenuItem>
+                <MenuItem value={15}>15</MenuItem>
+                <MenuItem value={20}>20</MenuItem>
+              </Select>
+            </FormControl>
             {totalPages > 1 && (
               <Stack spacing={2} sx={{ justifyContent: 'center' }}>
                 <Pagination
