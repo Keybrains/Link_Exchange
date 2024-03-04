@@ -10,6 +10,7 @@ const navConfig = [
     title: 'Dashboard',
     path: '/admin/admindashboard',
     icon: getIcon('eva:pie-chart-2-fill'),
+    
     // defaultOpen: true,
   },
   {

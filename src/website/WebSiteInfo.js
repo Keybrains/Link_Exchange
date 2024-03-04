@@ -193,11 +193,11 @@ export default function WebSiteInfo() {
     };
 
     fetchCategories();
-  }, []); 
-  
+  }, []);
+
   return (
     <>
-      <Page title="Other Detail" sx={{ paddingX: '15px', overflow: 'hidden' }}>
+      <Page title="Other Detail" style={{ paddingLeft: '10px', paddingRight: '10px' }} sx={{ mt: 0.2, pt: 6 }}>
         <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
           Add your website info
         </Typography>

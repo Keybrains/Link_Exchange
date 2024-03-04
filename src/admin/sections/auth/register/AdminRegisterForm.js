@@ -1,6 +1,5 @@
 import * as Yup from 'yup';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Stack, IconButton, InputAdornment } from '@mui/material';
@@ -9,8 +8,6 @@ import Iconify from '../../../components/Iconify';
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
 
 export default function AdminRegisterForm({ onSubmit }) {
-  const navigate = useNavigate();
-
   const [showPassword, setShowPassword] = useState(false);
   const [showRetypePassword, setShowRetypePassword] = useState(false);
 
@@ -50,12 +47,10 @@ export default function AdminRegisterForm({ onSubmit }) {
           <RHFTextField name="firstname" label="First Name" />
           <RHFTextField name="lastname" label="Last Name" />
         </Stack>
-
         <RHFTextField name="companyname" label="Company Name (Optional)" />
         <RHFTextField name="email" label="Email Address" />
         <RHFTextField name="phonenumber" label="Phone Number" />
         <RHFTextField name="username" label="User Name" />
-
         <RHFTextField
           name="password"
           label="Password"
@@ -70,7 +65,6 @@ export default function AdminRegisterForm({ onSubmit }) {
             ),
           }}
         />
-
         <RHFTextField
           name="retypePassword"
           label="Retype Password"
@@ -85,7 +79,6 @@ export default function AdminRegisterForm({ onSubmit }) {
             ),
           }}
         />
-
         <LoadingButton
           fullWidth
           size="large"

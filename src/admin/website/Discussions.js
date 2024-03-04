@@ -53,7 +53,6 @@ export default function Discussions() {
         setChatedUsers(userDetails);
         setLoading(false);
 
-        // Check if state.user_id exists and set the selectedUser
         if (state && state.user_id) {
           const selectedUser = state.user_id;
           setSelectedUser(selectedUser);
@@ -77,48 +76,31 @@ export default function Discussions() {
     fetchLoggedInUser();
   }, [loggedInUserId]);
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      if (selectedUser) {
-        try {
-          // Fetch messages
-          const response = await axiosInstance.get(
-            `/chatuser/chatuser/chat-messages/${loggedInUserId}/${selectedUser}`
-          );
-          setMessages(response.data.data);
-          fetchUsers(response.data.data);
-          setLoading(false);
-          scrollToBottom(); // Scroll to the bottom after updating messages
+  const fetchMessages = async () => {
+    if (selectedUser) {
+      try {
+        const response = await axiosInstance.get(`/chatuser/chatuser/chat-messages/${loggedInUserId}/${selectedUser}`);
+        setMessages(response.data.data);
+        fetchUsers(response.data.data);
+        setLoading(false);
+        scrollToBottom();
 
-          // Mark messages as read when the chat opens
-          await axiosInstance.put(`/chatuser/chatuser/mark-messages-as-read/${loggedInUserId}/${selectedUser}`);
-          await axiosInstance.put(`notification/mark-read/${selectedUser}/${loggedInUserId}`);
+        await axiosInstance.put(`/chatuser/chatuser/mark-messages-as-read/${loggedInUserId}/${selectedUser}`);
+        await axiosInstance.put(`notification/mark-read/${selectedUser}/${loggedInUserId}`);
 
-          // Update unread messages count
-          setUnreadMessagesCount((prevCounts) => ({
-            ...prevCounts,
-            [selectedUser]: 0,
-          }));
-        } catch (error) {
-          console.error('Error fetching messages:', error);
-          setLoading(false);
-        }
+        setUnreadMessagesCount((prevCounts) => ({
+          ...prevCounts,
+          [selectedUser]: 0,
+        }));
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+        setLoading(false);
       }
-    };
-
+    }
+  };
+  useEffect(() => {
     fetchMessages();
   }, [selectedUser, loggedInUserId]);
-
-  // const handleUserClick = async (userId) => {
-  //   setSelectedUser(userId);
-
-  //   try {
-  //     const response = await axiosInstance.get(`/chatuser/chatuser/chat-messages/${loggedInUserId}/${userId}`);
-  //     setMessages(response.data.data);
-  //   } catch (error) {
-  //     console.error('Error fetching messages:', error);
-  //   }
-  // };
 
   const handleUserClick = async (userId) => {
     setSelectedUser(userId);
@@ -156,7 +138,7 @@ export default function Discussions() {
 
         setMessages([...messages, response.data.data]);
         setMessage('');
-        // scrollToBottom(); // Scroll to the bottom after sending a message
+        fetchMessages();
       } else {
         console.error('No messages available to reply to.');
       }
@@ -188,21 +170,13 @@ export default function Discussions() {
     }
   };
 
-  // const getSenderFullName = (senderId) => {
-  //   const user = users[senderId];
-  //   return user ? `${user.firstname} ${user.lastname}` : '';
-  // };
-
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
     const currentDate = new Date();
     const isSameDay = date.toDateString() === currentDate.toDateString();
-
-    // Calculate if the message was sent within the last 24 hours
-    const isYesterday = Math.abs(currentDate - date) < 86400000; // 86400000 milliseconds in a day
+    const isYesterday = Math.abs(currentDate - date) < 86400000;
 
     if (isSameDay) {
-      // Display time only for messages sent today
       const hours = date.getHours();
       const minutes = date.getMinutes();
       const ampm = hours >= 12 ? 'PM' : 'AM';
@@ -211,11 +185,9 @@ export default function Discussions() {
     }
 
     if (isYesterday) {
-      // Display 'Yesterday' for messages sent within the last 24 hours
       return 'Yesterday';
     }
 
-    // Display date and time for messages sent on previous days
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return date.toLocaleDateString('en-US', options);
   };
@@ -238,13 +210,11 @@ export default function Discussions() {
     return fullName.includes(searchQuery.toLowerCase()) || username.includes(searchQuery.toLowerCase());
   });
   const [userAvatarColors, setUserAvatarColors] = useState(() => {
-    // Try to retrieve colors from localStorage
     const storedColors = localStorage.getItem('userAvatarColors');
     return storedColors ? JSON.parse(storedColors) : {};
   });
 
   const getRandomColor = (userId) => {
-    // If color for user already generated, return it
     if (userAvatarColors[userId]) {
       return userAvatarColors[userId];
     }
@@ -253,7 +223,7 @@ export default function Discussions() {
       const letters = 'ABCDEF';
       let lightColor = '#';
       for (let i = 0; i < 3; i += 1) {
-        lightColor += letters[Math.floor(Math.random() * 6)]; // Use only lighter colors (A to F)
+        lightColor += letters[Math.floor(Math.random() * 6)];
       }
       return lightColor;
     };
@@ -262,7 +232,7 @@ export default function Discussions() {
       const letters = '123456';
       let brightColor = '#';
       for (let i = 0; i < 3; i += 1) {
-        brightColor += letters[Math.floor(Math.random() * 6)]; // Use only bright colors (1 to 6)
+        brightColor += letters[Math.floor(Math.random() * 6)];
       }
       return brightColor;
     };
@@ -278,7 +248,6 @@ export default function Discussions() {
     };
     setUserAvatarColors(updatedColors);
 
-    // Save colors to localStorage
     localStorage.setItem('userAvatarColors', JSON.stringify(updatedColors));
     return colors;
   };
@@ -320,9 +289,6 @@ export default function Discussions() {
                                 value={searchQuery}
                                 onChange={handleSearchInputChange}
                               />
-                              {/* <span className="input-group-text border-0" id="search-addon">
-                        <MDBIcon fas icon="search" />
-                      </span> */}
                             </MDBInputGroup>
                             <div className="w-100">
                               <MDBTypography listUnStyled className="mb-0 w-100">
@@ -364,7 +330,7 @@ export default function Discussions() {
                                                 paddingBottom: '10px',
                                                 transition: 'background-color 0.3s',
                                                 backgroundColor: isSelected ? '#e0f7fa' : '#fff',
-                                                borderRadius: '8px', // Add border-radius for a rounded look
+                                                borderRadius: '8px',
                                               }}
                                             >
                                               <div className="d-flex flex-row align-items-center">
@@ -411,9 +377,9 @@ export default function Discussions() {
                                                     style={{
                                                       backgroundColor: 'gray',
                                                       color: 'white',
-                                                      padding: '2px 12px', // Adjust padding for better appearance
-                                                      borderRadius: '10px', // Add border-radius for rounded corners
-                                                      fontWeight: 'bold', // Make text bold
+                                                      padding: '2px 12px',
+                                                      borderRadius: '10px',
+                                                      fontWeight: 'bold',
                                                     }}
                                                   >
                                                     {unreadMessagesCount[userId]}

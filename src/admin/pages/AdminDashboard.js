@@ -1,20 +1,16 @@
 import { useEffect, useState } from 'react';
-
 // @mui
 // import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
 import axiosInstance from '../config/AxiosInstanceAdmin';
-
 // components
 import Page from '../components/Page';
-
 // sections
 import { AppWidgetSummary } from '../sections/@dashboard/app';
 
 // ----------------------------------------------------------------------
 
 export default function DashboardApp() {
-  // const theme = useTheme();
   const [websiteCounts, setWebsiteCounts] = useState({});
 
   useEffect(() => {
@@ -22,13 +18,12 @@ export default function DashboardApp() {
       try {
         const response = await axiosInstance.get('/website/websites/website-count');
         if (response.status === 200) {
-          setWebsiteCounts(response.data); // Update to set the entire response data
+          setWebsiteCounts(response.data);
         } else {
           throw new Error('Failed to fetch website counts');
         }
       } catch (error) {
         console.error(error);
-        // Handle error state if needed
       }
     }
 

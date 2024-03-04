@@ -16,15 +16,13 @@ import {
   DialogTitle,
   Tooltip,
   TablePagination,
-  TextField, // Added TextField for search functionality
+  TextField,
 } from '@mui/material';
 import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, useNavigate } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
-
 import axiosInstance from '../config/AxiosInstanceAdmin';
-
 import Page from '../../components/Page';
 
 export default function PaidWebsite() {
@@ -37,7 +35,7 @@ export default function PaidWebsite() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
-  const [searchQuery, setSearchQuery] = useState(''); // Added state for search query
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     async function fetchWebsites() {
@@ -52,8 +50,6 @@ export default function PaidWebsite() {
       } catch (error) {
         console.error(error);
         setLoading(false);
-
-        // Handle error state if needed
       }
     }
 
@@ -73,7 +69,6 @@ export default function PaidWebsite() {
       }
     } catch (error) {
       console.error(error);
-      // Handle error state if needed
     }
   };
 
@@ -111,7 +106,6 @@ export default function PaidWebsite() {
       }
     } catch (error) {
       console.error(error);
-      // Handle error state if needed
     } finally {
       setOpenActionDialog(false);
       setSelectedWebsite(null);
@@ -136,7 +130,6 @@ export default function PaidWebsite() {
     setSearchQuery(event.target.value);
   };
 
-  // Function to filter paid websites based on search query
   const filteredPaidWebsites = paidWebsites.filter(
     (website) =>
       website.url.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -175,7 +168,6 @@ export default function PaidWebsite() {
                       <TableCell sx={{ fontWeight: 'bold' }}>User</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Country</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Language</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Cost</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Approved</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Reported</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
@@ -194,11 +186,13 @@ export default function PaidWebsite() {
                       >
                         <TableCell>{website.url}</TableCell>
                         <TableCell>
-                          {website.users?.firstname} {website.users?.lastname}
+                          {website.users?.firstname || website.users?.lastname
+                            ? `${website.users?.firstname || ''} ${website.users?.lastname || ''}`.trim()
+                            : 'N/A'}
                         </TableCell>
+
                         <TableCell>{website.country}</TableCell>
                         <TableCell>{website.language}</TableCell>
-                        <TableCell>{website.costOfAddingBacklink}</TableCell>
                         <TableCell>
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <span style={{ marginBottom: '5px' }}>{website.approved ? 'Yes' : 'No'}</span>

@@ -1,19 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-  Card,
-} from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { styled } from '@mui/system';
-import { faUser, faEnvelope, faPhone, faBuilding, faUserCircle, faDotCircle } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faDotCircle } from '@fortawesome/free-solid-svg-icons';
 import {
   MDBCol,
   MDBContainer,
@@ -21,14 +10,12 @@ import {
   MDBCard,
   MDBCardText,
   MDBCardBody,
-  MDBCardImage,
   MDBTypography,
   MDBIcon,
 } from 'mdb-react-ui-kit';
 import './style.css';
 import CircularProgress from '@mui/material/CircularProgress';
 import Page from '../components/Page';
-
 import axiosInstance from '../config/AxiosInstanceAdmin';
 
 const IconWrapper = styled('span')({
@@ -64,79 +51,6 @@ export default function UserDetail() {
         </div>
       ) : (
         <>
-          <Typography variant="h4" gutterBottom style={{ paddingLeft: '10px', paddingBottom: '10px' }}>
-            {/* User Detail */}
-          </Typography>
-          {/* {userDetail && (
-        <Card style={{ padding: '30px' }}>
-          <FontAwesomeIcon
-            icon={faDotCircle}
-            style={{
-              color: userDetail.status === 'activate' ? 'green' : 'red',
-              fontSize: '0.9em', // Adjust the size as needed
-              marginRight: '5px',
-              marginLeft: '15px',
-            }}
-          />
-          <span style={{ color: userDetail.status === 'activate' ? 'green' : 'red' }}>
-            {userDetail.status === 'activate' ? 'activate' : 'deactivate'}
-          </span>
-
-          <TableContainer component={Paper}>
-            <Table aria-label="user details table">
-              <TableBody>
-                <TableRow>
-                  <TableCell>
-                    <IconWrapper>
-                      <FontAwesomeIcon icon={faUser} />
-                    </IconWrapper>
-                    Name:
-                  </TableCell>
-                  <TableCell>
-                    {userDetail.firstname} {userDetail.lastname}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    <IconWrapper>
-                      <FontAwesomeIcon icon={faBuilding} />
-                    </IconWrapper>
-                    Company Name:
-                  </TableCell>
-                  <TableCell>{userDetail.companyname}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    <IconWrapper>
-                      <FontAwesomeIcon icon={faEnvelope} />
-                    </IconWrapper>
-                    Email:
-                  </TableCell>
-                  <TableCell>{userDetail.email}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    <IconWrapper>
-                      <FontAwesomeIcon icon={faPhone} />
-                    </IconWrapper>
-                    Phone Number:
-                  </TableCell>
-                  <TableCell>{userDetail.phonenumber}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    <IconWrapper>
-                      <FontAwesomeIcon icon={faUserCircle} />
-                    </IconWrapper>
-                    Username:
-                  </TableCell>
-                  <TableCell>{userDetail.username}</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Card>
-      )} */}
           {userDetail && (
             <section className="">
               <MDBContainer className="py-5 h-100">
@@ -152,7 +66,7 @@ export default function UserDetail() {
                           <FontAwesomeIcon
                             icon={faUser}
                             style={{
-                              fontSize: '3em', // Adjust the size as needed
+                              fontSize: '3em',
                               marginBottom: '25px',
                               marginTop: '25px',
                             }}
@@ -197,9 +111,8 @@ export default function UserDetail() {
                                   icon={faDotCircle}
                                   style={{
                                     color: userDetail.status === 'activate' ? 'green' : 'red',
-                                    fontSize: '0.9em', // Adjust the size as needed
+                                    fontSize: '0.9em',
                                     marginRight: '5px',
-                                    // marginLeft: '15px',
                                   }}
                                 />
                                 <span style={{ color: userDetail.status === 'activate' ? 'green' : 'red' }}>

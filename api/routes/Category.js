@@ -3,7 +3,6 @@ const router = express.Router();
 const Category = require('../models/Category');
 const moment = require('moment');
 
-// Endpoint to save image path and URL
 router.post('/category', async (req, res) => {
   const { category } = req.body;
   const timestamp = Date.now();
@@ -36,7 +35,6 @@ router.post('/category', async (req, res) => {
 router.get('/categories', async (req, res) => {
   try {
     let categories = await Category.find({});
-    // Reverse the order of categories
     categories = categories.reverse();
     res.status(200).json(categories);
   } catch (error) {

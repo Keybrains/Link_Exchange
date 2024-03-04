@@ -22,9 +22,7 @@ import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, useNavigate } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
-
 import axiosInstance from '../config/AxiosInstanceAdmin';
-
 import Page from '../../components/Page';
 
 export default function FreeWebsite() {
@@ -37,7 +35,7 @@ export default function FreeWebsite() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
-  const [searchQuery, setSearchQuery] = useState(''); // New state for search query
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     async function fetchWebsites() {
@@ -52,8 +50,6 @@ export default function FreeWebsite() {
       } catch (error) {
         console.error(error);
         setLoading(false);
-
-        // Handle error state if needed
       }
     }
 
@@ -73,7 +69,6 @@ export default function FreeWebsite() {
       }
     } catch (error) {
       console.error(error);
-      // Handle error state if needed
     }
   };
 
@@ -111,7 +106,6 @@ export default function FreeWebsite() {
       }
     } catch (error) {
       console.error(error);
-      // Handle error state if needed
     } finally {
       setOpenActionDialog(false);
       setSelectedWebsite(null);
@@ -132,7 +126,6 @@ export default function FreeWebsite() {
     setPage(0);
   };
 
-  // Function to filter websites based on search query
   const filteredWebsites = freeWebsites.filter(
     (website) =>
       website.url.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -144,7 +137,7 @@ export default function FreeWebsite() {
       website.reported.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
       website.status.toString().toLowerCase().includes(searchQuery.toLowerCase())
   );
-    
+
   return (
     <Page title="Free Websites" sx={{ paddingX: '10px', overflow: 'hidden' }}>
       {loading ? (
@@ -155,7 +148,6 @@ export default function FreeWebsite() {
         <>
           <Typography variant="h4">Free Websites</Typography>
 
-          {/* Search Input */}
           <TextField
             label="Search"
             variant="outlined"
@@ -174,7 +166,6 @@ export default function FreeWebsite() {
                       <TableCell sx={{ fontWeight: 'bold' }}>User</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Country</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Language</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Cost</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Approved</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Reported</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
@@ -193,11 +184,13 @@ export default function FreeWebsite() {
                       >
                         <TableCell>{website.url}</TableCell>
                         <TableCell>
-                          {website.users?.firstname} {website.users?.lastname}
+                          {website.users?.firstname || website.users?.lastname
+                            ? `${website.users?.firstname || ''} ${website.users?.lastname || ''}`.trim()
+                            : 'N/A'}
                         </TableCell>
+
                         <TableCell>{website.country}</TableCell>
                         <TableCell>{website.language}</TableCell>
-                        <TableCell>{website.costOfAddingBacklink}</TableCell>
                         <TableCell>
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <span style={{ marginBottom: '5px' }}>{website.approved ? 'Yes' : 'No'}</span>
@@ -339,7 +332,8 @@ export default function FreeWebsite() {
                 page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
-                rowsPerPageOptions={[5, 10, 15, 20, 25, { label: 'All', value: -1 }]}s
+                rowsPerPageOptions={[5, 10, 15, 20, 25, { label: 'All', value: -1 }]}
+                s
                 labelRowsPerPage="Rows per page:"
                 labelDisplayedRows={({ from, to, count }) => (
                   <div style={{ fontSize: '14px', fontStyle: 'italic', marginTop: '5px' }}>

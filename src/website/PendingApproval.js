@@ -21,9 +21,7 @@ import { useNavigate } from 'react-router-dom';
 import { faDotCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CircularProgress from '@mui/material/CircularProgress';
-
 import axiosInstance from '../config/AxiosInstance';
-
 import Page from '../admin/components/Page';
 
 const StyledDialog = styled(Dialog)({
@@ -66,15 +64,11 @@ export default function PendingApproval() {
   useEffect(() => {
     async function fetchPendingApproval() {
       try {
-        // Retrieve the decodedToken from localStorage
         const decodedToken = localStorage.getItem('decodedToken');
 
         if (decodedToken) {
           const parsedToken = JSON.parse(decodedToken);
-          const userId = parsedToken.userId?.user_id; // Extracting user_id from decodedToken
-
-          // Update formData with the user_id
-          //   setFormData((prevData) => ({ ...prevData, user_id: userId }));
+          const userId = parsedToken.userId?.user_id;
           const response = await axiosInstance.get(`/website/websites/not-approved/${userId}`, {
             params: { page, itemsPerPage },
           });
@@ -95,7 +89,6 @@ export default function PendingApproval() {
         setLoading(false);
       } catch (error) {
         console.error(error);
-        // Handle error state if needed
         setLoading(false);
       }
     }
@@ -104,13 +97,12 @@ export default function PendingApproval() {
   }, [page, itemsPerPage]);
 
   const handleItemsPerPageChange = (event) => {
-    // Update itemsPerPage and reset to the first page
     setItemsPerPage(Number(event.target.value));
     setPage(1);
   };
 
   return (
-    <Page title="My Pending Approval" style={{ paddingLeft: "10px", paddingRight: "10px" }}>
+    <Page title="My Pending Approval" style={{ paddingLeft: '10px', paddingRight: '10px' }} sx={{ mt: 0.2, pt: 6 }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />
@@ -137,7 +129,7 @@ export default function PendingApproval() {
                           icon={faDotCircle}
                           style={{
                             color: website.status === 'pending' ? 'gray' : 'red',
-                            fontSize: '0.9em', // Adjust the size as needed
+                            fontSize: '0.9em',
                             marginRight: '5px',
                           }}
                         />
@@ -188,7 +180,6 @@ export default function PendingApproval() {
                           {website.backlinksAllowed}
                         </Typography>
                       </Grid>
-                      {/* Other Grid items */}
                       <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
                         <Typography style={{ marginBottom: '10px' }}>
                           <span style={{ fontWeight: 'bold' }}>Country : </span>
@@ -217,9 +208,6 @@ export default function PendingApproval() {
                           >
                             Contact Admin
                           </Button>
-                          {/* <Button variant="contained" color="secondary" sx={{ backgroundColor: '#FF7F7F' }}>
-                        Report
-                      </Button> */}
                         </div>
                       </Grid>
                     </Grid>
@@ -232,7 +220,7 @@ export default function PendingApproval() {
           )}
         </>
       )}
-      <hr style={{ borderTop: '1px solid black', width: '100%', margin: '20px 0' }} /> {/* Stylish horizontal line */}
+      <hr style={{ borderTop: '1px solid black', width: '100%', margin: '20px 0' }} />
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <>
           <FormControl margin="normal" sx={{ '& .MuiInput-root': { paddingTop: '18px' } }}>
@@ -241,7 +229,7 @@ export default function PendingApproval() {
               value={itemsPerPage}
               onChange={handleItemsPerPageChange}
               label="Items per Page"
-              sx={{ fontSize: '0.9rem' }} // Adjust the fontSize as needed
+              sx={{ fontSize: '0.9rem' }} 
             >
               <MenuItem value={5}>5</MenuItem>
               <MenuItem value={10}>10</MenuItem>
@@ -249,8 +237,6 @@ export default function PendingApproval() {
             </Select>
           </FormControl>
         </>
-
-        {/* Add your buttons and other components here */}
 
         {totalPages > 1 && (
           <Stack spacing={2} sx={{ justifyContent: 'center' }}>

@@ -23,7 +23,6 @@ const imageStyle = {
 
 export const OpenImageDialog = (props) => {
   const handleClose = () => props.setOpen(false);
-
   return (
     <Modal
       open={props.open}

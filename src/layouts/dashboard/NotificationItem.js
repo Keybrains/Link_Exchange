@@ -1,27 +1,14 @@
-// NotificationItem.js
-
 import PropTypes from 'prop-types';
 import { ListItemButton, ListItemAvatar, Avatar, ListItemText, Typography, Button } from '@mui/material';
 import { formatDistanceToNow } from 'date-fns';
 
 const NotificationItem = ({ notification, navigate, onMarkRead, onClosePopover }) => {
-  const getTimeDistance = () => {
-    try {
-      const createdAtDate = new Date(notification.createAt);
-      if (!Number.isNaN(createdAtDate.getTime())) {
-        return formatDistanceToNow(createdAtDate);
-      }
-    } catch (error) {
-      console.error('Error formatting time distance:', error);
-    }
-    return '';
-  };
 
   const getLightColor = () => {
     const letters = 'ABCDEF';
     let lightColor = '#';
     for (let i = 0; i < 3; i += 1) {
-      lightColor += letters[Math.floor(Math.random() * 6)]; // Use only lighter colors (A to F)
+      lightColor += letters[Math.floor(Math.random() * 6)];
     }
     return lightColor;
   };
@@ -30,7 +17,7 @@ const NotificationItem = ({ notification, navigate, onMarkRead, onClosePopover }
     const letters = '123456';
     let brightColor = '#';
     for (let i = 0; i < 3; i += 1) {
-      brightColor += letters[Math.floor(Math.random() * 6)]; // Use only bright colors (1 to 6)
+      brightColor += letters[Math.floor(Math.random() * 6)];
     }
     return brightColor;
   };
@@ -123,15 +110,12 @@ const NotificationItem = ({ notification, navigate, onMarkRead, onClosePopover }
                 color: 'text.disabled',
               }}
             >
-              {/* <Iconify icon="eva:clock-outline" sx={{ mr: 0.5, width: 16, height: 16 }} /> */}
-              {/* {getTimeDistance()} */}
               {notification.count && (
                 <span style={{ marginLeft: '1px', fontSize: '15px' }}>{`${notification.count} ${
                   notification.count === 1 ? 'Message' : 'Messages'
                 }`}</span>
               )}
             </Typography>
-            {/* Add your button here */}
             <Button
               variant="outlined"
               color="primary"

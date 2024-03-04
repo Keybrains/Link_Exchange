@@ -1,8 +1,6 @@
-// AdminNotificationList.js
-
 import { Box, Divider, Button } from '@mui/material';
 import Scrollbar from '../../components/Scrollbar';
-import NotificationItem from './AdminNotificationItem'; // Create NotificationItem component
+import NotificationItem from './AdminNotificationItem';
 
 
 const AdminNotificationList = ({ notifications, navigate, onMarkRead, onClosePopover }) => {
@@ -23,12 +21,6 @@ const AdminNotificationList = ({ notifications, navigate, onMarkRead, onClosePop
       </Scrollbar>
 
       <Divider sx={{ borderStyle: 'dashed' }} />
-
-      {/* <Box sx={{ p: 1 }}>
-        <Button fullWidth disableRipple>
-          View All
-        </Button>
-      </Box> */}
     </Box>
   );
 };

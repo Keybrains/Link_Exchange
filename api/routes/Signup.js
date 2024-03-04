@@ -3,7 +3,22 @@ const router = express.Router();
 const moment = require('moment');
 const Signup = require('../models/Signup');
 const AdminSignup = require('../models/AdminSignup');
-const { hashPassword, hashCompare, createToken } = require('../utils/authhelper');
+const { createToken } = require('../utils/authhelper');
+const crypto = require('crypto');
+
+const encrypt = (text) => {
+  const cipher = crypto.createCipher('aes-256-cbc', 'vaibhav');
+  let encrypted = cipher.update(text, 'utf-8', 'hex');
+  encrypted += cipher.final('hex');
+  return encrypted;
+};
+
+const decrypt = (text) => {
+  const decipher = crypto.createDecipher('aes-256-cbc', 'vaibhav');
+  let decrypted = decipher.update(text, 'hex', 'utf-8');
+  decrypted += decipher.final('utf-8');
+  return decrypted;
+};
 
 router.post('/signup', async (req, res) => {
   try {
@@ -48,7 +63,7 @@ router.post('/signup', async (req, res) => {
     const uniqueId = `${timestamp}${randomString}${randomNumber}`;
     const createTime = moment().format('YYYY-MM-DD HH:mm:ss');
     const updateTime = moment().format('YYYY-MM-DD HH:mm:ss');
-    const hashedPassword = await hashPassword(req.body.password);
+    const hashedPassword = encrypt(req.body.password);
 
     const newUser = new Signup({
       firstname: req.body.firstname,
@@ -82,7 +97,6 @@ router.post('/login', async (req, res) => {
   try {
     const { identifier, password } = req.body;
 
-    // Check if the user exists by email or username
     const user = await Signup.findOne({
       $or: [{ email: identifier }, { username: identifier }],
     });
@@ -96,13 +110,10 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    const compare = await hashCompare(password, user.password);
+    const decryptedPassword = decrypt(user.password);
 
-    if (!compare) {
-      return res.status(422).json({
-        success: false,
-        message: 'Wrong password',
-      });
+    if (password !== decryptedPassword) {
+      return res.status(422).json({ message: 'Old password is incorrect.' });
     }
 
     const { token, expiresIn } = await createToken(user);
@@ -124,7 +135,6 @@ router.post('/login', async (req, res) => {
 
 router.get('/users', async (req, res) => {
   try {
-    // Fetch all users from the database
     const users = await Signup.find();
 
     if (!users || users.length === 0) {
@@ -175,7 +185,6 @@ router.get('/allusers', async (req, res) => {
   }
 });
 
-//delete user
 router.delete('/users/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -238,11 +247,9 @@ router.put('/users/:userId/updateStatus', async (req, res) => {
   }
 });
 
-//get one user details
 router.get('/users/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
-
     const user = await Signup.findOne({ user_id: userId });
 
     if (!user) {
@@ -251,6 +258,8 @@ router.get('/users/:userId', async (req, res) => {
         message: 'User not found',
       });
     }
+
+    user.password = decrypt(user.password);
 
     res.json({
       success: true,
@@ -438,6 +447,68 @@ router.get('/signup/users/:userId/chatedallusers', async (req, res) => {
   } catch (error) {
     console.error('Error getting chated users:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+router.put('/editusers/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    let updatedUserData = req.body;
+
+    if (updatedUserData.hasOwnProperty('password') && updatedUserData.password) {
+      updatedUserData.password = encrypt(updatedUserData.password);
+    }
+
+    const updatedUser = await Signup.findOneAndUpdate({ user_id: userId }, updatedUserData, { new: true });
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found for update',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'User updated successfully',
+      data: updatedUser,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+      error: error.message,
+    });
+  }
+});
+
+router.post('/change-password', async (req, res) => {
+  const { email, oldPassword, newPassword } = req.body;
+
+  if (!email || !oldPassword || !newPassword) {
+    return res.status(400).json({ message: 'All fields are required.' });
+  }
+
+  try {
+    const user = await Signup.findOne({ email: email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    const decryptedOldPassword = decrypt(user.password);
+    if (oldPassword !== decryptedOldPassword) {
+      return res.status(401).json({ message: 'Old password is incorrect.' });
+    }
+
+    const encryptedNewPassword = encrypt(newPassword);
+    user.password = encryptedNewPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Password updated successfully.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 

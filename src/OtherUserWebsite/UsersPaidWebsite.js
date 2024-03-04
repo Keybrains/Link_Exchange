@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { faDotCircle } from '@fortawesome/free-solid-svg-icons';
+import { faSquareCheck, faRectangleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
 import { countries } from 'countries-list';
@@ -7,7 +7,6 @@ import iso6391 from 'iso-639-1';
 import {
   Typography,
   Card,
-  CardContent,
   Grid,
   Button,
   Dialog,
@@ -89,12 +88,13 @@ export default function UsersWebsite() {
               const languageFilter =
                 !filters.language || website.language.toLowerCase().includes(filters.language.toLowerCase());
 
-              const monthlyVisitsFilter =
-                !filters.monthlyVisits || website.monthlyVisits <= parseInt(filters.monthlyVisits, 10);
+                const monthlyVisitsFilter =
+                !filters.monthlyVisits || website.monthlyVisits >= parseInt(filters.monthlyVisits, 10);
 
-              const DAFiter = !filters.DA || website.DA <= parseInt(filters.DA, 10);
+              const DAFiter = !filters.DA || website.DA >= parseInt(filters.DA, 10);
 
-              const spamScoreFilter = !filters.spamScore || website.spamScore <= parseInt(filters.spamScore, 10);
+              const spamScoreFilter = !filters.spamScore || website.spamScore >= parseInt(filters.spamScore, 10);
+              
               const linkTypeFilter =
                 !filters.linkType || website.linkType.toLowerCase() === filters.linkType.toLowerCase();
 
@@ -208,50 +208,107 @@ export default function UsersWebsite() {
   }, []);
 
   return (
-    <Page title="Purchase Paid Website" style={{ paddingLeft: '10px', paddingRight: '10px' }}>
+    <Page title="Purchase Paid Website" style={{ paddingLeft: '10px', paddingRight: '10px' }} sx={{ mt: 0.2, pt: 6 }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />
         </div>
       ) : (
         <>
-          <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
-            Find Paid Website URL
-          </Typography>
+          <div>
+            <Typography variant="h5" gutterBottom sx={{ paddingBottom: '0px', color: '#010ED0' }}>
+              Find Paid Website URL
+            </Typography>
+            <hr style={{ color: '#010ED0' }} />
+          </div>
 
           <Grid container spacing={1} alignItems="center">
-            <Grid item xs={6} sm={4}>
+            <Grid item xs={6} sm={4} style={{ padding: '5px' }}>
               <TextField
-                label="Monthly Visits"
+                label="Monthly Visits..."
                 value={filters.monthlyVisits}
                 onChange={(e) => handleFilterChange('monthlyVisits', e.target.value)}
                 fullWidth
-                sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
-              />
-            </Grid>
-            <Grid item xs={6} sm={4}>
-              <TextField
-                label="Domain Authority"
-                value={filters.DA}
-                onChange={(e) => handleFilterChange('DA', e.target.value)}
-                fullWidth
-                sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
-              />
-            </Grid>
-            <Grid item xs={6} sm={4}>
-              <TextField
-                label="Spam Score"
-                value={filters.spamScore}
-                onChange={(e) => handleFilterChange('spamScore', e.target.value)}
-                fullWidth
-                sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  style: { color: '#010ED0' },
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '0px',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#010ED0',
+                    },
+                    '& fieldset': {
+                      borderColor: '#010ED0',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#010ED0',
+                    },
+                  },
+                }}
               />
             </Grid>
 
-            <Grid item xs={6} sm={4}>
+            <Grid item xs={6} sm={4} style={{ padding: '5px' }}>
+              <TextField
+                label="Domain Authority..."
+                value={filters.DA}
+                onChange={(e) => handleFilterChange('DA', e.target.value)}
+                fullWidth
+                size="small"
+                InputLabelProps={{
+                  style: { color: '#010ED0' },
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '0px',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#010ED0',
+                    },
+                    '& fieldset': {
+                      borderColor: '#010ED0',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#010ED0',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+            <Grid item xs={6} sm={4} style={{ padding: '5px' }}>
+              <TextField
+                label="Spam Score..."
+                value={filters.spamScore}
+                onChange={(e) => handleFilterChange('spamScore', e.target.value)}
+                fullWidth
+                size="small"
+                InputLabelProps={{
+                  style: { color: '#010ED0' },
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '0px',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#010ED0',
+                    },
+                    '& fieldset': {
+                      borderColor: '#010ED0',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#010ED0',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={6} sm={4} style={{ padding: '5px' }}>
               <FormControl fullWidth>
                 <Autocomplete
                   fullWidth
+                  size="small"
                   value={filters.country}
                   onChange={(event, newValue) => {
                     handleFilterChange('country', newValue);
@@ -264,17 +321,37 @@ export default function UsersWebsite() {
                       label="Country"
                       variant="outlined"
                       fullWidth
-                      sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
+                      InputLabelProps={{
+                        style: { color: '#010ED0' },
+                      }}
+                      sx={{
+                        '& .MuiSvgIcon-root': {
+                          color: '#010ED0',
+                        },
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: '0px',
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#010ED0',
+                          },
+                          '& fieldset': {
+                            borderColor: '#010ED0',
+                          },
+                          '&:hover fieldset': {
+                            borderColor: '#010ED0',
+                          },
+                        },
+                      }}
                     />
                   )}
                 />
               </FormControl>
             </Grid>
 
-            <Grid item xs={6} sm={4}>
+            <Grid item xs={6} sm={4} style={{ padding: '5px' }}>
               <FormControl fullWidth>
                 <Autocomplete
                   fullWidth
+                  size="small"
                   value={filters.language}
                   onChange={(event, newValue) => {
                     handleFilterChange('language', newValue);
@@ -284,41 +361,148 @@ export default function UsersWebsite() {
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      label="Language"
+                      label="Language..."
                       variant="outlined"
                       fullWidth
-                      sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
+                      InputLabelProps={{
+                        style: { color: '#010ED0' },
+                      }}
+                      sx={{
+                        '& .MuiSvgIcon-root': {
+                          color: '#010ED0',
+                        },
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: '0px',
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#010ED0',
+                          },
+                          '& fieldset': {
+                            borderColor: '#010ED0',
+                          },
+                          '&:hover fieldset': {
+                            borderColor: '#010ED0',
+                          },
+                        },
+                      }}
                     />
                   )}
                 />
               </FormControl>
             </Grid>
-            <Grid item xs={6} sm={4}>
-              <FormControl fullWidth>
-                <InputLabel>Link Type</InputLabel>
+            <Grid item xs={6} sm={4} style={{ padding: '5px' }}>
+              <FormControl
+                fullWidth
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '0px',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#010ED0',
+                    },
+                    '& fieldset': {
+                      borderColor: '#010ED0',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#010ED0',
+                    },
+                  },
+                }}
+              >
+                <InputLabel
+                  sx={{
+                    color: '#010ED0',
+                    '&.Mui-focused': {
+                      color: '#010ED0',
+                    },
+                  }}
+                >
+                  Link Type...
+                </InputLabel>
                 <Select
                   value={filters.linkType}
                   onChange={(e) => handleFilterChange('linkType', e.target.value)}
                   labelId="linkType"
                   id="linkType"
                   label="link Type"
-                  sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
+                  sx={{
+                    '& .MuiSvgIcon-root': {
+                      color: '#010ED0',
+                    },
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#010ED0',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#010ED0',
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#010ED0',
+                    },
+                    '& .MuiSelect-select': {
+                      '&:focus': {
+                        backgroundColor: 'transparent',
+                      },
+                    },
+                  }}
                 >
                   <MenuItem value="DoFollow">Do Follow</MenuItem>
                   <MenuItem value="NoFollow">No Follow</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={6} sm={4}>
-              <FormControl fullWidth>
-                <InputLabel>Categories</InputLabel>
+            <Grid item xs={6} sm={4} style={{ padding: '5px' }}>
+              <FormControl
+                fullWidth
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '0px',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#010ED0',
+                    },
+                    '& fieldset': {
+                      borderColor: '#010ED0',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#010ED0',
+                    },
+                  },
+                }}
+              >
+                <InputLabel
+                  sx={{
+                    color: '#010ED0',
+                    '&.Mui-focused': {
+                      color: '#010ED0',
+                    },
+                  }}
+                >
+                  Categories...
+                </InputLabel>
                 <Select
                   multiple
                   value={filters.categories}
                   onChange={(e) => handleFilterChange('categories', e.target.value)}
                   renderValue={(selected) => selected.join(', ')}
                   label="Categories"
-                  sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
+                  sx={{
+                    '& .MuiSvgIcon-root': {
+                      color: '#010ED0',
+                    },
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#010ED0',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#010ED0',
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#010ED0',
+                    },
+                    '& .MuiSelect-select': {
+                      '&:focus': {
+                        backgroundColor: 'transparent',
+                      },
+                    },
+                  }}
                 >
                   {categoriesList.map((category) => (
                     <MenuItem key={category.id} value={category.category}>
@@ -328,16 +512,60 @@ export default function UsersWebsite() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={6} sm={4}>
-              <FormControl fullWidth>
-                <InputLabel>Surface In Google News</InputLabel>
+            <Grid item xs={6} sm={4} style={{ padding: '5px' }}>
+              <FormControl
+                fullWidth
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '0px',
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#010ED0',
+                    },
+                    '& fieldset': {
+                      borderColor: '#010ED0',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#010ED0',
+                    },
+                  },
+                }}
+              >
+                <InputLabel
+                  sx={{
+                    color: '#010ED0',
+                    '&.Mui-focused': {
+                      color: '#010ED0',
+                    },
+                  }}
+                >
+                  Surface In Google News...
+                </InputLabel>
                 <Select
                   value={filters.surfaceInGoogleNews}
                   onChange={(e) => handleFilterChange('surfaceInGoogleNews', e.target.value)}
                   labelId="surfaceInGoogleNews"
                   id="surfaceInGoogleNews"
                   label="surface In Google News"
-                  sx={{ backgroundColor: 'rgba(177, 212, 224, 0.2)' }}
+                  sx={{
+                    '& .MuiSvgIcon-root': {
+                      color: '#010ED0',
+                    },
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#010ED0',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#010ED0',
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#010ED0',
+                    },
+                    '& .MuiSelect-select': {
+                      '&:focus': {
+                        backgroundColor: 'transparent',
+                      },
+                    },
+                  }}
                 >
                   <MenuItem value="Yes">Yes</MenuItem>
                   <MenuItem value="No">No</MenuItem>
@@ -345,7 +573,7 @@ export default function UsersWebsite() {
               </FormControl>
             </Grid>
           </Grid>
-          <Grid item xs={6} sm={4} className="pt-2">
+          <Grid item xs={6} sm={4}>
             <FormControl fullWidth>
               <FormGroup>
                 <FormControlLabel
@@ -356,82 +584,112 @@ export default function UsersWebsite() {
                       sx={{
                         '& .MuiSvgIcon-root': {
                           fontSize: '1.5rem',
+                          color: '#010ED0',
                         },
-                        '&.Mui-checked': {
-                          color: '#2ecc71',
+                        '&.Mui-checked .MuiSvgIcon-root': {
+                          color: '#010ED0',
                         },
                       }}
                     />
                   }
                   label="Show only new websites"
+                  sx={{
+                    '& .MuiTypography-root': {
+                      color: '#010ED0',
+                    },
+                  }}
                 />
               </FormGroup>
             </FormControl>
           </Grid>
-          <hr style={{ borderTop: '1px solid black', width: '100%', margin: '20px 0' }} />
+          <hr style={{ width: '100%', margin: '10px 0', color: '#010ED0' }} />
 
           {PaidWebsite.length > 0 ? (
             <>
-              {PaidWebsite.map((website) => (
-                <Card
-                  key={website._id}
-                  sx={{
-                    marginBottom: '20px',
-                    position: 'relative',
-                    overflow: 'visible',
-                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-                    '&:hover': {
-                      boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
-                    },
-                  }}
-                >
-                  {isNewWebsite(website.createAt) && (
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: '-0px',
-                        right: '-10px',
-                        background: 'linear-gradient(45deg, #4CAF50, #81C784)',
-                        color: 'white',
-                        padding: '5px 15px',
-                        fontSize: '0.75rem',
-                        transform: 'rotate(25deg)',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.4)',
-                        zIndex: 2,
-                        clipPath: 'polygon(20px 0, 80% 25%, 100% 100%, 0 60%)',
-                      }}
-                    >
-                      NEW
-                    </div>
-                  )}
-                  <CardContent sx={{ position: 'relative', zIndex: '2' }}>
+              <div style={{ backgroundColor: '#C7CAFF', padding: '10px' }}>
+                {PaidWebsite.map((website) => (
+                  <Card
+                    key={website._id}
+                    sx={{
+                      marginBottom: '20px',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                      '&:hover': {
+                        boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
+                      },
+                      borderRadius: '10px',
+                      padding: '5px',
+                    }}
+                  >
+                    {isNewWebsite(website.createAt) && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          right: 0,
+                          bottom: 0,
+                          width: '20px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: '#0B9010',
+                          zIndex: 1,
+                          transform: 'rotate(0deg)',
+                        }}
+                      >
+                        <span
+                          style={{
+                            transform: 'rotate(90deg)',
+                            display: 'block',
+                            fontFamily: 'Poppins',
+                            fontSize: '12px',
+                            fontWeight: 700,
+                            lineHeight: '18px',
+                            letterSpacing: '0.06em',
+                            textAlign: 'left',
+                            color: 'white',
+                          }}
+                        >
+                          NEW
+                        </span>
+                      </div>
+                    )}
+
                     <Grid container spacing={2} alignItems="center">
                       <Grid item xs={12} sm={7}>
                         <Box>
                           <Typography
                             variant="subtitle2"
                             component="div"
-                            sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, fontWeight: 'medium' }}
+                            sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1, fontWeight: 'medium' }}
                           >
                             <FontAwesomeIcon
-                              icon={faDotCircle}
-                              style={{ color: website.status === 'activate' ? '#4CAF50' : '#E57373' }}
+                              icon={website.status === 'activate' ? faSquareCheck : faRectangleXmark}
+                              style={{
+                                color: website.status === 'activate' ? '#4CAF50' : '#E57373',
+                                fontSize: '1.1rem',
+                              }}
                             />
-                            <span style={{ color: website.status === 'activate' ? '#4CAF50' : '#E57373' }}>
+                            <span
+                              style={{
+                                marginLeft: '0px',
+                                color: website.status === 'activate' ? '#4CAF50' : '#E57373',
+                              }}
+                            >
                               {website.status === 'activate' ? 'Active' : 'Inactive'}
                             </span>
                           </Typography>
                           <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
                             URL: {website.url}
                           </Typography>
-                          <Typography variant="body2" sx={{ color: '#0E86D4' }}>
+                          <Typography variant="body2" sx={{ color: '#010ED0', fontWeight: 'bold' }}>
                             Cost: ${website.charges || 0}
                           </Typography>
                         </Box>
                       </Grid>
                       <Grid item xs={12} sm={5}>
-                        <Box display="flex" justifyContent="flex-end" gap={1}>
-                          {/* Contact Button */}
+                        <Box display="flex" flexDirection={{ xs: 'row', sm: 'column' }} alignItems="flex-end" gap={1}>
                           <Tooltip title="Contact Owner - Click Here">
                             <Button
                               variant="contained"
@@ -439,10 +697,14 @@ export default function UsersWebsite() {
                               sx={{
                                 textTransform: 'none',
                                 fontSize: '0.7rem',
-                                backgroundColor: '#4CAF50',
+                                backgroundColor: '#F6D358',
                                 '&:hover': {
-                                  backgroundColor: '#388E3C',
+                                  backgroundColor: '#F6D358',
                                 },
+                                width: 100,
+                                borderRadius: '15px 0 0 15px',
+                                marginRight: '20px',
+                                paddingRight: '20px',
                               }}
                               onClick={() => {
                                 navigate(`/user/chat/${website.user_id}?url=${encodeURIComponent(website.url)}`, {
@@ -461,10 +723,14 @@ export default function UsersWebsite() {
                               sx={{
                                 textTransform: 'none',
                                 fontSize: '0.7rem',
-                                backgroundColor: '#f44336',
+                                backgroundColor: '#F5938D',
                                 '&:hover': {
-                                  backgroundColor: '#d32f2f',
+                                  backgroundColor: '#F5938D',
                                 },
+                                width: 100,
+                                borderRadius: '15px 0 0 15px',
+                                marginRight: '20px',
+                                paddingRight: '20px',
                               }}
                               onClick={() => handleOpenReportDialog(website.url)}
                             >
@@ -479,10 +745,14 @@ export default function UsersWebsite() {
                               sx={{
                                 textTransform: 'none',
                                 fontSize: '0.7rem',
-                                backgroundColor: '#2196F3',
+                                backgroundColor: '#90DCF6',
                                 '&:hover': {
-                                  backgroundColor: '#1976D2',
+                                  backgroundColor: '#90DCF6',
                                 },
+                                width: 100,
+                                borderRadius: '15px 0 0 15px',
+                                marginRight: '20px',
+                                paddingRight: '20px',
                               }}
                               onClick={() => {
                                 navigate(`/user/userwebsitedetail/${website.website_id}`, {});
@@ -494,12 +764,14 @@ export default function UsersWebsite() {
                         </Box>
                       </Grid>
                     </Grid>
-                  </CardContent>
-                </Card>
-              ))}
+                  </Card>
+                ))}
+              </div>
             </>
           ) : (
-            <Typography>No Websites</Typography>
+            <Typography variant="body2" sx={{ fontSize: '0.85em', textAlign: 'center', marginTop: '20px' }}>
+              No Websites Found
+            </Typography>
           )}
           <Dialog open={openReportDialog} onClose={handleCloseReportDialog}>
             <DialogTitle>Report Website</DialogTitle>

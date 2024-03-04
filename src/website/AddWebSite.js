@@ -56,7 +56,7 @@ export default function AddWebSite() {
 
   return (
     <>
-      <Page title="Add URL" style={{ paddingLeft: '10px', paddingRight: '10px' }}>
+      <Page title="Add URL" style={{ paddingLeft: '10px', paddingRight: '10px' }} sx={{ mt: 0.2, pt: 6 }}>
         <Typography variant="h4" gutterBottom>
           Add Website's
         </Typography>

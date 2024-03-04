@@ -22,7 +22,7 @@ export default function Terms() {
 
   return (
     <>
-      <Page title="Terms & Conditions" style={{ paddingLeft: "10px", paddingRight: "10px" }}>
+      <Page title="Terms & Conditions" style={{ paddingLeft: '10px', paddingRight: '10px' }} sx={{ mt: 0.2, pt: 6 }}>
         <Typography variant="h1" style={{ fontSize: '1.5rem', marginBottom: '1rem', fontWeight: 'bold' }}>
           Terms and Conditions for Backlink Exchange
         </Typography>
@@ -35,9 +35,7 @@ export default function Terms() {
           not continue to use this website if you do not accept all of the terms and conditions stated on this page.
         </Typography>
 
-        {/* Terms and Conditions list */}
         <ol style={{ marginBottom: '1rem', paddingLeft: '3rem' }}>
-          {/* Backlink Exchange Process */}
           <li style={{ marginBottom: '1rem' }}>
             <b>Backlink Exchange Process:</b>
             <ol type="a">
@@ -53,7 +51,6 @@ export default function Terms() {
               </li>
             </ol>
           </li>
-          {/* Eligibility */}
           <li style={{ marginBottom: '1rem' }}>
             <b>Eligibility:</b>
             <ol type="a">
@@ -67,14 +64,12 @@ export default function Terms() {
               </li>
             </ol>
           </li>
-          {/* Content Guidelines */}
           <li style={{ marginBottom: '1rem' }}>
             <b>Content Guidelines:</b>
             <p>
               Users must ensure that their websites do not contain any illegal, offensive, or inappropriate content.
             </p>
           </li>
-          {/* Spam and Abuse */}
           <li style={{ marginBottom: '1rem' }}>
             <b>Spam and Abuse:</b>
             <ol type="a">
@@ -88,7 +83,6 @@ export default function Terms() {
               </li>
             </ol>
           </li>
-          {/* Liability */}
           <li style={{ marginBottom: '1rem' }}>
             <b>Liability:</b>
             <ol type="a">
@@ -102,7 +96,6 @@ export default function Terms() {
               </li>
             </ol>
           </li>
-          {/* Modification of Terms */}
           <li style={{ marginBottom: '1rem' }}>
             <b>Modification of Terms:</b>
             <p>
@@ -111,16 +104,13 @@ export default function Terms() {
             </p>
           </li>
         </ol>
-
         <Typography variant="body1" style={{ marginTop: '1rem', marginLeft: '10px' }}>
           By using our website, you hereby consent to our terms and conditions and agree to abide by them.
         </Typography>
-
         <Box display="flex" alignItems="center" style={{ paddingTop: '10px' }}>
           <Checkbox checked={isChecked} onChange={handleCheckboxChange} style={{ marginRight: '8px' }} />
           <Typography variant="body1">I agree to the terms and conditions</Typography>
         </Box>
-
         <Button
           onClick={handleNavigate}
           variant="contained"

@@ -5,33 +5,6 @@ import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton } from '@mui/material';
 // components
 import MenuPopover from '../../components/MenuPopover';
-// mocks_
-// import account from '../../_mock/account';
-
-// ----------------------------------------------------------------------
-
-const MENU_OPTIONS = [
-  {
-    label: 'Account Setting',
-    icon: 'eva:home-fill',
-    linkTo: '#',
-  },
-  {
-    label: 'My Rating & Reviews',
-    icon: 'eva:person-fill',
-    linkTo: '#',
-  },
-  {
-    label: 'Referral Program',
-    icon: 'eva:settings-2-fill',
-    linkTo: '#',
-  },
-  {
-    label: 'Switch To Buyer',
-    icon: 'eva:settings-2-fill',
-    linkTo: '#',
-  },
-];
 
 // ----------------------------------------------------------------------
 
@@ -95,27 +68,6 @@ export default function AccountPopover() {
           },
         }}
       >
-        {/* <Box sx={{ my: 1.5, px: 2.5 }}>
-          <Typography variant="subtitle2" noWrap>
-            {account.displayName}
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
-          </Typography>
-        </Box> */}
-
-        {/* <Divider sx={{ borderStyle: 'dashed' }} />
-
-        <Stack sx={{ p: 1 }}>
-          {MENU_OPTIONS.map((option) => (
-            <MenuItem key={option.label} to={option.linkTo} component={RouterLink} onClick={handleClose}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </Stack>
-
-        <Divider sx={{ borderStyle: 'dashed' }} /> */}
-
         <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
           Logout
         </MenuItem>

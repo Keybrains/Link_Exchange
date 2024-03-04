@@ -4,8 +4,6 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 // material
 import { styled } from '@mui/material/styles';
 import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/material';
-// mock
-// import account from '../../_mock/account';
 // hooks
 import useResponsive from '../../hooks/useResponsive';
 // components
@@ -50,7 +48,6 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
     if (isOpenSidebar) {
       onCloseSidebar();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   const renderContent = (
@@ -63,31 +60,15 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
       <Box
         sx={{
           px: 2.5,
-          py: 3,
+          // py: 3,
           display: 'flex',
-          justifyContent:"center"
+          justifyContent: 'center',
         }}
       >
-        <Logo sx={{ width: '100px', height: '50px' }} />
+        <Logo sx={{ width: '180px', height: '100px' }} />
       </Box>
 
-      {/* <Box sx={{ mb: 5, mx: 2.5 }}>
-        <Link underline="none" component={RouterLink} to="#">
-          <AccountStyle>
-            <Avatar src={account.photoURL} alt="photoURL" />
-            <Box sx={{ ml: 2 }}>
-              <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {account.displayName}
-              </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {account.role}
-              </Typography>
-            </Box>
-          </AccountStyle>
-        </Link>
-      </Box> */}
-
-      <NavSection navConfig={navConfig}  />
+      <NavSection navConfig={navConfig} />
 
       <Box sx={{ flexGrow: 1 }} />
     </Scrollbar>

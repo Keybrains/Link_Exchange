@@ -10,7 +10,10 @@ import axiosInstance from '../config/AxiosInstance';
 import useResponsive from '../hooks/useResponsive';
 // components
 import Page from '../components/Page';
-import Logo from '../components/Logo';
+
+import { ReactComponent as Logo } from '../assets/nav-logo.svg';
+import  LoginImage  from '../assets/build-a-single-page-application.webp';
+
 // sections
 import { LoginForm } from '../sections/auth/login';
 
@@ -61,22 +64,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 export default function Login() {
   const navigate = useNavigate();
-  // const [open, setOpen] = useState(false);
-  // const [userType, setUserType] = useState('');
-  // const handleUserTypeSelection = (selectedType) => {
-  //   setUserType(selectedType);
-  //   setOpen(false);
-  //   handleRedirect(selectedType);
-  // };
-
-  // const handleRedirect = (selectedType) => {
-  //   if (selectedType === 'buyer') {
-  //     navigate('/buyer');
-  //   } else if (selectedType === 'publisher') {
-  //     navigate('/user');
-  //   }
-  // };
-
+  
   const smUp = useResponsive('up', 'sm');
 
   const mdUp = useResponsive('up', 'md');
@@ -96,8 +84,6 @@ export default function Login() {
     try {
       const decodedToken = decodeToken(token);
       toast.success('Token Decoded Successfully');
-
-      // Convert decodedToken to a string before storing it
       const decodedTokenString = JSON.stringify(decodedToken);
       localStorage.setItem('decodedToken', decodedTokenString);
     } catch (error) {
@@ -157,34 +143,36 @@ export default function Login() {
         <RootStyle>
           <HeaderStyle>
             {smUp && (
-              <Box
-                sx={{
-                  px: 2.5,
-                  py: 3,
+              <div
+                style={{
+                  width: '10%',
+                  height: '10%',
                   display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                <Logo sx={{ width: '100px', height: '50px' }} />
-              </Box>
+                <Logo style={{ width: '100%', height: '100%' }} />
+              </div>
             )}
           </HeaderStyle>
 
           {mdUp && (
             <SectionStyle>
-              <Typography variant="h3" sx={{ px: 5, mt: 15, mb: 5 }}>
+              <Typography variant="h3" sx={{ px: 5, mt: 0, mb: 10 }} style={{color:"#010ED0"}}>
                 Hi, Welcome Back
               </Typography>
-              <img src="/static/illustrations/illustration_adminlogin.png" alt="login" />
+              <img src={LoginImage} alt="login"  />
             </SectionStyle>
           )}
 
           <Container maxWidth="sm">
             <ContentStyle>
-              <Typography variant="h4" gutterBottom>
-                Sign in to Link Exchange
+              <Typography variant="h4" gutterBottom style={{color:"#010ED0"}}>
+                Sign in to Swapalink
               </Typography>
 
-              <Typography sx={{ color: 'text.secondary', mb: 5 }}>Enter your details below.</Typography>
+              <Typography sx={{ color: 'text.secondary', mb: 5 }} style={{color:"#010ED0"}}>Enter your details below.</Typography>
 
               <LoginForm onSubmit={handleSubmit} />
 
@@ -212,46 +200,6 @@ export default function Login() {
         </RootStyle>
       </Page>
       <Toaster />
-      {/* <Dialog
-        open={open}
-        onClose={() => setOpen(false)}
-        BackdropProps={{
-          sx: { backdropFilter: 'blur(15px)' },
-        }}
-        PaperProps={{
-          style: { backgroundColor: 'transparent', boxShadow: 'none' },
-        }}
-      >
-        <DialogContent sx={{ width: '500px' }}>
-          <Card sx={{ backgroundColor: 'rgba(255, 255, 255, 0.9)' }}>
-            {' '}
-            <DialogTitle sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              Select User Type
-            </DialogTitle>
-            <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Button
-                  variant="contained"
-                  onClick={() => handleUserTypeSelection('buyer')}
-                  sx={{ width: '120px', height: '40px', marginRight: 1 }}
-                >
-                  Buyer
-                </Button>
-                <Button
-                  variant="contained"
-                  onClick={() => handleUserTypeSelection('publisher')}
-                  sx={{ width: '120px', height: '40px', marginLeft: 1 }}
-                >
-                  Publisher
-                </Button>
-              </div>
-            </CardContent>
-            <DialogActions>
-              <Button onClick={() => setOpen(false)}>Cancel</Button>
-            </DialogActions>
-          </Card>
-        </DialogContent>
-      </Dialog> */}
     </>
   );
 }

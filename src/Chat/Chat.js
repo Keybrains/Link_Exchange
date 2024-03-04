@@ -7,10 +7,8 @@ import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardBody, MDBTypography, MDBIcon } from 'mdb-react-ui-kit';
 import CircularProgress from '@mui/material/CircularProgress';
 import Page from '../admin/components/Page';
-
 import axiosInstance from '../config/AxiosInstance';
 
-// Styled Dialog component
 const StyledDialog = styled(Dialog)({
   '& .MuiDialogTitle-root': {
     backgroundColor: '#2196F3',
@@ -72,25 +70,28 @@ export default function Chat() {
       const decodedToken = localStorage.getItem('decodedToken');
       const parsedToken = JSON.parse(decodedToken);
       const loggedInUserId = parsedToken.userId?.user_id;
-
-      const checkMessagesResponse = await axiosInstance.get(
-        `/chatuser/chatuser/chat-messages/${loggedInUserId}/${userId}`
-      );
-      const data = {
-        firstname: userDetail?.firstname,
-        lastname: userDetail?.lastname,
-        user_id: userId,
-      };
-      if (checkMessagesResponse.data.data.length > 0) {
-        navigate('/user/chateduser', { state: data });
-      } else {
-        setOpenDialog(true);
-      }
+  
+      await axiosInstance.get(`/chatuser/chatuser/chat-messages/${loggedInUserId}/${userId}`)
+        .then(response => {
+          const data = {
+            firstname: userDetail?.firstname,
+            lastname: userDetail?.lastname,
+            user_id: userId,
+          };
+          navigate('/user/chateduser', { state: data });
+        })
+        .catch(error => {
+          if (error.response && error.response.status === 404) {
+            setOpenDialog(true);
+          } else {
+            console.error('Error checking messages:', error);
+          }
+        });
     } catch (error) {
       console.error('Error checking messages:', error);
     }
   };
-
+  
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
@@ -144,9 +145,6 @@ export default function Chat() {
         </div>
       ) : (
         <>
-          <Typography variant="h4" gutterBottom style={{ paddingLeft: '10px', paddingBottom: '10px' }}>
-            {/* User Detail */}
-          </Typography>
           {userDetail && (
             <section className="">
               <MDBContainer className="py-5 h-100">
@@ -193,7 +191,7 @@ export default function Chat() {
                                       variant="outlined"
                                       fullWidth
                                       multiline
-                                      rows={5} // Set the number of visible rows as needed
+                                      rows={5}
                                       value={message}
                                       onChange={(e) => setMessage(e.target.value)}
                                       style={{ marginTop: '16px', marginBottom: '16px' }}

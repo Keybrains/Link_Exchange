@@ -16,6 +16,7 @@ const ListItemStyle = styled((props) => <ListItemButton disableGutters {...props
   textTransform: 'capitalize',
   color: theme.palette.text.secondary,
   borderRadius: theme.shape.borderRadius,
+  fontSize: '1.1rem',
 }));
 
 const ListItemIconStyle = styled(ListItemIcon)({
@@ -48,8 +49,8 @@ function NavItem({ item, active }) {
     color: 'primary.main',
     fontWeight: 'fontWeightMedium',
     bgcolor: alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity),
+    borderLeft: '4px solid white', // Add a white left border for active items
   };
-
   const activeSubStyle = {
     color: 'text.primary',
     fontWeight: 'fontWeightMedium',
@@ -63,8 +64,8 @@ function NavItem({ item, active }) {
     return (
       <>
         <ListItemStyle onClick={handleOpen} sx={isActiveRoot ? activeRootStyle : {}}>
-          <ListItemIconStyle style={{ color: 'black' }}>{icon && icon}</ListItemIconStyle>
-          <ListItemText disableTypography primary={title} style={{ color: 'black' }} />
+          <ListItemIconStyle style={{ color: 'white' }}>{icon && icon}</ListItemIconStyle>
+          <ListItemText disableTypography primary={title} style={{ color: 'white' }} />
           {info && info}
           <Iconify
             icon={open ? 'eva:arrow-ios-downward-fill' : 'eva:arrow-ios-forward-fill'}
@@ -93,16 +94,18 @@ function NavItem({ item, active }) {
                       borderRadius: '50%',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      bgcolor: 'text.disabled',
+                      bgcolor: active(item.path) ? 'theme.palette.primary.main' : 'white',
                       transition: (theme) => theme.transitions.create('transform'),
                       ...(active(item.path) && {
                         transform: 'scale(2)',
                         bgcolor: 'primary.main',
+                        boxShadow: `0 0 0 2px white`,
                       }),
                     }}
                   />
                 </ListItemIconStyle>
-                <ListItemText disableTypography primary={item.title} sx={{ color: 'black' }} />
+
+                <ListItemText disableTypography primary={item.title} sx={{ color: 'white' }} />
               </ListItemStyle>
             ))}
           </List>
@@ -119,8 +122,8 @@ function NavItem({ item, active }) {
         ...(isActiveRoot && activeRootStyle),
       }}
     >
-      <ListItemIconStyle style={{ color: 'black' }}>{icon && icon}</ListItemIconStyle>
-      <ListItemText disableTypography primary={title} style={{ color: 'black' }} />
+      <ListItemIconStyle style={{ color: 'white' }}>{icon && icon}</ListItemIconStyle>
+      <ListItemText disableTypography primary={title} style={{ color: 'white' }} />
       {info && info}
     </ListItemStyle>
   );

@@ -11,7 +11,6 @@ import {
   faEdit,
   faToggleOn,
   faInfoCircle,
-  // ... other icon imports
 } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 
@@ -30,7 +29,7 @@ export default function WebsiteDashboard() {
   };
 
   return (
-    <Page title="Add Web Site" style={{ paddingLeft: "10px", paddingRight: "10px" }}>
+    <Page title="Add Web Site" style={{ paddingLeft: '10px', paddingRight: '10px' }} sx={{ mt: 0.2, pt: 6 }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
         Add Website
       </Typography>
@@ -133,7 +132,6 @@ export default function WebsiteDashboard() {
           Add website
         </Button>
       </Box>
-      {/* YouTube Video Embed */}
       <Card sx={{ marginBottom: '20px' }}>
         <iframe
           width="100%"

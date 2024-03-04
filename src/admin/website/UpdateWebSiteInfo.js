@@ -123,6 +123,7 @@ export default function UpdateWebSiteInfo() {
 
     fetchCategories();
   }, []);
+
   return (
     <Page title="Update Web Site" sx={{ padding: '25px', overflow: 'hidden' }}>
       {loading ? (

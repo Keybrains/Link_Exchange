@@ -16,12 +16,13 @@ import {
   DialogTitle,
   Tooltip,
   TablePagination,
-  TextField, // Import TextField for search input
+  TextField,
+  Box
 } from '@mui/material';
 import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CircularProgress from '@mui/material/CircularProgress';
-
+import * as XLSX from 'xlsx';
 import axiosInstance from '../config/AxiosInstanceAdmin';
 import Page from '../../components/Page';
 
@@ -35,7 +36,7 @@ export default function User() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
-  const [searchQuery, setSearchQuery] = useState(''); // New state for search query
+  const [searchQuery, setSearchQuery] = useState('');
 
   const navigate = useNavigate();
 
@@ -51,7 +52,6 @@ export default function User() {
         setLoading(false);
       } catch (error) {
         console.error(error);
-        // Handle error state if needed
         setLoading(false);
       }
     }
@@ -80,7 +80,6 @@ export default function User() {
     try {
       const response = await axiosInstance.delete(`/signup/users/${deleteUserId}`);
       if (response.status === 200) {
-        // Remove the deleted user from the users state
         setUsers(users.filter((user) => user.user_id !== deleteUserId));
         setDeleteUserId(null);
         setOpenDeleteDialog(false);
@@ -89,7 +88,6 @@ export default function User() {
       }
     } catch (error) {
       console.error(error);
-      // Handle error state if needed
     }
   };
 
@@ -98,11 +96,8 @@ export default function User() {
       const response = await axiosInstance.put(`/signup/users/${userId}/updateStatus`, { status: newStatus });
 
       if (response.status === 200) {
-        // Fetch the updated user data after status change
         const updatedResponse = await axiosInstance.get(`/signup/users`);
-
         if (updatedResponse.status === 200) {
-          // Update the local state with the fetched updated user data
           setUsers(updatedResponse.data.data);
         } else {
           throw new Error('Failed to fetch updated user data');
@@ -112,7 +107,6 @@ export default function User() {
       }
     } catch (error) {
       console.error(error);
-      // Handle error state if needed
     }
   };
 
@@ -120,7 +114,6 @@ export default function User() {
     navigate(`/admin/userdetail/${userId}`);
   };
 
-  // Function to filter users based on search query
   const filteredUsers = users.filter(
     (user) =>
       user.firstname.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -128,6 +121,47 @@ export default function User() {
       user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.phonenumber.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleNavigate = (userId) => {
+    navigate(`/admin/edituserdetail/${userId}`);
+  };
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date
+      .getDate()
+      .toString()
+      .padStart(2, '0')}`;
+  }
+
+  const downloadExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(
+      users.map((user) => ({
+        'First Name': user.firstname,
+        'Last Name': user.lastname,
+        Email: user.email,
+        'Phone Number': user.phonenumber,
+        Status: user.status,
+        'Created On': formatDate(user.createAt),
+      }))
+    );
+
+    const wscols = [
+      { wch: Math.max(...users.map((user) => user.firstname.length)) },
+      { wch: Math.max(...users.map((user) => user.lastname.length)) },
+      { wch: Math.max(...users.map((user) => user.email.length)) },
+      { wch: Math.max(...users.map((user) => user.phonenumber.length)) },
+      { wch: 10 },
+      { wch: 15 },
+    ];
+
+    worksheet['!cols'] = wscols;
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Users');
+
+    XLSX.writeFile(workbook, 'UsersData.xlsx');
+  };
 
   return (
     <Page title="User" sx={{ paddingX: '10px', overflowY: 'hidden' }}>
@@ -140,6 +174,7 @@ export default function User() {
           <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
             All User
           </Typography>
+          <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom="15px">
           <TextField
             label="Search"
             variant="outlined"
@@ -147,6 +182,10 @@ export default function User() {
             onChange={(e) => setSearchQuery(e.target.value)}
             sx={{ marginBottom: '15px' }}
           />
+            <Button onClick={downloadExcel} variant="contained" color="primary">
+              Download Excel
+            </Button>
+          </Box>
           {filteredUsers.length > 0 ? (
             <>
               <TableContainer component={Paper}>
@@ -225,6 +264,22 @@ export default function User() {
                               <FontAwesomeIcon icon={faTrashAlt} />
                             </span>
                           </Tooltip>
+                          <Tooltip title="edit">
+                            <span
+                              role="button"
+                              tabIndex={0}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleNavigate(user.user_id);
+                              }}
+                              onKeyPress={(e) => {
+                                if (e.key === 'Enter') handleNavigate();
+                              }}
+                              style={{ cursor: 'pointer', fontSize: '15px', paddingLeft: '10px' }}
+                            >
+                              <FontAwesomeIcon icon={faPencilAlt} />
+                            </span>
+                          </Tooltip>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -296,7 +351,6 @@ export default function User() {
                   sx: { backdropFilter: 'blur(4px)' },
                 }}
               >
-                {/* Content for activate/deactivate dialog */}
                 <DialogTitle>Confirm Status Change</DialogTitle>
                 <DialogContent>
                   <Typography>

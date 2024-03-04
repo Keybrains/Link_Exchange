@@ -57,6 +57,7 @@ const UploadForm = () => {
 
     const formData = new FormData();
     formData.append('files', file);
+
     try {
       const uploadResponse = await axios.post('https://propertymanager.cloudpress.host/api/images/upload/', formData, {
         headers: {
@@ -64,11 +65,10 @@ const UploadForm = () => {
         },
       });
 
-      const imagePath = uploadResponse.data.files[0].url;
-      const imageName = imagePath.split('/').pop();
+      const imagePath = uploadResponse.data.files[0].filename;
 
       await axiosInstance.post('/projects/project', {
-        image: imageName,
+        image: imagePath,
         url,
       });
 
@@ -121,7 +121,6 @@ const UploadForm = () => {
   };
 
   const handleConfirmDelete = async () => {
-    // Perform the delete operation
     await handleDelete(selectedProjectId);
     setOpenDialog(false);
   };

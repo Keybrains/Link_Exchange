@@ -36,17 +36,13 @@ export default function ChangePassword() {
         newPassword,
       });
 
-      // Remove tokens from local storage
       localStorage.removeItem('authToken');
       localStorage.removeItem('decodedToken');
 
-      // Navigate to adminlogin
       navigate('/adminlogin');
 
-      // Add logic to handle success, show messages, or redirect as needed
     } catch (error) {
       console.error('Error changing password:', error.response?.data || error.message);
-      // Add logic to handle errors, show error messages, etc.
     }
   };
 

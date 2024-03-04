@@ -18,20 +18,16 @@ import {
   TablePagination,
   TextField,
 } from '@mui/material';
-import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, useNavigate } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
-
 import axiosInstance from '../config/AxiosInstanceAdmin';
-
 import Page from '../../components/Page';
 
 export default function ReportedWebsite() {
   const [reportedWebsites, setReportedWebsites] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedWebsiteId, setSelectedWebsiteId] = useState(null);
-  const [searchQuery, setSearchQuery] = useState(''); // New state for search query
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
@@ -50,7 +46,6 @@ export default function ReportedWebsite() {
       } catch (error) {
         console.error(error);
         setLoading(false);
-        // Handle error state if needed
       }
     }
 
@@ -75,7 +70,6 @@ export default function ReportedWebsite() {
         const deleteResponse = await axiosInstance.delete(`reportedwebsite/deletereportedwebsite/${selectedWebsiteId}`);
 
         if (deleteResponse.status === 200) {
-          // After successful deletion, fetch the updated reported websites
           const response = await axiosInstance.get('/reportedwebsite/reportedwebsites');
           if (response.status === 200) {
             setReportedWebsites(response.data.data);
@@ -90,7 +84,6 @@ export default function ReportedWebsite() {
       }
     } catch (error) {
       console.error(error);
-      // Handle error state if needed
     } finally {
       setOpenDialog(false);
     }
@@ -113,7 +106,6 @@ export default function ReportedWebsite() {
     setPage(0);
   };
 
-  // Function to filter reported websites based on search query
   const filteredReportedWebsites = reportedWebsites.filter(
     (website) =>
       website.url.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -164,7 +156,9 @@ export default function ReportedWebsite() {
                       >
                         <TableCell>{website.url}</TableCell>
                         <TableCell>
-                          {website.user?.firstname} {website.user?.lastname}
+                          {website.users?.firstname || website.users?.lastname
+                            ? `${website.users?.firstname || ''} ${website.users?.lastname || ''}`.trim()
+                            : 'N/A'}
                         </TableCell>
                         <TableCell>{new Date(website.createAt).toLocaleDateString()}</TableCell>
                         <TableCell>

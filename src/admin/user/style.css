@@ -1,11 +1,8 @@
 .gradient-custom {
-    /* Fallback for older browsers */
     background: #D4F1F4;
 
-    /* Chrome 10-25, Safari 5.1-6 */
     background: -webkit-linear-gradient(to right bottom, #A0E9F6, #A0E9F6);
 
-    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     background: linear-gradient(to right bottom, #A0E9F6, #005C97);
 }
 

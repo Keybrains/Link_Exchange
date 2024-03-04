@@ -85,18 +85,25 @@ const AdminChat = () => {
       const parsedToken = JSON.parse(decodedToken);
       const loggedInUserId = parsedToken.userId?.user_id;
 
-      const checkMessagesResponse = await axiosInstance.get(
-        `/chatuser/chatuser/chat-messages/${loggedInUserId}/${userId}`
-      );
-      const data = { firstname: userDetail?.firstname, lastname: userDetail?.lastname, user_id: userId };
-      if (checkMessagesResponse.data.data.length > 0) {
-        navigate('/user/chateduser', { state: data });
-      } else {
-        setOpenDialog(true);
-      }
+      await axiosInstance
+        .get(`/chatuser/chatuser/chat-messages/${loggedInUserId}/${userId}`)
+        .then((response) => {
+          const data = {
+            firstname: userDetail?.firstname,
+            lastname: userDetail?.lastname,
+            user_id: userId,
+          };
+          navigate('/user/chateduser', { state: data });
+        })
+        .catch((error) => {
+          if (error.response && error.response.status === 404) {
+            setOpenDialog(true);
+          } else {
+            console.error('Error checking messages:', error);
+          }
+        });
     } catch (error) {
       console.error('Error checking messages:', error);
-      setError('Error checking messages');
     }
   };
 
@@ -160,10 +167,6 @@ const AdminChat = () => {
         </div>
       ) : (
         <>
-          <Typography variant="h4" gutterBottom style={{ paddingLeft: '10px', paddingBottom: '10px' }}>
-            {/* User Detail */}
-          </Typography>
-
           <section className="">
             <MDBContainer className="py-5 h-100">
               <MDBRow className="justify-content-center align-items-center h-100">

@@ -45,8 +45,6 @@ router.post('/adminsignup', async (req, res) => {
   }
 });
 
-
-
 router.post('/adminlogin', async (req, res) => {
   try {
     const user = await AdminSignup.findOne({ email: req.body.email });
@@ -89,7 +87,6 @@ router.put('/adminchangepassword/:user_id', async (req, res) => {
     const { user_id } = req.params;
     const { oldPassword, newPassword } = req.body;
 
-    // Find the user by user_id
     const user = await AdminSignup.findOne({ user_id });
 
     if (!user) {
@@ -99,7 +96,6 @@ router.put('/adminchangepassword/:user_id', async (req, res) => {
       });
     }
 
-    // Check if the old password is correct
     const compare = await hashCompare(oldPassword, user.password);
 
     if (!compare) {
@@ -109,12 +105,10 @@ router.put('/adminchangepassword/:user_id', async (req, res) => {
       });
     }
 
-    // Hash and update the new password
     const hashedNewPassword = await hashPassword(newPassword);
     user.password = hashedNewPassword;
     user.updateAt = moment().format('YYYY-MM-DD HH:mm:ss');
 
-    // Save the updated user
     await user.save();
 
     res.json({

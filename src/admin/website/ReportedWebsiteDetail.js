@@ -6,14 +6,8 @@ import { styled } from '@mui/system';
 import { faUser, faMoneyBill, faBarsProgress, faCircleInfo, faLink, faBug } from '@fortawesome/free-solid-svg-icons';
 import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBTypography } from 'mdb-react-ui-kit';
 import CircularProgress from '@mui/material/CircularProgress';
-
 import Page from '../components/Page';
 import axiosInstance from '../config/AxiosInstanceAdmin';
-
-// const IconWrapper = styled('span')({
-//   marginRight: '8px',
-//   fontSize: '20px',
-// });
 
 const StyledDialog = styled(Dialog)({
   '& .MuiDialogTitle-root': {
@@ -52,20 +46,16 @@ export default function ReportedWebsiteDetail() {
     try {
       const response = await axiosInstance.get(`/website/websitesdetail?website_id=${websiteId}`);
       if (response.data && response.data.success) {
-        setWebsiteDetail(response.data.data); // Assuming "website" is the key for website details
+        setWebsiteDetail(response.data.data);
 
         setLoading(false);
       } else {
         console.error('No data found in response:', response);
         setLoading(false);
-
-        // Handle other cases if needed (e.g., error messages)
       }
     } catch (error) {
       console.error('Error fetching website details:', error);
       setLoading(false);
-
-      // Handle error state if needed
     }
   };
 
@@ -77,54 +67,11 @@ export default function ReportedWebsiteDetail() {
     setOpenDialog(false);
   };
 
-  // const handleSendMessageAndToggleStatus = async () => {
-  //   try {
-  //     const decodedToken = localStorage.getItem('decodedToken');
-  //     const parsedToken = JSON.parse(decodedToken);
-  //     const loggedInUserId = parsedToken.userId?.user_id;
-
-  //     // Check if there are existing messages
-  //     const checkMessagesResponse = await axiosInstance.get(
-  //       `/chatuser/chatuser/chat-messages/${loggedInUserId}/${websiteDetail.user?.user_id}`
-  //     );
-
-  //     if (checkMessagesResponse.data.data.length > 0) {
-  //       navigate('/user/chateduser');
-  //     } else {
-  //       // If no existing messages, send a new message
-  //       setOpenDialog(true);
-
-  //       const payload = {
-  //         receiver_id: loggedInUserId,
-  //       };
-
-  //       const updateUserResponse = await axiosInstance.put(
-  //         `/signup/signup/allusers/${websiteDetail.user?.user_id}`,
-  //         payload
-  //       );
-
-  //       const chatPayload = {
-  //         receiver_id: websiteDetail.user?.user_id,
-  //         sender_id: loggedInUserId,
-  //         message,
-  //       };
-
-  //       const sendMessageResponse = await axiosInstance.post('/chatuser/chat-messages', chatPayload);
-
-  //       // After sending the message, toggle the status and delete the reported website
-  //       await toggleStatusAndDeleteReportedWebsite();
-  //     }
-  //   } catch (error) {
-  //     console.error('Error handling send message and toggle status:', error);
-  //   }
-  // };
-
   const toggleStatusAndDeleteReportedWebsite = async () => {
     try {
       const response = await axiosInstance.put(`/reportedwebsite/reportedwebsite/toggle-status/${websiteId}`);
 
       if (response.data && response.data.success) {
-        // Delete the reported website
         const deleteResponse = await axiosInstance.delete(`/reportedwebsite/deletereportedwebsite/${websiteId}`);
         if (deleteResponse.data && deleteResponse.data.success) {
           navigate('/admin/allwebsite');
@@ -143,60 +90,9 @@ export default function ReportedWebsiteDetail() {
     }
   };
 
-  // const handleConfirmDialog = async () => {
-  //   try {
-  //     const response = await axiosInstance.put(`/reportedwebsite/reportedwebsite/toggle-status/${websiteId}`);
-
-  //     if (response.data && response.data.success) {
-  //       // Handle success, e.g., show a success message
-  //
-
-  //       // Delete the reported website
-  //       const deleteResponse = await axiosInstance.delete(`/reportedwebsite/deletereportedwebsite/${websiteId}`);
-  //       if (deleteResponse.data && deleteResponse.data.success) {
-  //
-  //         navigate('/admin/allwebsite');
-  //       } else {
-  //         console.error('Failed to delete reported website:', deleteResponse.data.message);
-  //       }
-
-  //       fetchWebsiteDetail();
-  //     } else {
-  //       // Handle failure, e.g., show an error message
-  //       console.error('Failed to toggle status:', response.data.message);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error toggling status:', error);
-  //   } finally {
-  //     // Close the dialog whether the request succeeded or failed
-  //     setOpenDialog(false);
-  //   }
-  // };
-
   useEffect(() => {
     fetchWebsiteDetail(websiteId);
   }, [websiteId]);
-
-  //--------------------------------------------------------
-  // const handleSendMessage = async () => {
-  //   try {
-  //     const decodedToken = localStorage.getItem('decodedToken');
-  //     const parsedToken = JSON.parse(decodedToken);
-  //     const loggedInUserId = parsedToken.userId?.user_id;
-
-  //     const checkMessagesResponse = await axiosInstance.get(
-  //       `/chatuser/chatuser/chat-messages/${loggedInUserId}/${websiteDetail.user?.user_id}`
-  //     );
-
-  //     if (checkMessagesResponse.data.data.length > 0) {
-  //       navigate('/user/chateduser');
-  //     } else {
-  //       setOpenDialog(true);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error checking messages:', error);
-  //   }
-  // };
 
   const handleSendButtonClick = async () => {
     try {
@@ -204,13 +100,11 @@ export default function ReportedWebsiteDetail() {
       const parsedToken = JSON.parse(decodedToken);
       const loggedInUserId = parsedToken.userId?.user_id;
 
-      // Update user details
       const updatePayload = {
         receiver_id: loggedInUserId,
       };
       await axiosInstance.put(`/signup/signup/allusers/${websiteDetail.user?.user_id}`, updatePayload);
 
-      // Send a new message
       const chatPayload = {
         receiver_id: websiteDetail.user?.user_id,
         sender_id: loggedInUserId,
@@ -225,7 +119,6 @@ export default function ReportedWebsiteDetail() {
 
       await axiosInstance.post('/notification/notifications', notificationPayload);
 
-      // Toggle status and delete the reported website
       await toggleStatusAndDeleteReportedWebsite();
 
       setOpenDialog(false);
@@ -249,27 +142,6 @@ export default function ReportedWebsiteDetail() {
                   <MDBCol lg="12" className="mb-2 mb-lg-0">
                     <MDBCard className="mb-3" style={{ borderRadius: '.5rem' }}>
                       <MDBRow className="g-0">
-                        {/* <MDBCol
-                      md="4"
-                      className="gradient-custom text-center text-white d-flex flex-column justify-content-center align-items-center"
-                      style={{ borderTopLeftRadius: '.5rem', borderBottomLeftRadius: '.5rem' }}
-                    >
-                      <FontAwesomeIcon
-                        icon={faUser}
-                        style={{
-                          fontSize: '3em', // Adjust the size as needed
-                          marginBottom: '25px',
-                          marginTop: '25px',
-                        }}
-                      />
-
-                      <MDBTypography tag="h6">
-                        {websiteDetail.url} {websiteDetail.lastname}
-                      </MDBTypography>
-                      <MDBCardText>{websiteDetail.username}</MDBCardText>
-                      <MDBIcon far icon="edit mb-5" />
-                    </MDBCol> */}
-
                         <MDBCol>
                           <MDBCardBody className="p-4 pb-4">
                             <MDBTypography tag="h5" className="pb-2" style={{ color: '#145DA0' }}>
@@ -353,7 +225,6 @@ export default function ReportedWebsiteDetail() {
                             <hr className="mt-0 mb-2" />
                             <MDBRow className="pt-1 pb-2 pt-2">
                               <MDBCol size="12" className="mb-3">
-                                {/* <MDBTypography tag="h6">Email</MDBTypography> */}
                                 <MDBCardText className="text-muted" style={{ fontSize: '20px' }}>
                                   {websiteDetail.website?.url}
                                 </MDBCardText>
@@ -536,7 +407,7 @@ export default function ReportedWebsiteDetail() {
                 variant="outlined"
                 fullWidth
                 multiline
-                rows={5} // Set the number of visible rows as needed
+                rows={5}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 style={{ marginTop: '16px', marginBottom: '16px' }}

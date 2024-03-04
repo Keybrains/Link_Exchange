@@ -4,15 +4,12 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 // material
 import { styled } from '@mui/material/styles';
 import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/material';
-// mock
-// import account from '../../_mock/account';
 // hooks
 import useResponsive from '../../hooks/useResponsive';
 // components
 import Logo from '../../components/Logo';
 import Scrollbar from '../../components/Scrollbar';
 import NavSection from '../../components/NavSection';
-//
 import navConfig from './NavConfig';
 
 // ----------------------------------------------------------------------
@@ -50,17 +47,15 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
     if (isOpenSidebar) {
       onCloseSidebar();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(true);
 
   useEffect(() => {
-    setIsDropdownOpen(true); // Set dropdown to open initially
+    setIsDropdownOpen(true);
   }, []);
 
   useEffect(() => {
-    // Close dropdown on page change
     setIsDropdownOpen(false);
   }, [pathname]);
 
@@ -74,29 +69,13 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
       <Box
         sx={{
           px: 2.5,
-          py: 3,
+          // py: 3,
           display: 'flex',
           justifyContent: 'center',
         }}
       >
-        <Logo sx={{ width: '100px', height: '50px' }} />
+        <Logo sx={{ width: '180px', height: '100px' }} />
       </Box>
-
-      {/* <Box sx={{ mb: 5, mx: 2.5 }}>
-        <Link underline="none" component={RouterLink} to="#">
-          <AccountStyle>
-            <Avatar src={account.photoURL} alt="photoURL" />
-            <Box sx={{ ml: 2 }}>
-              <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {account.displayName}
-              </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {account.role}
-              </Typography>
-            </Box>
-          </AccountStyle>
-        </Link>
-      </Box> */}
 
       <NavSection navConfig={navConfig} isOpen={isDropdownOpen} />
 
@@ -111,7 +90,11 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
           open={isOpenSidebar}
           onClose={onCloseSidebar}
           PaperProps={{
-            sx: { width: DRAWER_WIDTH },
+            sx: {
+              width: DRAWER_WIDTH,
+              background: 'linear-gradient(180deg, #C7CAFF 0%, #010ED0 100%)',
+              borderRadius: '0px 25px 25px 0px',
+            },
           }}
         >
           {renderContent}
@@ -125,8 +108,8 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
           PaperProps={{
             sx: {
               width: DRAWER_WIDTH,
-              backgroundColor: '#B1D4E0',
-              borderRightStyle: 'dashed',
+              background: 'linear-gradient(180deg, #C7CAFF 0%, #010ED0 100%)',
+              borderRadius: '0px 25px 25px 0px',
             },
           }}
         >

@@ -1,6 +1,5 @@
 import * as Yup from 'yup';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 // form
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -10,13 +9,12 @@ import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from '../../../components/Iconify';
 import { FormProvider, RHFTextField, RHFCheckbox } from '../../../components/hook-form';
-
+import PasswordResetDialog from './PasswordResetDialog';
 // ----------------------------------------------------------------------
 
 export default function LoginForm({ onSubmit }) {
-  const navigate = useNavigate();
-
   const [showPassword, setShowPassword] = useState(false);
+  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
 
   const LoginSchema = Yup.object().shape({
     identifier: Yup.string().required('Email or Username is required'),
@@ -38,10 +36,6 @@ export default function LoginForm({ onSubmit }) {
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
-
-  // const onSubmit = async () => {
-  //   navigate('/dashboard', { replace: true });
-  // };
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
@@ -66,11 +60,21 @@ export default function LoginForm({ onSubmit }) {
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
         <RHFCheckbox name="remember" label="Remember me" />
-        <Link variant="subtitle2" underline="hover">
+        <Link
+          variant="subtitle2"
+          underline="hover"
+          onClick={() => setIsResetDialogOpen(true)}
+          style={{ cursor: 'pointer' }}
+        >
           Forgot password?
         </Link>
       </Stack>
 
+      <PasswordResetDialog
+        open={isResetDialogOpen}
+        onClose={() => setIsResetDialogOpen(false)}
+      />
+                                                
       <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
         Login
       </LoadingButton>

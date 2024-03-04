@@ -20,7 +20,10 @@ export default function ThemeProvider({ children }) {
     () => ({
       palette,
       shape: { borderRadius: 8 },
-      typography,
+      typography: {
+        ...typography,
+        fontFamily: 'Poppins, sans-serif',
+      },
       shadows,
       customShadows,
     }),

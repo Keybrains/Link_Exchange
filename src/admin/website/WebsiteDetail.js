@@ -15,6 +15,7 @@ import axios from 'axios';
 import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBTypography } from 'mdb-react-ui-kit';
 import CircularProgress from '@mui/material/CircularProgress';
 import { PhotoCamera } from '@mui/icons-material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Page from '../components/Page';
 import { OpenImageDialog } from '../../OtherUserWebsite/OpenImageDialog';
 import axiosInstance from '../config/AxiosInstanceAdmin';
@@ -27,6 +28,7 @@ export default function WebsiteDetail() {
   const [fileName, setFileName] = useState('');
   const [open, setOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
+
   const handleOpenDialog = (image) => {
     setSelectedImage(`${basePath}${image}`);
     setOpen(true);
@@ -86,6 +88,26 @@ export default function WebsiteDetail() {
     }
   };
   const basePath = 'https://propertymanager.cloudpress.host/api/images/get-file/';
+
+  const handleDeleteImage = async () => {
+    try {
+      const response = await axiosInstance.delete(`/website/websites/remove-image/${websiteId}`);
+      if (response.data.success) {
+        setWebsiteDetail((prevDetails) => ({
+          ...prevDetails,
+          website: {
+            ...prevDetails.website,
+            image: '',
+          },
+        }));
+        setTimeout(() => {
+          fetchWebsiteDetail(websiteId);
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Error deleting image:', error);
+    }
+  };
 
   return (
     <Page title="User Detail">
@@ -410,6 +432,21 @@ export default function WebsiteDetail() {
                                     Image
                                     <input type="file" hidden onChange={handleFileChange} />
                                   </Button>
+                                  {websiteDetail.website?.image && (
+                                    <Button
+                                      color="error"
+                                      variant="outlined"
+                                      onClick={handleDeleteImage}
+                                      fullWidth={{ xs: true, sm: false }}
+                                      sx={{
+                                        margin: '0px 0',
+                                        borderColor: 'action.active',
+                                        width: { sm: 'auto' },
+                                      }}
+                                    >
+                                      <DeleteIcon sx={{ ml: 0 }} />
+                                    </Button>
+                                  )}
                                   {fileName && (
                                     <div>
                                       <img

@@ -5,7 +5,6 @@ import {
   CardContent,
   Grid,
   Button,
-  // ...other imports
   Stack,
   Pagination,
   Select,
@@ -25,21 +24,18 @@ export default function ReportedWebsite() {
   const [ReportedWebsite, setReportedWebsite] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5); // Updated state for items per page
+  const [itemsPerPage, setItemsPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     async function fetchReportedWebsite() {
       try {
-        // Retrieve the decodedToken from localStorage
         const decodedToken = localStorage.getItem('decodedToken');
 
         if (decodedToken) {
           const parsedToken = JSON.parse(decodedToken);
-          const userId = parsedToken.userId?.user_id; // Extracting user_id from decodedToken
+          const userId = parsedToken.userId?.user_id;
 
-          // Update formData with the user_id
-          //   setFormData((prevData) => ({ ...prevData, user_id: userId }));
           const response = await axiosInstance.get(`/reportedwebsite/reported/${userId}`, {
             params: { page, itemsPerPage },
           });
@@ -60,7 +56,6 @@ export default function ReportedWebsite() {
         setLoading(false);
       } catch (error) {
         console.error(error);
-        // Handle error state if needed
         setLoading(false);
       }
     }
@@ -69,7 +64,6 @@ export default function ReportedWebsite() {
   }, [page, itemsPerPage]);
 
   const handleItemsPerPageChange = (event) => {
-    // Update itemsPerPage and reset to the first page
     setItemsPerPage(Number(event.target.value));
     setPage(1);
   };
@@ -102,7 +96,7 @@ export default function ReportedWebsite() {
                           icon={faDotCircle}
                           style={{
                             color: website.reported ? 'red' : 'gray',
-                            fontSize: '0.9em', // Adjust the size as needed
+                            fontSize: '0.9em',
                             marginRight: '5px',
                           }}
                         />
@@ -147,7 +141,6 @@ export default function ReportedWebsite() {
                           {website.backlinksAllowed}
                         </Typography>
                       </Grid>
-                      {/* Other Grid items */}
                       <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
                         <Typography style={{ marginBottom: '10px' }}>
                           <span style={{ fontWeight: 'bold' }}>Country : </span>
@@ -167,9 +160,6 @@ export default function ReportedWebsite() {
                           <Button variant="contained" color="primary" sx={{ marginRight: '10px' }}>
                             Contact
                           </Button>
-                          {/* <Button variant="contained" color="secondary" sx={{ backgroundColor: '#FF7F7F' }}>
-                        Report
-                      </Button> */}
                         </div>
                       </Grid>
                     </Grid>
@@ -182,7 +172,7 @@ export default function ReportedWebsite() {
           )}
         </>
       )}
-      <hr style={{ borderTop: '1px solid black', width: '100%', margin: '20px 0' }} /> {/* Stylish horizontal line */}
+      <hr style={{ borderTop: '1px solid black', width: '100%', margin: '20px 0' }} />
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <>
           <FormControl margin="normal" sx={{ '& .MuiInput-root': { paddingTop: '18px' } }}>
@@ -191,7 +181,7 @@ export default function ReportedWebsite() {
               value={itemsPerPage}
               onChange={handleItemsPerPageChange}
               label="Items per Page"
-              sx={{ fontSize: '0.9rem' }} // Adjust the fontSize as needed
+              sx={{ fontSize: '0.9rem' }}
             >
               <MenuItem value={5}>5</MenuItem>
               <MenuItem value={10}>10</MenuItem>
@@ -199,8 +189,6 @@ export default function ReportedWebsite() {
             </Select>
           </FormControl>
         </>
-
-        {/* Add your buttons and other components here */}
 
         {totalPages > 1 && (
           <Stack spacing={2} sx={{ justifyContent: 'center' }}>

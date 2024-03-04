@@ -3,15 +3,14 @@ import toast, { Toaster } from 'react-hot-toast';
 import { jwtDecode } from 'jwt-decode';
 // @mui
 import { styled } from '@mui/material/styles';
-import { Card,Container, Typography, Box } from '@mui/material';
+import { Card, Container, Typography, Box } from '@mui/material';
 import axiosInstance from '../config/AxiosInstanceAdmin';
 // hooks
 import useResponsive from '../hooks/useResponsive';
 // components
 import Page from '../components/Page';
-import Logo from '../components/Logo';
+import { ReactComponent as Logo } from '../../assets/nav-logo.svg';
 // sections
-
 import AdminLoginForm from '../sections/auth/login/AdminLoginForm';
 
 // ----------------------------------------------------------------------
@@ -62,8 +61,6 @@ const ContentStyle = styled('div')(({ theme }) => ({
 export default function AdminLogin() {
   const navigate = useNavigate();
 
-  // const smUp = useResponsive('up', 'sm');
-
   const mdUp = useResponsive('up', 'md');
 
   const decodeToken = (token) => {
@@ -76,31 +73,12 @@ export default function AdminLogin() {
     }
   };
 
-  // const handleTokenDecoding = (token) => {
-  //   localStorage.setItem('authToken', token);
-  //   try {
-  //     const decodedToken = decodeToken(token);
-  //     toast.success('Token Decoded Successfully');
-
-  //     // Store the decoded token in localStorage
-  //     localStorage.setItem('decodedToken', JSON.stringify(decodedToken));
-  //     localStorage.setItem('authToken', token);
-
-  //     // Perform any further actions with the decoded token if needed
-  //   } catch (error) {
-  //     console.error('Token decoding error:', error);
-  //     toast.error('Failed to decode token');
-  //     // Handle the error or perform additional actions as needed
-  //   }
-  // };
-
   const handleTokenDecoding = (token) => {
     localStorage.setItem('authToken', token);
     try {
       const decodedToken = decodeToken(token);
       toast.success('Token Decoded Successfully');
 
-      // Convert decodedToken to a string before storing it
       const decodedTokenString = JSON.stringify(decodedToken);
       localStorage.setItem('decodedToken', decodedTokenString);
     } catch (error) {
@@ -118,8 +96,6 @@ export default function AdminLogin() {
         },
       });
 
-  
-
       if (response && response.data && response.data.success) {
         await toast
           .promise(Promise.resolve(response.data.message), {
@@ -132,7 +108,7 @@ export default function AdminLogin() {
           });
 
         const { token } = response.data;
-      
+
         handleTokenDecoding(token);
       } else {
         toast.error('Failed to log in');
@@ -161,29 +137,28 @@ export default function AdminLogin() {
       <Page title="Admin Login">
         <RootStyle>
           <HeaderStyle>
-            <Box
-              sx={{
-                px: 2.5,
-                py: 3,
+            <div
+              style={{
+                width: '15%',
+                height: '15%',
                 display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              <Logo sx={{ width: '100px', height: '50px' }} />
-            </Box>
+              <Logo style={{ width: '100%', height: '100%' }} />
+            </div>
           </HeaderStyle>
 
           {mdUp && (
             <SectionStyle sx={{ px: 5, mt: 15, mb: 5 }}>
-              {/* <Typography variant="h3" sx={{ px: 5, mt: 15, mb: 5 }}>
-                Hi, Welcome Back
-              </Typography> */}
               <img src="/static/illustrations/illustration_adminlogin.png" alt="login" />
             </SectionStyle>
           )}
 
           <Container maxWidth="sm">
             <ContentStyle>
-              <Typography variant="h4" align="center" sx={{ mb: 5 }} gutterBottom>
+              <Typography variant="h4" align="center" sx={{ mb: 5 }} gutterBottom style={{ color: '#010ED0' }}>
                 Admin Login
               </Typography>
 

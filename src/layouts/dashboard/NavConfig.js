@@ -7,15 +7,15 @@ const getIcon = (name) => <Iconify icon={name} width={22} height={22} />;
 
 const navConfig = [
   // {
-  //   title: 'My Plateforms',
-  //   path: '/user/dashboard',
-  //   icon: getIcon('eva:pie-chart-2-fill'),
+  //   title: 'My Dashboard',
+  //   path: '/user/userdashboard',
+  //   icon: getIcon('clarity:dashboard-line'),
   //   defaultOpen: true,
   // },
   {
-    title: 'Search For Publishers',
-    icon: getIcon('mdi:users'),
-    defaultOpen: true,
+    title: 'Search For Publisher',
+    icon: getIcon('ic:baseline-search'),
+    // defaultOpen: true,
     children: [
       {
         title: 'All Website',
@@ -32,15 +32,13 @@ const navConfig = [
         path: '/user/paiduserwebsite',
         icon: getIcon('material-symbols:paid-outline'),
       },
-      // Add more dropdown options as needed
     ],
   },
   {
     title: 'Add Website',
     path: '/user/mywebsite',
-    icon: getIcon('gg:website'),
+    icon: getIcon('icons8:plus'),
   },
-
   {
     title: 'My Free Website',
     path: '/user/freewebsite',
@@ -54,35 +52,14 @@ const navConfig = [
   {
     title: 'My Pending Approval',
     path: '/user/pendingapproval',
-    icon: getIcon('material-symbols:upcoming-outline'),
+    icon: getIcon('ph:dots-three-circle'),
   },
-  // {
-  //   title: 'Reported Website',
-  //   path: '/user/reportedwebsite',
-  //   icon: getIcon('material-symbols:report'),
-  // },
-
-  // {
-  //   title: 'Discussions',
-  //   path: '/user/discussions',
-  //   icon: getIcon('material-symbols:chat'),
-  // },
   {
-    title: 'Chated User',
+    title: 'My Chats',
     path: '/user/chateduser',
-    icon: getIcon('material-symbols:chat'),
+    icon: getIcon('tabler:message'),
   },
 
-  // {
-  //   title: 'register',
-  //   path: '/register',
-  //   icon: getIcon('eva:person-add-fill'),
-  // },
-  // {
-  //   title: 'Not found',
-  //   path: '/404',
-  //   icon: getIcon('eva:alert-triangle-fill'),
-  // },
 ];
 
 export default navConfig;

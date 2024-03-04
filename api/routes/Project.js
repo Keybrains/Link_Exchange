@@ -3,7 +3,6 @@ const router = express.Router();
 const Project = require('../models/Project');
 const moment = require('moment');
 
-// Endpoint to save image path and URL
 router.post('/project', async (req, res) => {
   const { image, url } = req.body;
   const timestamp = Date.now();
@@ -38,10 +37,9 @@ router.post('/project', async (req, res) => {
   }
 });
 
-// Endpoint to get all projects
 router.get('/projects', async (req, res) => {
   try {
-    const projects = await Project.find(); // Use .find() with no arguments to retrieve all documents
+    const projects = await Project.find();
     res.status(200).json(projects);
   } catch (error) {
     console.error('Error fetching projects:', error);
@@ -49,9 +47,8 @@ router.get('/projects', async (req, res) => {
   }
 });
 
-// Endpoint to delete a project using project_id
 router.delete('/project/:project_id', async (req, res) => {
-  const { project_id } = req.params; // Extract project_id from URL parameters
+  const { project_id } = req.params;
 
   if (!project_id) {
     return res.status(400).json({ message: 'Project ID is required' });

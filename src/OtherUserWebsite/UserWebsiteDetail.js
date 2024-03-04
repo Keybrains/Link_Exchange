@@ -17,7 +17,6 @@ export default function UserWebsiteDetail() {
   const basePath = 'https://propertymanager.cloudpress.host/api/images/get-file/';
   const [open, setOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
-
   const handleOpenDialog = (image) => {
     setSelectedImage(`${basePath}${image}`);
     setOpen(true);
@@ -306,7 +305,6 @@ export default function UserWebsiteDetail() {
               </MDBContainer>
             </section>
           )}
-          {/* OpenImageDialog Component */}
           <OpenImageDialog open={open} setOpen={setOpen} selectedImage={selectedImage} />
         </>
       )}

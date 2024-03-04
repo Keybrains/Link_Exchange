@@ -69,9 +69,7 @@ export default function Discussions() {
           sender_id: userId,
           message,
         };
-
         const response = await axiosInstance.post('/chatuser/chat-messages', payload);
-
         setMessages([...messages, response.data.data]);
         fetchUsers([...messages, response.data.data]);
       } else {

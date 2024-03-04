@@ -20,12 +20,16 @@ export default function Searchbar() {
 
   return (
     <>
-      <div className="imagebtn" style={{ display: 'flex', overflow: 'auto' }}>
+      <div
+        className="imagebtn"
+        style={{ display: 'flex', overflow: 'auto', paddingLeft: '10px', paddingTop: '5px', paddingBottom: '10px' }}
+      >
         {projects.map((project) => (
           <button
             key={project.id}
             onClick={() => window.open(project.url, '_blank')}
             onKeyPress={(event) => event.key === 'Enter' && window.open(project.url, '_blank')}
+            style={{ margin: '0 10px', border: 'none', background: 'none' }}
           >
             <img
               src={`${basePath}${project.image}`}

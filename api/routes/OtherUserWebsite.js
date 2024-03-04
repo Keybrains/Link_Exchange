@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Website = require('../models/WebSite');
 
-//get all website
 router.get('/websites-not-matching-user/:userId', async (req, res) => {
   try {
     const { userId } = req.params;

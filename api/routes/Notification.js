@@ -1,5 +1,3 @@
-// notificationRoutes.js
-
 const express = require('express');
 const router = express.Router();
 const Notification = require('../models/Notification');
@@ -9,121 +7,156 @@ const AdminSignup = require('../models/AdminSignup');
 
 router.post('/notifications', async (req, res) => {
   try {
-    const timestamp = Date.now();
-    const randomString = Math.random().toString(36).substr(5, 15);
-    const randomNumber = Math.floor(Math.random() * Math.pow(10, 10))
-      .toString()
-      .padStart(10, '0');
-    const uniqueId = `${timestamp}${randomString}${randomNumber}`;
-
-    const notificationUniqueId = (req.body['chat_id'] = uniqueId);
-    // Extract necessary fields from the request body
     const { website_id, sender_id, receiver_id } = req.body;
+    
+    const notification_id = [sender_id, receiver_id].sort().join('_');
 
-    const newNotification = new Notification({
-      notification_id: notificationUniqueId,
+    const newNotificationDetail = {
       website_id,
       sender_id,
       receiver_id,
-      createAt: moment().format('YYYY-MM-DD HH:mm:ss'),
-      updateAt: moment().format('YYYY-MM-DD HH:mm:ss'),
-      // Add any other notification-related fields as needed
-    });
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-    const savedNotification = await newNotification.save();
+    let notificationThread = await Notification.findOne({ notification_id });
+
+    if (notificationThread) {
+      notificationThread.notifications.push(newNotificationDetail);
+      notificationThread.updatedAt = new Date();
+    } else {
+      notificationThread = new Notification({
+        notification_id,
+        participants: [sender_id, receiver_id].sort(),
+        notifications: [newNotificationDetail],
+      });
+    }
+
+    await notificationThread.save();
 
     res.status(201).json({
       success: true,
-      data: savedNotification,
-      message: 'Notification created successfully',
+      message: 'Notification created/updated successfully',
     });
   } catch (error) {
+    console.error('Error creating/updating notification:', error);
     res.status(500).json({
       success: false,
-      message: 'Error creating notification',
+      message: 'Error creating/updating notification',
       error: error.message,
     });
   }
 });
 
+
 router.get('/unread-notifications/:userId', async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const unreadNotificationsCount = await Notification.countDocuments({
-      receiver_id: userId,
-      isUnRead: true,
+
+    const threads = await Notification.find({
+      participants: userId,
+      "notifications.isUnRead": true,
     });
 
-    const unreadNotifications = await Notification.find({
-      receiver_id: userId,
-      isUnRead: true,
-    });
-
-    const senderIds = unreadNotifications.map((notification) => notification.sender_id);
-
-    const senders = await Promise.all([
-      Signup.find({ user_id: { $in: senderIds } }, 'user_id firstname lastname'),
-      AdminSignup.find({ user_id: { $in: senderIds } }, 'user_id firstname lastname'),
-    ]);
-
+    let unreadNotificationsCount = 0;
     const senderDetailsMap = {};
-
-    // Process sender details from Signup collection
-    senders[0].forEach((sender) => {
-      senderDetailsMap[sender.user_id] = {
-        firstname: sender.firstname,
-        lastname: sender.lastname,
-      };
-    });
-
-    // Process sender details from AdminSignup collection
-    senders[1].forEach((sender) => {
-      senderDetailsMap[sender.user_id] = {
-        firstname: sender.firstname,
-        lastname: sender.lastname,
-      };
-    });
-
     const response = {};
 
-    unreadNotifications.forEach((notification) => {
-      const senderId = notification.sender_id.toString();
-      if (!response[senderId]) {
-        response[senderId] = {
-          sender_id: senderId,
-          sender: senderDetailsMap[senderId],
-          count: 1,
-        };
-      } else {
-        response[senderId].count++;
+    for (const thread of threads) {
+      const unreadNotifications = thread.notifications.filter(notification => notification.receiver_id === userId && notification.isUnRead);
+
+      unreadNotificationsCount += unreadNotifications.length;
+
+      for (const notification of unreadNotifications) {
+        const senderId = notification.sender_id;
+
+        if (!senderDetailsMap[senderId]) {
+          const sender = await Signup.findOne({ user_id: senderId }, 'user_id firstname lastname') ||
+                         await AdminSignup.findOne({ user_id: senderId }, 'user_id firstname lastname');
+
+          if (sender) {
+            senderDetailsMap[senderId] = {
+              firstname: sender.firstname,
+              lastname: sender.lastname,
+            };
+          }
+        }
+
+        if (!response[senderId]) {
+          response[senderId] = {
+            sender_id: senderId,
+            sender: senderDetailsMap[senderId],
+            count: 1,
+          };
+        } else {
+          response[senderId].count++;
+        }
       }
-    });
+    }
 
     res.json({ unreadNotificationsCount, unreadNotifications: Object.values(response) });
   } catch (error) {
-    console.error('Error fetching unread notifications count:', error);
+    console.error('Error fetching unread notifications:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 router.put('/mark-read/:userId', async (req, res) => {
   const { userId } = req.params;
 
   try {
-    // Find all unread notifications for the given user
-    const unreadNotifications = await Notification.find({
-      receiver_id: userId,
-      isUnRead: true,
+    const threads = await Notification.find({
+      participants: userId,
+      "messages.isUnRead": true,
+      "messages.receiver_id": userId,
     });
 
-    // Update the isUnRead status for each notification to false
-    await Promise.all(
-      unreadNotifications.map(async (notification) => {
+    await Promise.all(threads.map(async (thread) => {
+      thread.messages.forEach((message) => {
+        if (message.receiver_id === userId && message.isUnRead) {
+          message.isUnRead = false;
+        }
+      });
+      await thread.save();
+    }));
+
+    res.json({ message: 'All notifications marked as read successfully' });
+  } catch (error) {
+    console.error('Error marking notifications as read:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+router.put('/mark-read/:senderId/:receiverId', async (req, res) => {
+  const { senderId, receiverId } = req.params;
+
+  try {
+  
+    const thread = await Notification.findOne({
+      participants: { $all: [senderId, receiverId] },
+      notifications: {
+        $elemMatch: {
+          sender_id: senderId,
+          receiver_id: receiverId,
+          isUnRead: true,
+        },
+      },
+    });
+
+    if (!thread) {
+      return res.status(404).json({ error: 'Notification thread not found or no unread messages' });
+    }
+
+    thread.notifications.forEach((notification) => {
+      if (notification.sender_id === senderId && notification.receiver_id === receiverId && notification.isUnRead) {
         notification.isUnRead = false;
-        await notification.save();
-      })
-    );
+      }
+    });
+
+    await thread.save();
 
     res.json({ message: 'Notifications marked as read successfully' });
   } catch (error) {
@@ -132,30 +165,6 @@ router.put('/mark-read/:userId', async (req, res) => {
   }
 });
 
-router.put('/mark-read/:senderId/:receiverId', async (req, res) => {
-  const { senderId, receiverId } = req.params;
 
-  try {
-    // Find the specific notification using sender_id and receiver_id
-    const notification = await Notification.findOne({
-      sender_id: senderId,
-      receiver_id: receiverId,
-      isUnRead: true,
-    });
-
-    if (!notification) {
-      return res.status(404).json({ error: 'Notification not found or already marked as read' });
-    }
-
-    // Update the isUnRead status for the notification to false
-    notification.isUnRead = false;
-    await notification.save();
-
-    res.json({ message: 'Notification marked as read successfully' });
-  } catch (error) {
-    console.error('Error marking notification as read:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
 
 module.exports = router;

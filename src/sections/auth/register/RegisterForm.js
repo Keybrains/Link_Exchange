@@ -1,8 +1,6 @@
 import { getCountries, getCountryCallingCode } from 'libphonenumber-js';
-
 import * as Yup from 'yup';
 import { useEffect, useState } from 'react';
-
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
@@ -15,7 +13,6 @@ import {
   MenuItem,
   Typography,
 } from '@mui/material';
-
 import { LoadingButton } from '@mui/lab';
 import Iconify from '../../../components/Iconify';
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
@@ -74,13 +71,11 @@ export default function RegisterForm({ onSubmit }) {
   const [formattedPhoneNumber, setFormattedPhoneNumber] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  // Function to update the formatted phone number when the country code changes
   const handleCountryCodeChange = (countryCode) => {
     setSelectedCountryCode(countryCode);
     setFormattedPhoneNumber(`${countryCode}`);
   };
 
-  // Update formatted phone number when selectedCountryCode changes
   useEffect(() => {
     if (selectedCountryCode) {
       setFormattedPhoneNumber(`${selectedCountryCode}`);
@@ -111,8 +106,8 @@ export default function RegisterForm({ onSubmit }) {
               MenuProps={{
                 PaperProps: {
                   style: {
-                    maxHeight: '200px', // Set your desired height
-                    width: '150px', // Set your desired width
+                    maxHeight: '200px',
+                    width: '150px',
                   },
                 },
                 anchorOrigin: {
@@ -126,9 +121,6 @@ export default function RegisterForm({ onSubmit }) {
                 getContentAnchorEl: null,
               }}
             >
-              {/* <MenuItem value="" disabled>
-                Code
-              </MenuItem> */}
               {countryCodes.map((country, index) => (
                 <MenuItem key={index} value={country.dialCode}>
                   {`${country.name} (${country.dialCode})`}
@@ -143,10 +135,9 @@ export default function RegisterForm({ onSubmit }) {
             value={formattedPhoneNumber}
             onChange={(e) => {
               setFormattedPhoneNumber(e.target.value);
-              setPhoneNumber(e.target.value); // Store the actual phone number separately
+              setPhoneNumber(e.target.value);
             }}
             onBlur={() => {
-              // Set the actual phone number after the user exits the input
               methods.setValue('phonenumber', phoneNumber, { shouldValidate: true });
             }}
             style={{
@@ -196,6 +187,7 @@ export default function RegisterForm({ onSubmit }) {
           type="submit"
           variant="contained"
           loading={methods.formState.isSubmitting}
+          style={{backgroundColor:'#010ED0'}}
         >
           Register
         </LoadingButton>

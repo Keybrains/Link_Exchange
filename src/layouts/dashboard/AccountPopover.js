@@ -5,77 +5,20 @@ import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton } from '@mui/material';
 // components
 import MenuPopover from '../../components/MenuPopover';
-// mocks_
-// import account from '../../_mock/account';
-
-// ----------------------------------------------------------------------
-
-const MENU_OPTIONS = [
-  // {
-  //   label: 'Account Setting',
-  //   icon: 'eva:home-fill',
-  //   linkTo: '#',
-  // },
-  // {
-  //   label: 'My Rating & Reviews',
-  //   icon: 'eva:person-fill',
-  //   linkTo: '#',
-  // },
-  // {
-  //   label: 'Referral Program',
-  //   icon: 'eva:settings-2-fill',
-  //   linkTo: '#',
-  // },
-  // {
-  //   label: 'Switch To Buyer',
-  //   icon: 'eva:settings-2-fill',
-  //   linkTo: '#',
-  // },
-];
 
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
-  const getLightColor = () => {
-    const storedColor = localStorage.getItem('lightColor');
-    if (storedColor) {
-      return storedColor;
-    }
-
-    const letters = 'ABCDEF';
-    let lightColor = '#';
-    for (let i = 0; i < 3; i += 1) {
-      lightColor += letters[Math.floor(Math.random() * letters.length)];
-    }
-
-    localStorage.setItem('lightColor', lightColor);
-    return lightColor;
-  };
-
-  const getBrightColor = () => {
-    const storedColor = localStorage.getItem('brightColor');
-    if (storedColor) {
-      return storedColor;
-    }
-
-    const letters = '89ABCDEF';
-    let brightColor = '#';
-    for (let i = 0; i < 3; i += 1) {
-      brightColor += letters[Math.floor(Math.random() * letters.length)];
-    }
-
-    localStorage.setItem('brightColor', brightColor);
-    return brightColor;
-  };
+  const [userInfo, setUserInfo] = useState({});
+  const [open, setOpen] = useState(null);
+  const anchorRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Retrieve decodedToken from localStorage
     const decodedToken = localStorage.getItem('decodedToken');
     if (decodedToken) {
       const parsedToken = JSON.parse(decodedToken);
       const { userId } = parsedToken;
-
-      // Extracting firstname, lastname, and email from userId in decodedToken
       setUserInfo({
         firstname: userId.firstname,
         lastname: userId.lastname,
@@ -89,10 +32,6 @@ export default function AccountPopover() {
     return `${firstname ? firstname.charAt(0) : ''}${lastname ? lastname.charAt(0) : ''}`;
   };
 
-  const anchorRef = useRef(null);
-
-  const [open, setOpen] = useState(null);
-
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
@@ -101,8 +40,6 @@ export default function AccountPopover() {
     setOpen(null);
   };
 
-  const navigate = useNavigate();
-
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('decodedToken');
@@ -110,15 +47,12 @@ export default function AccountPopover() {
 
     handleClose();
   };
-  const [userInfo, setUserInfo] = useState({});
+
   useEffect(() => {
-    // Retrieve decodedToken from localStorage
     const decodedToken = localStorage.getItem('decodedToken');
     if (decodedToken) {
       const parsedToken = JSON.parse(decodedToken);
       const { userId } = parsedToken;
-
-      // Extracting firstname, lastname, and email from userId in decodedToken
       setUserInfo({
         firstname: userId.firstname,
         lastname: userId.lastname,
@@ -149,8 +83,9 @@ export default function AccountPopover() {
       >
         <Avatar
           sx={{
-            backgroundColor: getLightColor(), // Use light color for background
-            color: getBrightColor(), // Use bright color for text
+            fontSize: '1.1rem',
+            backgroundColor: '#010ED0',
+            color: '#fffff',
           }}
         >
           {getInitials()}
@@ -179,17 +114,6 @@ export default function AccountPopover() {
             {userInfo.email}
           </Typography>
         </Box>
-
-        {/* <Divider sx={{ borderStyle: 'dashed' }} /> */}
-
-        {/* <Stack sx={{ p: 1 }}>
-          {MENU_OPTIONS.map((option) => (
-            <MenuItem key={option.label} to={option.linkTo} component={RouterLink} onClick={handleClose}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </Stack> */}
-
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <MenuItem onClick={handleLogout} sx={{ m: 1 }}>

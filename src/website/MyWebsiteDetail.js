@@ -308,7 +308,6 @@ export default function MyWebsiteDetail() {
               </MDBContainer>
             </section>
           )}
-          {/* OpenImageDialog Component */}
           <OpenImageDialog open={open} setOpen={setOpen} selectedImage={selectedImage} />
         </>
       )}

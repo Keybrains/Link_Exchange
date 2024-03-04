@@ -1,5 +1,3 @@
-// AdminNotificationItem.js
-
 import PropTypes from 'prop-types';
 import { ListItemButton, ListItemAvatar, Avatar, ListItemText, Typography, Button } from '@mui/material';
 import { formatDistanceToNow } from 'date-fns';
@@ -123,15 +121,13 @@ const AdminNotificationItem = ({ notification, navigate, onMarkRead, onClosePopo
                 color: 'text.disabled',
               }}
             >
-              {/* <Iconify icon="eva:clock-outline" sx={{ mr: 0.5, width: 16, height: 16 }} /> */}
-              {/* {getTimeDistance()} */}
               {notification.count && (
                 <span style={{ marginLeft: '1px', fontSize: '15px' }}>{`${notification.count} ${
                   notification.count === 1 ? 'Message' : 'Messages'
                 }`}</span>
               )}
             </Typography>
-            {/* Add your button here */}
+          
             <Button
               variant="outlined"
               color="primary"

@@ -11,7 +11,8 @@ import axiosInstance from '../config/AxiosInstance';
 import useResponsive from '../hooks/useResponsive';
 // components
 import Page from '../components/Page';
-import Logo from '../components/Logo';
+import { ReactComponent as Logo } from '../assets/nav-logo.svg';
+import  RegisterImage  from '../assets/Work_3-1.webp';
 // sections
 import { RegisterForm } from '../sections/auth/register';
 // import AuthSocial from '../sections/auth/AuthSocial';
@@ -55,17 +56,15 @@ const ContentStyle = styled('div')(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
   flexDirection: 'column',
-  padding: theme.spacing(0), // Set padding to zero
-  overflow: 'hidden', // Apply overflow: hidden to the content
+  padding: theme.spacing(0),
+  overflow: 'hidden',
 }));
 
 // ----------------------------------------------------------------------
 
 export default function Register() {
   const navigate = useNavigate();
-
   const smUp = useResponsive('up', 'sm');
-
   const mdUp = useResponsive('up', 'md');
 
   const handleSubmit = async (data, e) => {
@@ -104,7 +103,6 @@ export default function Register() {
       }
     } catch (error) {
       console.error('Error occurred:', error);
-      // toast.error('An error occurred while processing your request.');
     }
   };
 
@@ -114,46 +112,36 @@ export default function Register() {
         <RootStyle sx={{ overflow: 'hidden' }}>
           <HeaderStyle>
             {smUp && (
-              <Box
-                sx={{
+              <div
+                style={{
+                  width: '10%',
+                  height: '10%',
                   display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                <Logo sx={{ width: '100px', height: '50px' }} />
-              </Box>
+                <Logo style={{ width: '100%', height: '100%' }} />
+              </div>
             )}
           </HeaderStyle>
 
           {mdUp && (
             <SectionStyle>
-              <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-                Manage the link more effectively with Link Exchange
+              <Typography variant="h4" sx={{ px: 3, mt: 10, mb: 5 }} style={{color:"#010ED0"}}>
+                Manage the link more effectively with Swapalink
               </Typography>
-              <img alt="register" src="/static/illustrations/illustration_adminregister.png" />
+              <img src={RegisterImage} alt="register"  />
             </SectionStyle>
           )}
 
           <Container sx={{ overflow: 'hidden' }}>
             <ContentStyle>
-              <Typography variant="h4" sx={{ mt: 1, mb: 2 }} gutterBottom>
-                Sign up to Link Exchange
+              <Typography variant="h4" sx={{ mt: 1, mb: 2 }} gutterBottom style={{color:"#010ED0"}}>
+                Sign up to Swapalink
               </Typography>
-
-              {/* <Typography sx={{ color: 'text.secondary', mb: 1 }}>Enter your details below.</Typography> */}
 
               <RegisterForm onSubmit={handleSubmit} />
-
-              <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 2 }}>
-                By registering, I agree to Minimal&nbsp;
-                <Link underline="always" color="text.primary" href="#">
-                  Terms of Service
-                </Link>
-                {''}and{''}
-                <Link underline="always" color="text.primary" href="#">
-                  Privacy Policy
-                </Link>
-                .
-              </Typography>
 
               {!smUp && (
                 <Typography variant="body2" sx={{ mt: 3, textAlign: 'center' }}>
@@ -163,7 +151,7 @@ export default function Register() {
                   </Link>
                 </Typography>
               )}
-              <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 3 }}>
+              <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 5 }}>
                 {smUp && (
                   <Typography variant="body2" sx={{ mt: { md: -2 } }}>
                     Already have an account? {''}

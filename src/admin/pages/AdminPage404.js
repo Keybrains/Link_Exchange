@@ -5,7 +5,6 @@ import { Button, Typography, Container, Box } from '@mui/material';
 // components
 import Page from '../components/Page';
 
-// ----------------------------------------------------------------------
 
 const ContentStyle = styled('div')(({ theme }) => ({
   maxWidth: 480,
@@ -17,7 +16,6 @@ const ContentStyle = styled('div')(({ theme }) => ({
   padding: theme.spacing(12, 0)
 }));
 
-// ----------------------------------------------------------------------
 
 export default function AdminPage404() {
   return (

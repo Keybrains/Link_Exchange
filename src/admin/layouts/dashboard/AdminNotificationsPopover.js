@@ -1,12 +1,10 @@
-// AdminNotificationsPopover.js
-
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { IconButton, Badge, Tooltip, Typography, Box, Divider, Button } from '@mui/material';
 import Iconify from '../../components/Iconify';
 import MenuPopover from '../../components/MenuPopover';
 import Scrollbar from '../../components/Scrollbar';
-import NotificationList from './AdminNotificationList'; // Create NotificationList component
+import NotificationList from './AdminNotificationList';
 import axiosInstance from '../../config/AxiosInstanceAdmin';
 
 const AdminNotificationsPopover = () => {
@@ -26,15 +24,13 @@ const AdminNotificationsPopover = () => {
   };
 
   useEffect(() => {
-    // Call fetchData on component mount
     fetchData();
   }, [loggedInUserId]);
 
   const handleMarkRead = async (senderId) => {
     try {
       await axiosInstance.put(`notification/mark-read/${senderId}/${loggedInUserId}`);
-      // Fetch updated notifications after marking as read
-      fetchData(); // Call fetchData to update notificationsData
+      fetchData();
     } catch (error) {
       console.error('Error marking notification as read:', error);
     }
@@ -48,10 +44,6 @@ const AdminNotificationsPopover = () => {
     setOpen(null);
   };
 
-  // Logic to mark all as read (replace with your actual API call)
-  const handleMarkAllAsRead = () => {
-    // Your logic here
-  };
 
   return (
     <>
@@ -75,14 +67,6 @@ const AdminNotificationsPopover = () => {
                 You have {notificationsData?.unreadNotificationsCount} unread messages
               </Typography>
             </Box>
-
-            {/* {notificationsData?.unreadNotificationsCount > 0 && (
-              <Tooltip title="Mark all as read">
-                <Button color="primary" onClick={handleMarkAllAsRead}>
-                  Mark All as Read
-                </Button>
-              </Tooltip>
-            )} */}
           </Box>
 
           <Divider sx={{ borderStyle: 'dashed' }} />
@@ -99,12 +83,6 @@ const AdminNotificationsPopover = () => {
           </Scrollbar>
 
           <Divider sx={{ borderStyle: 'dashed' }} />
-
-          {/* <Box sx={{ p: 1 }}>
-            <Button fullWidth disableRipple>
-              View All
-            </Button>
-          </Box> */}
         </Box>
       </MenuPopover>
     </>

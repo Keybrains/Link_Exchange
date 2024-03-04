@@ -31,22 +31,19 @@ export default function FreeWebsite() {
   const [FreeWebsites, setFreeWebsites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5); // Updated state for items per page
+  const [itemsPerPage, setItemsPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchFreeWebsites() {
       try {
-        // Retrieve the decodedToken from localStorage
         const decodedToken = localStorage.getItem('decodedToken');
 
         if (decodedToken) {
           const parsedToken = JSON.parse(decodedToken);
-          const userId = parsedToken.userId?.user_id; // Extracting user_id from decodedToken
+          const userId = parsedToken.userId?.user_id;
 
-          // Update formData with the user_id
-          //   setFormData((prevData) => ({ ...prevData, user_id: userId }));
           const response = await axiosInstance.get(`/website/websites/free/${userId}`, {
             params: { page, itemsPerPage },
           });
@@ -67,7 +64,6 @@ export default function FreeWebsite() {
         setLoading(false);
       } catch (error) {
         console.error(error);
-        // Handle error state if needed
         setLoading(false);
       }
     }
@@ -76,7 +72,6 @@ export default function FreeWebsite() {
   }, [page, itemsPerPage]);
 
   const handleItemsPerPageChange = (event) => {
-    // Update itemsPerPage and reset to the first page
     setItemsPerPage(Number(event.target.value));
     setPage(1);
   };
@@ -86,20 +81,12 @@ export default function FreeWebsite() {
   const [reportedURL, setReportedURL] = useState('');
   const [reportMessage, setReportMessage] = useState('');
 
-  // Function to handle opening the report dialog
-  // const handleOpenReportDialog = (url) => {
-  //   setReportedURL(url);
-  //   setOpenReportDialog(true);
-  // };
-
-  // Function to handle closing the report dialog
   const handleCloseReportDialog = () => {
     setOpenReportDialog(false);
     setReportedURL('');
     setReportMessage('');
   };
 
-  // Function to handle reporting the website
 
   const handleReportWebsite = async () => {
     try {
@@ -111,7 +98,6 @@ export default function FreeWebsite() {
       const parsedToken = JSON.parse(decodedToken);
       const userId = parsedToken.userId?.user_id;
 
-      // Find the website with the given URL to extract its ID
       const websiteToReport = FreeWebsites.find((website) => website.url === reportedURL);
 
       if (!websiteToReport) {
@@ -120,7 +106,7 @@ export default function FreeWebsite() {
 
       const response = await axiosInstance.post('/reportedwebsite/reportedwerbsites', {
         user_id: userId,
-        website_id: websiteToReport.website_id, // Use the extracted website ID
+        website_id: websiteToReport.website_id,
         url: reportedURL,
         message: reportMessage,
       });
@@ -129,31 +115,28 @@ export default function FreeWebsite() {
        
         handleCloseReportDialog();
 
-        // Update reported status for the reported URL using the PUT API
         await axiosInstance.put(`website/updateReportedStatus/${websiteToReport.website_id}`);
         setFreeWebsites((prevWebsites) => prevWebsites.filter((website) => website.url !== reportedURL));
-        // Refresh the approved websites after reporting
-        // fetchFreeWebsites();
+
       } else {
         throw new Error('Failed to report website');
       }
 
       if (response.status === 201) {
        
-        handleCloseReportDialog(); // Close the dialog after reporting
+        handleCloseReportDialog();
       } else {
         throw new Error('Failed to report website');
       }
     } catch (error) {
       console.error('Error reporting website:', error);
-      // Handle error state if needed
     }
   };
   const handleNavigate = () => {
     navigate('/user/terms');
   };
   return (
-    <Page title="My Free Website" style={{ paddingLeft: "10px", paddingRight: "10px" }}>
+    <Page title="My Free Website" style={{ paddingLeft: '10px', paddingRight: '10px' }} sx={{ mt: 0.2, pt: 6 }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
         My Free Website
       </Typography>
@@ -214,7 +197,7 @@ export default function FreeWebsite() {
                           icon={faDotCircle}
                           style={{
                             color: website.status === 'activate' ? 'green' : 'red',
-                            fontSize: '0.9em', // Adjust the size as needed
+                            fontSize: '0.9em',
                             marginRight: '5px',
                           }}
                         />
@@ -259,7 +242,6 @@ export default function FreeWebsite() {
                           {website.backlinksAllowed}
                         </Typography>
                       </Grid>
-                      {/* Other Grid items */}
                       <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
                         <Typography style={{ marginBottom: '10px' }}>
                           <span style={{ fontWeight: 'bold' }}>Country : </span>
@@ -274,22 +256,6 @@ export default function FreeWebsite() {
                           {website.surfaceInGoogleNews ? 'Yes' : 'No'}
                         </Typography>
                       </Grid>
-
-                      {/* <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
-                    <div style={{ margin: '15px' }}>
-                      <Button variant="contained" color="primary" sx={{ marginRight: '10px' }}>
-                        Contact
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        sx={{ backgroundColor: '#FF7F7F' }}
-                        onClick={() => handleOpenReportDialog(website.url)}
-                      >
-                        Report
-                      </Button>
-                    </div>
-                  </Grid> */}
                     </Grid>
                   </Grid>
                 </CardContent>
@@ -322,7 +288,7 @@ export default function FreeWebsite() {
           </Dialog>
         </>
       )}
-      <hr style={{ borderTop: '1px solid black', width: '100%', margin: '20px 0' }} /> {/* Stylish horizontal line */}
+      <hr style={{ borderTop: '1px solid black', width: '100%', margin: '20px 0' }} />
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <>
           <FormControl margin="normal" sx={{ '& .MuiInput-root': { paddingTop: '18px' } }}>
@@ -331,7 +297,7 @@ export default function FreeWebsite() {
               value={itemsPerPage}
               onChange={handleItemsPerPageChange}
               label="Items per Page"
-              sx={{ fontSize: '0.9rem' }} // Adjust the fontSize as needed
+              sx={{ fontSize: '0.9rem' }}
             >
               <MenuItem value={5}>5</MenuItem>
               <MenuItem value={10}>10</MenuItem>
@@ -339,8 +305,6 @@ export default function FreeWebsite() {
             </Select>
           </FormControl>
         </>
-
-        {/* Add your buttons and other components here */}
 
         {totalPages > 1 && (
           <Stack spacing={2} sx={{ justifyContent: 'center' }}>

@@ -42,6 +42,8 @@ import Project from './admin/project/Project';
 import UserWebsiteDetail from './OtherUserWebsite/UserWebsiteDetail';
 import MyWebsiteDetail from './website/MyWebsiteDetail';
 import Category from './admin/category/Category';
+import UserDashboard from './pages/UserDashboard';
+import Edituser from './admin/user/Edituser';
 
 const isAuthenticated = () => {
   const authToken = localStorage.getItem('authToken');
@@ -54,6 +56,7 @@ const Router = () => {
       path: '/user',
       element: isAuthenticated() ? <DashboardLayout /> : <Navigate to="/login" />,
       children: [
+        { path: 'userdashboard', element: isAuthenticated() ? <UserDashboard /> : <Navigate to="/adminlogin" /> },
         { path: 'mywebsite', element: isAuthenticated() ? <WebsiteDashboard /> : <Navigate to="/login" /> },
         { path: 'terms', element: isAuthenticated() ? <Terms /> : <Navigate to="/login" /> },
         { path: 'addwebsite', element: isAuthenticated() ? <AddWebSite /> : <Navigate to="/login" /> },
@@ -137,6 +140,8 @@ const Router = () => {
           element: isAuthenticated() ? <UpdateWebSiteInfo /> : <Navigate to="/adminlogin" />,
         },
         { path: 'userdetail/:userId', element: isAuthenticated() ? <UserDetail /> : <Navigate to="/adminlogin" /> },
+        { path: 'edituserdetail/:userId', element: isAuthenticated() ? <Edituser /> : <Navigate to="/adminlogin" /> },
+
         {
           path: 'websitedetail/:websiteId',
           element: isAuthenticated() ? <WebsiteDetail /> : <Navigate to="/adminlogin" />,

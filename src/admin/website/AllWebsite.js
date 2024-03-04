@@ -29,7 +29,7 @@ export default function AllWebsite() {
   const [selectedWebsite, setSelectedWebsite] = useState(null);
   const [approveDialogOpen, setApproveDialogOpen] = useState(false);
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(''); // New state for search query
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
@@ -40,14 +40,13 @@ export default function AllWebsite() {
       const response = await axiosInstance.get('/website/websites');
       if (response.status === 200) {
         setWebsites(response.data.data);
-     
+
         setLoading(false);
       } else {
         throw new Error('Failed to fetch websites');
       }
     } catch (error) {
       console.error(error);
-      // Handle error state if needed
       setLoading(false);
     }
   };
@@ -86,28 +85,25 @@ export default function AllWebsite() {
       }
     } catch (error) {
       console.error(error);
-      // Handle error state if needed
     }
   };
 
   const [rejectReason, setRejectReason] = useState('');
 
-
   const handleConfirmReject = async () => {
     try {
       const response = await axiosInstance.put(`/website/reject/${selectedWebsite.website_id}`, {
-        reason: rejectReason, // Pass the reject reason in the API request body
+        reason: rejectReason,
       });
       if (response.status === 200) {
         setRejectDialogOpen(false);
-        setRejectReason(''); // Reset reject reason after successful rejection
+        setRejectReason('');
         fetchWebsites();
       } else {
         throw new Error('Failed to reject website');
       }
     } catch (error) {
       console.error(error);
-      // Handle error state if needed
     }
   };
 
@@ -165,8 +161,8 @@ export default function AllWebsite() {
                       <TableCell sx={{ fontWeight: 'bold' }}>Country</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Language</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Cost</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Is Paid</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Approved</TableCell>
+                      {/* <TableCell sx={{ fontWeight: 'bold' }}>Is Paid</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>Approved</TableCell> */}
                       <TableCell sx={{ fontWeight: 'bold' }}>Action</TableCell>
                     </TableRow>
                   </TableHead>
@@ -181,14 +177,19 @@ export default function AllWebsite() {
                         style={{ cursor: 'pointer' }}
                       >
                         <TableCell>{website.url}</TableCell>
-                        <TableCell>{`${website.users?.firstname} ${website.users?.lastname}`}</TableCell>
+                        <TableCell>
+                          {website.users?.firstname || website.users?.lastname
+                            ? `${website.users?.firstname || ''} ${website.users?.lastname || ''}`.trim()
+                            : 'N/A'}
+                        </TableCell>
+
                         <TableCell>{website.country}</TableCell>
                         <TableCell>{website.language}</TableCell>
                         <TableCell>
                           {website.costOfAddingBacklink} (${website.charges || 0})
                         </TableCell>
-                        <TableCell>{website.isPaid ? 'Yes' : 'No'}</TableCell>
-                        <TableCell>{website.approved ? 'Yes' : 'No'}</TableCell>
+                        {/* <TableCell>{website.isPaid ? 'Yes' : 'No'}</TableCell>
+                        <TableCell>{website.approved ? 'Yes' : 'No'}</TableCell> */}
                         <TableCell>
                           {!website.approved && (
                             <>

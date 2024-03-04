@@ -1,12 +1,10 @@
-// NotificationsPopover.js
-
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { IconButton, Badge, Tooltip, Typography, Box, Divider, Button } from '@mui/material';
 import Iconify from '../../components/Iconify';
 import MenuPopover from '../../components/MenuPopover';
 import Scrollbar from '../../components/Scrollbar';
-import NotificationList from './NotificationList'; // Create NotificationList component
+import NotificationList from './NotificationList';
 import axiosInstance from '../../config/AxiosInstance';
 
 const NotificationsPopover = () => {
@@ -26,15 +24,13 @@ const NotificationsPopover = () => {
   };
 
   useEffect(() => {
-    // Call fetchData on component mount
     fetchData();
   }, [loggedInUserId]);
 
   const handleMarkRead = async (senderId) => {
     try {
       await axiosInstance.put(`notification/mark-read/${senderId}/${loggedInUserId}`);
-      // Fetch updated notifications after marking as read
-      fetchData(); // Call fetchData to update notificationsData
+      fetchData();
     } catch (error) {
       console.error('Error marking notification as read:', error);
     }
@@ -48,16 +44,11 @@ const NotificationsPopover = () => {
     setOpen(null);
   };
 
-  // Logic to mark all as read (replace with your actual API call)
-  const handleMarkAllAsRead = () => {
-    // Your logic here
-  };
-
   return (
     <>
       <IconButton color={open ? 'primary' : 'default'} onClick={handleOpen} sx={{ width: 40, height: 40 }}>
         <Badge badgeContent={notificationsData?.unreadNotificationsCount || 0} color="error">
-          <Iconify icon="eva:bell-fill" width={20} height={20} />
+          <Iconify icon="basil:notification-on-solid" width={20} height={20} sx={{ color:"#010ED0" }}/>
         </Badge>
       </IconButton>
 
@@ -75,14 +66,6 @@ const NotificationsPopover = () => {
                 You have {notificationsData?.unreadNotificationsCount} unread messages
               </Typography>
             </Box>
-
-            {/* {notificationsData?.unreadNotificationsCount > 0 && (
-              <Tooltip title="Mark all as read">
-                <Button color="primary" onClick={handleMarkAllAsRead}>
-                  Mark All as Read
-                </Button>
-              </Tooltip>
-            )} */}
           </Box>
 
           <Divider sx={{ borderStyle: 'dashed' }} />
@@ -99,12 +82,6 @@ const NotificationsPopover = () => {
           </Scrollbar>
 
           <Divider sx={{ borderStyle: 'dashed' }} />
-
-          {/* <Box sx={{ p: 1 }}>
-            <Button fullWidth disableRipple>
-              View All
-            </Button>
-          </Box> */}
         </Box>
       </MenuPopover>
     </>
