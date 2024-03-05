@@ -320,6 +320,11 @@ router.get('/websites/count/:userId', async (req, res) => {
 
     const countReportedWebsites = await Website.countDocuments({ user_id: userId, reported: true });
 
+    const countAprovedWebsites = await Website.countDocuments({ user_id: userId, approved: true });
+
+    const user = await Signup.findOne({ user_id: userId });
+    const countChatedUsers = user ? user.chateduser.length : 0;
+
     return res.status(200).json({
       success: true,
       message: 'Website counts retrieved successfully',
@@ -329,6 +334,8 @@ router.get('/websites/count/:userId', async (req, res) => {
         countTotalWebsites,
         countPendingWebsites,
         countReportedWebsites,
+        countAprovedWebsites,
+        countChatedUsers,
       },
     });
   } catch (error) {
@@ -395,11 +402,7 @@ router.put('/websites/:id', async (req, res) => {
     const websiteId = req.params.id;
     const updatedWebsiteData = req.body;
 
-    const updatedWebsite = await Website.findOneAndUpdate(
-      { website_id: websiteId },
-      updatedWebsiteData,
-      { new: true }
-    );
+    const updatedWebsite = await Website.findOneAndUpdate({ website_id: websiteId }, updatedWebsiteData, { new: true });
 
     if (!updatedWebsite) {
       return res.status(404).json({
@@ -581,4 +584,242 @@ router.delete('/websites/remove-image/:websiteId', async (req, res) => {
     });
   }
 });
+
+router.get('/websites/data/yearly/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const yearlyData = await Website.aggregate([
+      {
+        $match: {
+          user_id: userId,
+        },
+      },
+      {
+        $addFields: {
+          convertedDate: { $dateFromString: { dateString: '$createAt' } },
+        },
+      },
+      {
+        $group: {
+          _id: { year: { $year: '$convertedDate' } },
+          paidCount: {
+            $sum: {
+              $cond: [{ $eq: ['$costOfAddingBacklink', 'Paid'] }, 1, 0],
+            },
+          },
+          freeCount: {
+            $sum: {
+              $cond: [{ $eq: ['$isPaid', false] }, 1, 0],
+            },
+          },
+        },
+      },
+      {
+        $sort: { '_id.year': 1 },
+      },
+      {
+        $project: {
+          _id: 0,
+          year: '$_id.year',
+          paidCount: 1,
+          freeCount: 1,
+        },
+      },
+    ]);
+
+    res.status(200).json({ yearly: yearlyData });
+  } catch (error) {
+    console.error('Error fetching yearly data for userId:', userId, error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+router.get('/websites/data/monthly/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const currentYear = new Date().getFullYear();
+
+  try {
+    const monthlyData = await Website.aggregate([
+      {
+        $addFields: {
+          convertedDate: { $dateFromString: { dateString: '$createAt' } },
+        },
+      },
+      {
+        $match: {
+          user_id: userId,
+          convertedDate: {
+            $gte: new Date(`${currentYear}-01-01`),
+            $lte: new Date(`${currentYear}-12-31`),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            month: { $month: '$convertedDate' },
+          },
+          paidCount: {
+            $sum: {
+              $cond: [{ $eq: ['$costOfAddingBacklink', 'Paid'] }, 1, 0],
+            },
+          },
+          freeCount: {
+            $sum: {
+              $cond: [{ $eq: ['$isPaid', false] }, 1, 0],
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          month: '$_id.month',
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          month: 1,
+          paidCount: 1,
+          freeCount: 1,
+        },
+      },
+      {
+        $sort: { month: 1 },
+      },
+    ]);
+
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const formattedData = monthlyData.map((data) => ({
+      ...data,
+      month: monthNames[data.month - 1],
+    }));
+
+    res.status(200).json(formattedData);
+  } catch (error) {
+    console.error('Error fetching monthly data for userId:', userId, error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+router.get('/websites/data/status/yearly/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const yearlyStatusData = await Website.aggregate([
+      {
+        $match: {
+          user_id: userId,
+        },
+      },
+      {
+        $addFields: {
+          convertedDate: { $dateFromString: { dateString: '$createAt' } },
+        },
+      },
+      {
+        $group: {
+          _id: { year: { $year: '$convertedDate' } },
+          pendingApprovalCount: {
+            $sum: {
+              $cond: [{ $eq: ['$approved', false] }, 1, 0],
+            },
+          },
+          approvedCount: {
+            $sum: {
+              $cond: [{ $eq: ['$approved', true] }, 1, 0],
+            },
+          },
+        },
+      },
+      {
+        $sort: { '_id.year': 1 },
+      },
+      {
+        $project: {
+          _id: 0,
+          year: '$_id.year',
+          pendingApprovalCount: 1,
+          approvedCount: 1,
+        },
+      },
+    ]);
+
+    res.status(200).json({ yearlyStatus: yearlyStatusData });
+  } catch (error) {
+    console.error('Error fetching yearly status data for userId:', userId, error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+router.get('/websites/data/status/monthly/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { year } = req.query;
+  const currentYear = year || new Date().getFullYear();
+
+  try {
+    const monthlyStatusData = await Website.aggregate([
+      {
+        $addFields: {
+          convertedDate: { $dateFromString: { dateString: '$createAt' } },
+        },
+      },
+      {
+        $match: {
+          user_id: userId,
+          convertedDate: {
+            $gte: new Date(`${currentYear}-01-01`),
+            $lte: new Date(`${currentYear}-12-31`),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            month: { $month: '$convertedDate' },
+          },
+          pendingApprovalCount: {
+            $sum: {
+              $cond: [{ $eq: ['$approved', false] }, 1, 0],
+            },
+          },
+          approvedCount: {
+            $sum: {
+              $cond: [{ $eq: ['$approved', true] }, 1, 0],
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          month: '$_id.month',
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          month: 1,
+          pendingApprovalCount: 1,
+          approvedCount: 1,
+        },
+      },
+      {
+        $sort: { month: 1 },
+      },
+    ]);
+
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const formattedData = monthlyStatusData.map((data) => ({
+      ...data,
+      month: monthNames[data.month - 1],
+    }));
+
+    res.status(200).json(formattedData);
+  } catch (error) {
+    console.error('Error fetching monthly status data for userId:', userId, 'Year:', currentYear, error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
 module.exports = router;

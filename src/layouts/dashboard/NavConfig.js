@@ -6,12 +6,12 @@ import Iconify from '../../components/Iconify';
 const getIcon = (name) => <Iconify icon={name} width={22} height={22} />;
 
 const navConfig = [
-  // {
-  //   title: 'My Dashboard',
-  //   path: '/user/userdashboard',
-  //   icon: getIcon('clarity:dashboard-line'),
-  //   defaultOpen: true,
-  // },
+  {
+    title: 'My Dashboard',
+    path: '/user/userdashboard',
+    icon: getIcon('clarity:dashboard-line'),
+    defaultOpen: true,
+  },
   {
     title: 'Search For Publisher',
     icon: getIcon('ic:baseline-search'),

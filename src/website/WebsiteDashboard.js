@@ -29,7 +29,7 @@ export default function WebsiteDashboard() {
   };
 
   return (
-    <Page title="Add Web Site" style={{ paddingLeft: '10px', paddingRight: '10px' }} sx={{ mt: 0.2, pt: 6 }}>
+    <Page title="Add Web Site" style={{ paddingLeft: '10px', paddingRight: '10px' }} sx={{ mt: 3, pt: 10 }}>
       <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
         Add Website
       </Typography>

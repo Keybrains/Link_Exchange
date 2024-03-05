@@ -9,7 +9,7 @@ import axiosInstance from '../config/AxiosInstanceAdmin';
 import useResponsive from '../hooks/useResponsive';
 // components
 import Page from '../components/Page';
-import { ReactComponent as Logo } from '../../assets/nav-logo.svg';
+import { ReactComponent as Logo } from '../../assets/SWAPALINKLOGO.svg';
 // sections
 import AdminLoginForm from '../sections/auth/login/AdminLoginForm';
 

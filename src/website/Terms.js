@@ -22,7 +22,7 @@ export default function Terms() {
 
   return (
     <>
-      <Page title="Terms & Conditions" style={{ paddingLeft: '10px', paddingRight: '10px' }} sx={{ mt: 0.2, pt: 6 }}>
+      <Page title="Terms & Conditions" style={{ paddingLeft: '10px', paddingRight: '10px' }}  sx={{ mt: 3, pt: 10 }}>
         <Typography variant="h1" style={{ fontSize: '1.5rem', marginBottom: '1rem', fontWeight: 'bold' }}>
           Terms and Conditions for Backlink Exchange
         </Typography>

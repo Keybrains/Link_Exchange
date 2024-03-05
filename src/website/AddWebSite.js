@@ -56,7 +56,7 @@ export default function AddWebSite() {
 
   return (
     <>
-      <Page title="Add URL" style={{ paddingLeft: '10px', paddingRight: '10px' }} sx={{ mt: 0.2, pt: 6 }}>
+      <Page title="Add URL" style={{ paddingLeft: '10px', paddingRight: '10px' }}  sx={{ mt: 3, pt: 10 }}>
         <Typography variant="h4" gutterBottom>
           Add Website's
         </Typography>
@@ -91,7 +91,7 @@ export default function AddWebSite() {
             </Box>
             <Typography variant="body1" sx={{ marginTop: '15px', fontWeight: 'bold' }}>
               Please give a do-follow backlink to our Go Program page with the URL
-              https://keybrainstech.com/go-project-by-key-brains/ (Anchor Text as Free Backlinks) . Once you add our
+              https://swapalink.com (Anchor Text as Free Backlinks) . Once you add our
               link on any page of yours please enter the page URL where the backlink has been given. This is to prove
               that you have the authority to add or manage backlinks on your website. It should be the same website
               which you entered for backlink. Do not remove the URL until you wish to use our system.

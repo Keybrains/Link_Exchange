@@ -43,7 +43,7 @@ export default function UserWebsiteDetail() {
   }, [websiteId]);
 
   return (
-    <Page title="User Detail">
+    <Page title="User Detail"  sx={{ mt: 3, pt: 10 }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />

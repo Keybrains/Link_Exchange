@@ -11,7 +11,7 @@ import useResponsive from '../hooks/useResponsive';
 // components
 import Page from '../components/Page';
 
-import { ReactComponent as Logo } from '../assets/nav-logo.svg';
+import { ReactComponent as Logo } from '../assets/SWAPALINKLOGO.svg';
 import  LoginImage  from '../assets/build-a-single-page-application.webp';
 
 // sections
@@ -110,7 +110,7 @@ export default function Login() {
             success: 'User Login Successful',
             error: 'Failed to log in',
           });
-          navigate('/user/alluserwebsite');
+          navigate('/user/userdashboard');
 
           const { token } = response.data;
           handleTokenDecoding(token);
@@ -145,8 +145,8 @@ export default function Login() {
             {smUp && (
               <div
                 style={{
-                  width: '10%',
-                  height: '10%',
+                  width: '13%',
+                  height: '13%',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',

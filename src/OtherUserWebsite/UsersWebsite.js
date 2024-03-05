@@ -209,7 +209,7 @@ export default function UsersWebsite() {
   }, []);
 
   return (
-    <Page title="Purchase Website" style={{ paddingLeft: '10px', paddingRight: '10px' }} sx={{ mt: 0.2, pt: 6 }}>
+    <Page title="Purchase Website" style={{ paddingLeft: '10px', paddingRight: '10px' }} sx={{ mt: 3, pt: 10 }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />

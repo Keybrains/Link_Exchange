@@ -36,7 +36,9 @@ export default function LoginForm({ onSubmit }) {
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
-
+  const handleHelpClick = () => {
+    window.open('https://swapalink.com/contact', '_blank');
+  };
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
@@ -60,21 +62,13 @@ export default function LoginForm({ onSubmit }) {
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
         <RHFCheckbox name="remember" label="Remember me" />
-        <Link
-          variant="subtitle2"
-          underline="hover"
-          onClick={() => setIsResetDialogOpen(true)}
-          style={{ cursor: 'pointer' }}
-        >
+        <Link variant="subtitle2" underline="hover" onClick={handleHelpClick} style={{ cursor: 'pointer' }}>
           Forgot password?
         </Link>
       </Stack>
 
-      <PasswordResetDialog
-        open={isResetDialogOpen}
-        onClose={() => setIsResetDialogOpen(false)}
-      />
-                                                
+      <PasswordResetDialog open={isResetDialogOpen} onClose={() => setIsResetDialogOpen(false)} />
+
       <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
         Login
       </LoadingButton>

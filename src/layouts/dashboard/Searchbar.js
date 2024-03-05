@@ -21,20 +21,43 @@ export default function Searchbar() {
   return (
     <>
       <div
-        className="imagebtn"
-        style={{ display: 'flex', overflow: 'auto', paddingLeft: '10px', paddingTop: '5px', paddingBottom: '10px' }}
+        style={{
+          display: 'flex',
+          overflow: 'auto',
+          paddingLeft: '10px',
+          paddingTop: '20px',
+          paddingBottom: '10px',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#010ED0 transparent',
+          gap: '10px',
+        }}
       >
         {projects.map((project) => (
           <button
             key={project.id}
             onClick={() => window.open(project.url, '_blank')}
             onKeyPress={(event) => event.key === 'Enter' && window.open(project.url, '_blank')}
-            style={{ margin: '0 10px', border: 'none', background: 'none' }}
+            style={{
+              margin: '0 10px',
+              border: 'none',
+              background: 'none',
+              cursor: 'pointer',
+              padding: '0',
+              outline: 'none',
+            }}
           >
             <img
               src={`${basePath}${project.image}`}
               alt={project.name}
-              style={{ display: 'block', maxWidth: '130px' }}
+              style={{
+                boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
+                borderRadius: '10px',
+                maxWidth: '300px',
+                maxHeight: '300px',
+                width: 'auto',
+                height: 'auto',
+                transition: 'transform 0.2s',
+              }}
             />
           </button>
         ))}

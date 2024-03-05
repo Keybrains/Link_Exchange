@@ -206,7 +206,7 @@ export default function UsersWebsite() {
     fetchCategories();
   }, []);
   return (
-    <Page title="Purchase Free Website" style={{ paddingLeft: '10px', paddingRight: '10px' }} sx={{ mt: 0.2, pt: 6 }}>
+    <Page title="Purchase Free Website" style={{ paddingLeft: '10px', paddingRight: '10px' }}  sx={{ mt: 3, pt: 10 }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />

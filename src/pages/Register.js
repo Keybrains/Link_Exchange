@@ -11,7 +11,7 @@ import axiosInstance from '../config/AxiosInstance';
 import useResponsive from '../hooks/useResponsive';
 // components
 import Page from '../components/Page';
-import { ReactComponent as Logo } from '../assets/nav-logo.svg';
+import { ReactComponent as Logo } from '../assets/SWAPALINKLOGO.svg';
 import  RegisterImage  from '../assets/Work_3-1.webp';
 // sections
 import { RegisterForm } from '../sections/auth/register';
@@ -114,8 +114,8 @@ export default function Register() {
             {smUp && (
               <div
                 style={{
-                  width: '10%',
-                  height: '10%',
+                  width: '13%',
+                  height: '13%',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',

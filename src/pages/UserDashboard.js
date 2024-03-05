@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Grid, Typography, Card, CardContent, Box, Icon, Button, ButtonGroup, Container } from '@mui/material';
 import MoneyOffIcon from '@mui/icons-material/MoneyOff';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
@@ -8,6 +8,7 @@ import MessageIcon from '@mui/icons-material/Message';
 import BlockIcon from '@mui/icons-material/Block';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import Page from '../components/Page';
+import axiosInstance from '../config/AxiosInstance';
 
 export default function UserDashboard() {
   const dataMonthly = [
@@ -62,11 +63,33 @@ export default function UserDashboard() {
       </div>
     </div>
   );
+  const decodedToken = localStorage.getItem('decodedToken');
+  const parsedToken = JSON.parse(decodedToken);
+  const userId = parsedToken.userId?.user_id;
   const [viewMode, setViewMode] = useState('monthly');
   const [viewMode1, setViewMode1] = useState('monthly');
+  const [websiteCounts, setWebsiteCounts] = useState({});
+
+  useEffect(() => {
+    async function fetchWebsiteCounts() {
+      try {
+        const response = await axiosInstance.get(`/websites/websites/count/${userId}`);
+        if (response.status === 200) {
+          setWebsiteCounts(response.data.data);
+          console.log('response.data', response.data);
+        } else {
+          throw new Error('Failed to fetch website counts');
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchWebsiteCounts();
+  }, [userId]);
 
   return (
-    <Page title="User Dashboard" sx={{ mt: 0.2, pt: { xs: 10, sm: 10, md: 10, lg: 5, xl: 5 } }}>
+    <Page title="User Dashboard" sx={{ mt: 3, pt: { xs: 15, sm: 15, md: 15, lg: 10, xl: 10 } }}>
       <Container maxWidth="xl">
         <Grid container spacing={3}>
           <Grid item xs={12} md={9}>
@@ -126,7 +149,7 @@ export default function UserDashboard() {
                         fontWeight: 'bold',
                       }}
                     >
-                      Free Website
+                      My Free Website
                     </Typography>
                   </CardContent>
                   <Box
@@ -144,7 +167,7 @@ export default function UserDashboard() {
                     }}
                   >
                     <Typography variant="subtitle1" style={{ color: '#010ED0' }}>
-                      001
+                      {websiteCounts?.countFreeWebsites || 0}
                     </Typography>
                   </Box>
                 </Card>
@@ -204,7 +227,7 @@ export default function UserDashboard() {
                         fontWeight: 'bold',
                       }}
                     >
-                      Paid Website
+                      My Paid Website
                     </Typography>
                   </CardContent>
                   <Box
@@ -222,7 +245,7 @@ export default function UserDashboard() {
                     }}
                   >
                     <Typography variant="subtitle1" style={{ color: '#010ED0' }}>
-                      001
+                      {websiteCounts?.countPaidWebsites || 0}
                     </Typography>
                   </Box>
                 </Card>
@@ -282,7 +305,7 @@ export default function UserDashboard() {
                         fontWeight: 'bold',
                       }}
                     >
-                      Pending Approval
+                      My Pending Approval
                     </Typography>
                   </CardContent>
                   <Box
@@ -300,7 +323,7 @@ export default function UserDashboard() {
                     }}
                   >
                     <Typography variant="subtitle1" style={{ color: '#010ED0' }}>
-                      001
+                      {websiteCounts?.countPendingWebsites || 0}
                     </Typography>
                   </Box>
                 </Card>
@@ -360,7 +383,7 @@ export default function UserDashboard() {
                         fontWeight: 'bold',
                       }}
                     >
-                      Approved Website
+                      My Approve Website
                     </Typography>
                   </CardContent>
                   <Box
@@ -378,13 +401,10 @@ export default function UserDashboard() {
                     }}
                   >
                     <Typography variant="subtitle1" style={{ color: '#010ED0' }}>
-                      001
+                      {websiteCounts?.countAprovedWebsites || 0}
                     </Typography>
                   </Box>
                 </Card>
-              </Grid>
-              <Grid item xs={12} style={{ margin: '6px 0' }}>
-                <hr style={{ height: '1px', border: 'none', backgroundColor: '#010ED0', margin: '0' }} />
               </Grid>
               <Grid item xs={12} sm={6} md={6}>
                 <Card
@@ -404,14 +424,14 @@ export default function UserDashboard() {
                       aria-label="outlined primary button group"
                       style={{
                         backgroundColor: '#010ED0',
-                        padding: '10px',
+                        padding: '5px',
                       }}
                     >
                       <Button
                         onClick={() => setViewMode('monthly')}
                         style={{
-                          backgroundColor: viewMode === 'monthly' ? '#FFFFFF' : 'transparent', // White background if selected, transparent if not
-                          color: viewMode === 'monthly' ? '#010ED0' : '#FFFFFF', // Text color changes based on selection
+                          backgroundColor: viewMode === 'monthly' ? '#FFFFFF' : 'transparent',
+                          color: viewMode === 'monthly' ? '#010ED0' : '#FFFFFF',
                         }}
                       >
                         Monthly
@@ -419,8 +439,8 @@ export default function UserDashboard() {
                       <Button
                         onClick={() => setViewMode('yearly')}
                         style={{
-                          backgroundColor: viewMode === 'yearly' ? '#FFFFFF' : 'transparent', // White background if selected, transparent if not
-                          color: viewMode === 'yearly' ? '#010ED0' : '#FFFFFF', // Text color changes based on selection
+                          backgroundColor: viewMode === 'yearly' ? '#FFFFFF' : 'transparent',
+                          color: viewMode === 'yearly' ? '#010ED0' : '#FFFFFF',
                         }}
                       >
                         Yearly
@@ -428,11 +448,11 @@ export default function UserDashboard() {
                     </ButtonGroup>
                   </div>
 
-                  <ResponsiveContainer width="100%" height={200}>
+                  <ResponsiveContainer width="100%" height={170}>
                     <BarChart
                       data={viewMode === 'monthly' ? dataMonthly : dataYearly}
                       margin={{
-                        top: 20,
+                        top: 10,
                         right: 30,
                         left: 20,
                         bottom: 5,
@@ -447,13 +467,14 @@ export default function UserDashboard() {
                       <Bar dataKey="Paid" stackId="a" fill="#010ED0" barSize={20} />
                       <Bar dataKey="Free" stackId="a" fill="#C7CAFF" radius={[10, 10, 0, 0]} barSize={20} />
                     </BarChart>
-                    <CustomLegend />
                   </ResponsiveContainer>
+                  <CustomLegend />
                 </Card>
               </Grid>
               <Grid item xs={12} sm={6} md={6}>
                 <Card
                   sx={{
+                    mb: { xs: 2, sm: 2, md: 2, lg: 2, xl: 2 },
                     boxShadow: '0px 2px 6px 0px rgba(0, 0, 0, 0.25)',
                     border: '0.5px solid #C7CAFF',
                     background: '#FFFFFF',
@@ -468,7 +489,7 @@ export default function UserDashboard() {
                       aria-label="outlined primary button group"
                       style={{
                         backgroundColor: '#010ED0',
-                        padding: '10px',
+                        padding: '5px',
                       }}
                     >
                       <Button
@@ -492,11 +513,11 @@ export default function UserDashboard() {
                     </ButtonGroup>
                   </div>
 
-                  <ResponsiveContainer width="100%" height={200}>
+                  <ResponsiveContainer width="100%" height={170}>
                     <BarChart
                       data={viewMode1 === 'monthly' ? dataMonthly : dataYearly}
                       margin={{
-                        top: 20,
+                        top: 10,
                         right: 30,
                         left: 20,
                         bottom: 5,
@@ -511,8 +532,8 @@ export default function UserDashboard() {
                       <Bar dataKey="Paid" stackId="a" fill="#010ED0" barSize={20} />
                       <Bar dataKey="Free" stackId="a" fill="#C7CAFF" radius={[10, 10, 0, 0]} barSize={20} />
                     </BarChart>
-                    <CustomLegend1 />
                   </ResponsiveContainer>
+                  <CustomLegend1 />
                 </Card>
               </Grid>
             </Grid>
@@ -576,7 +597,7 @@ export default function UserDashboard() {
                         fontWeight: 'bold',
                       }}
                     >
-                      Chatted Users
+                      My Chatted Users
                     </Typography>
                   </CardContent>
                   <Box
@@ -594,7 +615,7 @@ export default function UserDashboard() {
                     }}
                   >
                     <Typography variant="subtitle1" style={{ color: '#010ED0' }}>
-                      001
+                      {websiteCounts?.countChatedUsers || 0}
                     </Typography>
                   </Box>
                 </Card>
@@ -653,7 +674,7 @@ export default function UserDashboard() {
                         fontWeight: 'bold',
                       }}
                     >
-                      Blocked Websites
+                      My Blocked Websites
                     </Typography>
                   </CardContent>
                   <Box
@@ -671,7 +692,7 @@ export default function UserDashboard() {
                     }}
                   >
                     <Typography variant="subtitle1" style={{ color: '#010ED0' }}>
-                      001
+                      {websiteCounts?.countReportedWebsites || 0}
                     </Typography>
                   </Box>
                 </Card>

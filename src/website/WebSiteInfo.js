@@ -197,7 +197,7 @@ export default function WebSiteInfo() {
 
   return (
     <>
-      <Page title="Other Detail" style={{ paddingLeft: '10px', paddingRight: '10px' }} sx={{ mt: 0.2, pt: 6 }}>
+      <Page title="Other Detail" style={{ paddingLeft: '10px', paddingRight: '10px' }}  sx={{ mt: 3, pt: 10 }}>
         <Typography variant="h4" gutterBottom sx={{ paddingBottom: '15px' }}>
           Add your website info
         </Typography>
