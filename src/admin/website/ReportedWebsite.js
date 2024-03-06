@@ -39,6 +39,7 @@ export default function ReportedWebsite() {
         const response = await axiosInstance.get('reportedwebsite/reportedwebsites');
         if (response.status === 200) {
           setReportedWebsites(response.data.data);
+          console.log('response.data.data', response.data.data);
           setLoading(false);
         } else {
           throw new Error('Failed to fetch websites');
@@ -108,9 +109,11 @@ export default function ReportedWebsite() {
 
   const filteredReportedWebsites = reportedWebsites.filter(
     (website) =>
-      website.url.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      `${website.user?.firstname} ${website.user?.lastname}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      new Date(website.createAt).toLocaleDateString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.url?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      `${website.user?.firstname ?? ''} ${website.user?.lastname ?? ''}`
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      new Date(website.createAt)?.toLocaleDateString().toLowerCase().includes(searchQuery.toLowerCase()) ||
       (!website.resolved && 'Resolve'.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
@@ -156,8 +159,8 @@ export default function ReportedWebsite() {
                       >
                         <TableCell>{website.url}</TableCell>
                         <TableCell>
-                          {website.users?.firstname || website.users?.lastname
-                            ? `${website.users?.firstname || ''} ${website.users?.lastname || ''}`.trim()
+                          {website.user?.firstname || website.user?.lastname
+                            ? `${website.user?.firstname || ''} ${website.user?.lastname || ''}`.trim()
                             : 'N/A'}
                         </TableCell>
                         <TableCell>{new Date(website.createAt).toLocaleDateString()}</TableCell>

@@ -96,7 +96,7 @@ export default function UpdateWebSiteInfo() {
         language: languageFullName,
       };
 
-      const response = await axiosInstance.put(`website/websites/${websiteId}`, updatedData);
+      const response = await axiosInstance.put(`website/updatewebsites/${websiteId}`, updatedData);
       if (response.status === 200) {
         navigate('/admin/freewebsite');
       } else {

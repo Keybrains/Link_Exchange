@@ -70,82 +70,83 @@ export default function UsersWebsite() {
     setPage(1);
   };
 
-  useEffect(() => {
-    async function fetchAllWebsites() {
-      try {
-        const decodedToken = localStorage.getItem('decodedToken');
-        if (decodedToken) {
-          const parsedToken = JSON.parse(decodedToken);
-          const userId = parsedToken.userId?.user_id;
+  async function fetchAllWebsites() {
+    try {
+      const decodedToken = localStorage.getItem('decodedToken');
+      if (decodedToken) {
+        const parsedToken = JSON.parse(decodedToken);
+        const userId = parsedToken.userId?.user_id;
 
-          const response = await axiosInstance.get(`/otheruserwebsite/free-websites-not-matching-user/${userId}`);
+        const response = await axiosInstance.get(`/otheruserwebsite/free-websites-not-matching-user/${userId}`);
 
-          if (response.status === 200) {
-            const filteredData = response.data.data.filter((website) => {
-              const countryFilter =
-                !filters.country || website.country.toLowerCase().includes(filters.country.toLowerCase());
+        if (response.status === 200) {
+          const filteredData = response.data.data.filter((website) => {
+            const countryFilter =
+              !filters.country || website.country.toLowerCase().includes(filters.country.toLowerCase());
 
-              const languageFilter =
-                !filters.language || website.language.toLowerCase().includes(filters.language.toLowerCase());
+            const languageFilter =
+              !filters.language || website.language.toLowerCase().includes(filters.language.toLowerCase());
 
-              const monthlyVisitsFilter =
-                !filters.monthlyVisits || website.monthlyVisits >= parseInt(filters.monthlyVisits, 10);
+            const monthlyVisitsFilter =
+              !filters.monthlyVisits || website.monthlyVisits >= parseInt(filters.monthlyVisits, 10);
 
-              const DAFiter = !filters.DA || website.DA >= parseInt(filters.DA, 10);
+            const DAFiter = !filters.DA || website.DA >= parseInt(filters.DA, 10);
 
-              const spamScoreFilter = !filters.spamScore || website.spamScore >= parseInt(filters.spamScore, 10);
+            const spamScoreFilter = !filters.spamScore || website.spamScore >= parseInt(filters.spamScore, 10);
 
-              const linkTypeFilter =
-                !filters.linkType || website.linkType.toLowerCase() === filters.linkType.toLowerCase();
-              const categoryFilter =
-                filters.categories.length === 0 ||
-                filters.categories.some((category) => website.categories.includes(category));
-              const surfaceingooglenewseFilter =
-                !filters.surfaceInGoogleNews ||
-                website.surfaceInGoogleNews.toLowerCase() === filters.surfaceInGoogleNews.toLowerCase();
-              const costOfaddingbacklinkfilter =
-                !filters.costOfAddingBacklink ||
-                website.costOfAddingBacklink.toLowerCase() === filters.costOfAddingBacklink.toLowerCase();
-              const newWebsiteFilter = !filters.newOnly || isNewWebsite(website.createAt);
-              return (
-                costOfaddingbacklinkfilter &&
-                countryFilter &&
-                languageFilter &&
-                monthlyVisitsFilter &&
-                DAFiter &&
-                spamScoreFilter &&
-                linkTypeFilter &&
-                categoryFilter &&
-                surfaceingooglenewseFilter &&
-                newWebsiteFilter
-              );
-            });
+            const linkTypeFilter =
+              !filters.linkType || website.linkType.toLowerCase() === filters.linkType.toLowerCase();
+            const categoryFilter =
+              filters.categories.length === 0 ||
+              filters.categories.some((category) => website.categories.includes(category));
+            const surfaceingooglenewseFilter =
+              !filters.surfaceInGoogleNews ||
+              website.surfaceInGoogleNews.toLowerCase() === filters.surfaceInGoogleNews.toLowerCase();
+            const costOfaddingbacklinkfilter =
+              !filters.costOfAddingBacklink ||
+              website.costOfAddingBacklink.toLowerCase() === filters.costOfAddingBacklink.toLowerCase();
+            const newWebsiteFilter = !filters.newOnly || isNewWebsite(website.createAt);
+            return (
+              costOfaddingbacklinkfilter &&
+              countryFilter &&
+              languageFilter &&
+              monthlyVisitsFilter &&
+              DAFiter &&
+              spamScoreFilter &&
+              linkTypeFilter &&
+              categoryFilter &&
+              surfaceingooglenewseFilter &&
+              newWebsiteFilter
+            );
+          });
 
-            const paginatedWebsites = filteredData.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+          const paginatedWebsites = filteredData.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
-            setAllWebsites(paginatedWebsites);
-            setTotalPages(Math.ceil(filteredData.length / itemsPerPage));
-          } else {
-            throw new Error('Failed to fetch approved websites');
-          }
+          setAllWebsites(paginatedWebsites);
+          setTotalPages(Math.ceil(filteredData.length / itemsPerPage));
         } else {
-          throw new Error('User ID not found in decoded token');
+          throw new Error('Failed to fetch approved websites');
         }
-        setLoading(false);
-      } catch (error) {
-        console.error(error);
-        setLoading(false);
+      } else {
+        throw new Error('User ID not found in decoded token');
       }
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
     }
-
+  }
+  useEffect(() => {
     fetchAllWebsites();
   }, [page, itemsPerPage, filters]);
 
-  const handleOpenReportDialog = (url) => {
-    setReportedURL(url);
+  const [reportedWebsiteId, setReportedWebsiteId] = useState('');
+
+  const handleOpenReportDialog = (websiteId, websiteUrl) => {
+    setReportedWebsiteId(websiteId);
+    setReportedURL(websiteUrl);
     setOpenReportDialog(true);
   };
-
   const handleCloseReportDialog = () => {
     setOpenReportDialog(false);
     setReportedURL('');
@@ -162,28 +163,27 @@ export default function UsersWebsite() {
       const parsedToken = JSON.parse(decodedToken);
       const userId = parsedToken.userId?.user_id;
 
-      const websiteToReport = FreeWebsite.find((website) => website.url === reportedURL);
-
-      if (!websiteToReport) {
-        throw new Error('Website not found for the reported URL');
-      }
-
       const response = await axiosInstance.post('/reportedwebsite/reportedwerbsites', {
         user_id: userId,
-        website_id: websiteToReport.website_id,
+        website_id: reportedWebsiteId,
         url: reportedURL,
         message: reportMessage,
       });
 
       if (response.status === 201) {
-        handleCloseReportDialog();
-        await axiosInstance.put(`website/updateReportedStatus/${websiteToReport.website_id}`);
-        setAllWebsites((prevWebsites) => prevWebsites.filter((website) => website.url !== reportedURL));
+        const updateResponse = await axiosInstance.put(`/website/updateReportedStatus/${reportedWebsiteId}`);
+        if (updateResponse.status === 200) {
+          handleCloseReportDialog();
+          fetchAllWebsites();
+          console.log('Reported status updated successfully', updateResponse.data);
+        } else {
+          throw new Error('Failed to update reported status');
+        }
       } else {
         throw new Error('Failed to report website');
       }
     } catch (error) {
-      console.error('Error reporting website:', error);
+      console.error('Error in reporting or updating website status:', error);
     }
   };
 
@@ -206,7 +206,7 @@ export default function UsersWebsite() {
     fetchCategories();
   }, []);
   return (
-    <Page title="Purchase Free Website" style={{ paddingLeft: '10px', paddingRight: '10px' }}  sx={{ mt: 3, pt: 10 }}>
+    <Page title="Purchase Free Website" style={{ paddingLeft: '10px', paddingRight: '10px' }} sx={{ mt: 3, pt: 10 }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress color="primary" />
@@ -730,7 +730,7 @@ export default function UsersWebsite() {
                                 marginRight: '20px',
                                 paddingRight: '20px',
                               }}
-                              onClick={() => handleOpenReportDialog(website.url)}
+                              onClick={() => handleOpenReportDialog(website.website_id, website.url)}
                             >
                               Report
                             </Button>

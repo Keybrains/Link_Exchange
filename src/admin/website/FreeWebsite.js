@@ -273,11 +273,11 @@ export default function FreeWebsite() {
                             tabIndex={0}
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleUpdate(website._id);
+                              handleUpdate(website.website_id);
                             }}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {
-                                handleUpdate(website._id);
+                                handleUpdate(website.website_id);
                               }
                             }}
                             style={{

@@ -11,26 +11,17 @@ import Page from '../components/Page';
 import axiosInstance from '../config/AxiosInstance';
 
 export default function UserDashboard() {
-  const dataMonthly = [
-    { name: 'Jan', Free: 4, Paid: 2 },
-    { name: 'Feb', Free: 3, Paid: 1 },
-    { name: 'Mar', Free: 2, Paid: 9 },
-    { name: 'Apr', Free: 2, Paid: 3 },
-    { name: 'May', Free: 1, Paid: 4 },
-    { name: 'Jun', Free: 2, Paid: 3 },
-    { name: 'Jul', Free: 3, Paid: 4 },
-    { name: 'Aug', Free: 2, Paid: 3 },
-    { name: 'sep', Free: 1, Paid: 4 },
-    { name: 'oct', Free: 2, Paid: 3 },
-    { name: 'nov', Free: 3, Paid: 4 },
-    { name: 'dec', Free: 3, Paid: 4 },
-  ];
-  const dataYearly = [
-    { name: '2020', Free: 20, Paid: 12 },
-    { name: '2021', Free: 30, Paid: 15 },
-    { name: '2022', Free: 20, Paid: 12 },
-    { name: '2023', Free: 30, Paid: 15 },
-  ];
+  const decodedToken = localStorage.getItem('decodedToken');
+  const parsedToken = JSON.parse(decodedToken);
+  const userId = parsedToken.userId?.user_id;
+  const [viewMode, setViewMode] = useState('monthly');
+  const [viewMode1, setViewMode1] = useState('monthly');
+  const [monthlyData, setMonthlyData] = useState([]);
+  const [yearlyData, setYearlyData] = useState([]);
+  const [monthlyData1, setMonthlyData1] = useState([]);
+  const [yearlyData1, setYearlyData1] = useState([]);
+  const [websiteCounts, setWebsiteCounts] = useState({});
+
   const CustomLegend = () => (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px 0' }}>
       <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -47,6 +38,7 @@ export default function UserDashboard() {
       </div>
     </div>
   );
+
   const CustomLegend1 = () => (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px 0' }}>
       <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -63,17 +55,129 @@ export default function UserDashboard() {
       </div>
     </div>
   );
-  const decodedToken = localStorage.getItem('decodedToken');
-  const parsedToken = JSON.parse(decodedToken);
-  const userId = parsedToken.userId?.user_id;
-  const [viewMode, setViewMode] = useState('monthly');
-  const [viewMode1, setViewMode1] = useState('monthly');
-  const [websiteCounts, setWebsiteCounts] = useState({});
 
   useEffect(() => {
     async function fetchWebsiteCounts() {
       try {
-        const response = await axiosInstance.get(`/websites/websites/count/${userId}`);
+        const response = await axiosInstance.get(`/website/websites/count/${userId}`);
+        if (response.status === 200) {
+          setWebsiteCounts(response.data.data);
+          console.log('response.data', response.data);
+        } else {
+          throw new Error('Failed to fetch website counts');
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchWebsiteCounts();
+  }, [userId]);
+
+  useEffect(() => {
+    const fetchMonthlyData = async () => {
+      try {
+        const response = await axiosInstance.get(`/website/websites/data/monthly/${userId}`);
+
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        const rawData = Array.isArray(response.data) ? response.data : [];
+        const dataWithAllMonths = monthNames.map((month) => {
+          const monthData = rawData.find((item) => item.month === month);
+          return {
+            name: month,
+            Paid: monthData ? monthData.paidCount : 0,
+            Free: monthData ? monthData.freeCount : 0,
+          };
+        });
+
+        setMonthlyData(dataWithAllMonths);
+      } catch (error) {
+        console.error('Error fetching monthly data:', error);
+      }
+    };
+
+    const fetchYearlyData = async () => {
+      try {
+        const yearlyResponse = await axiosInstance.get(`/website/websites/data/yearly/${userId}`);
+        if (yearlyResponse.status === 200 && yearlyResponse.data && Array.isArray(yearlyResponse.data.yearly)) {
+          const transformedData = yearlyResponse.data.yearly.map((item) => ({
+            name: item.year.toString(),
+            Paid: item.paidCount,
+            Free: item.freeCount,
+          }));
+          setYearlyData(transformedData);
+        } else {
+          throw new Error('Failed to fetch yearly data');
+        }
+      } catch (error) {
+        console.error('Error fetching yearly data:', error);
+      }
+    };
+
+    if (userId) {
+      fetchMonthlyData();
+      fetchYearlyData();
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    const fetchMonthlyData1 = async () => {
+      try {
+        const response = await axiosInstance.get(`/website/websites/data/status/monthly/${userId}`);
+        console.log('Fetched monthly data:', response.data);
+
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        const rawData = Array.isArray(response.data) ? response.data : [];
+        const dataWithAllMonths = monthNames.map((month) => {
+          const monthData = rawData.find((item) => item.month === month);
+          return {
+            name: month,
+            Pending: monthData ? monthData.pendingApprovalCount : 0,
+            Approved: monthData ? monthData.approvedCount : 0,
+          };
+        });
+
+        setMonthlyData1(dataWithAllMonths);
+      } catch (error) {
+        console.error('Error fetching monthly data:', error);
+      }
+    };
+
+    const fetchYearlyData1 = async () => {
+      try {
+        const yearlyResponse = await axiosInstance.get(`/website/websites/data/status/yearly/${userId}`);
+        if (
+          yearlyResponse.status === 200 &&
+          yearlyResponse.data.yearlyStatus &&
+          Array.isArray(yearlyResponse.data.yearlyStatus)
+        ) {
+          console.log('Fetched yearly data:', yearlyResponse.data);
+          const transformedData = yearlyResponse.data.yearlyStatus.map((item) => ({
+            name: item.year.toString(),
+            Pending: item.pendingApprovalCount,
+            Approved: item.approvedCount,
+          }));
+          setYearlyData1(transformedData);
+        } else {
+          throw new Error('Failed to fetch yearly data');
+        }
+      } catch (error) {
+        console.error('Error fetching yearly data:', error);
+      }
+    };
+
+    if (userId) {
+      fetchMonthlyData1();
+      fetchYearlyData1();
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    async function fetchWebsiteCounts() {
+      try {
+        const response = await axiosInstance.get(`/website/websites/count/${userId}`);
         if (response.status === 200) {
           setWebsiteCounts(response.data.data);
           console.log('response.data', response.data);
@@ -139,7 +243,6 @@ export default function UserDashboard() {
                     </Box>
                     <Typography
                       className="textColor"
-                      // variant="h6"
                       sx={{
                         mt: 5,
                         color: '#010ED0',
@@ -217,7 +320,6 @@ export default function UserDashboard() {
                     </Box>
                     <Typography
                       className="textColor"
-                      // variant="h6"
                       sx={{
                         mt: 5,
                         color: '#010ED0',
@@ -295,7 +397,6 @@ export default function UserDashboard() {
                     </Box>
                     <Typography
                       className="textColor"
-                      // variant="h6"
                       sx={{
                         mt: 5,
                         color: '#010ED0',
@@ -373,7 +474,6 @@ export default function UserDashboard() {
                     </Box>
                     <Typography
                       className="textColor"
-                      // variant="h6"
                       sx={{
                         mt: 5,
                         color: '#010ED0',
@@ -447,10 +547,9 @@ export default function UserDashboard() {
                       </Button>
                     </ButtonGroup>
                   </div>
-
                   <ResponsiveContainer width="100%" height={170}>
                     <BarChart
-                      data={viewMode === 'monthly' ? dataMonthly : dataYearly}
+                      data={viewMode === 'monthly' ? monthlyData : yearlyData}
                       margin={{
                         top: 10,
                         right: 30,
@@ -512,10 +611,9 @@ export default function UserDashboard() {
                       </Button>
                     </ButtonGroup>
                   </div>
-
                   <ResponsiveContainer width="100%" height={170}>
                     <BarChart
-                      data={viewMode1 === 'monthly' ? dataMonthly : dataYearly}
+                      data={viewMode1 === 'monthly' ? monthlyData1 : yearlyData1}
                       margin={{
                         top: 10,
                         right: 30,
@@ -529,8 +627,8 @@ export default function UserDashboard() {
                         tick={{ fontSize: '12px', fill: '#010ED0', fontWeight: 'bold' }}
                       />
                       <Tooltip />
-                      <Bar dataKey="Paid" stackId="a" fill="#010ED0" barSize={20} />
-                      <Bar dataKey="Free" stackId="a" fill="#C7CAFF" radius={[10, 10, 0, 0]} barSize={20} />
+                      <Bar dataKey="Pending" stackId="a" fill="#010ED0" barSize={20} />
+                      <Bar dataKey="Approved" stackId="a" fill="#C7CAFF" radius={[10, 10, 0, 0]} barSize={20} />
                     </BarChart>
                   </ResponsiveContainer>
                   <CustomLegend1 />
@@ -587,7 +685,6 @@ export default function UserDashboard() {
                     </Box>
                     <Typography
                       className="textColor"
-                      // variant="h6"
                       sx={{
                         mt: 5,
                         color: '#010ED0',
@@ -664,7 +761,6 @@ export default function UserDashboard() {
                     </Box>
                     <Typography
                       className="textColor"
-                      // variant="h6"
                       sx={{
                         mt: 5,
                         color: '#010ED0',
@@ -674,7 +770,7 @@ export default function UserDashboard() {
                         fontWeight: 'bold',
                       }}
                     >
-                      My Blocked Websites
+                      My Reported Websites
                     </Typography>
                   </CardContent>
                   <Box

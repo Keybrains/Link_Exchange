@@ -54,8 +54,8 @@ export default function Searchbar() {
                 borderRadius: '10px',
                 maxWidth: '300px',
                 maxHeight: '300px',
-                width: 'auto',
-                height: 'auto',
+                width: '200px',
+                height: '100px',
                 transition: 'transform 0.2s',
               }}
             />

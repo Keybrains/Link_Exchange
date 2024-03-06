@@ -10,11 +10,9 @@ const WebsiteSchema = new mongoose.Schema({
   },
   url: {
     type: String,
-    unique: true,
   },
   image: {
     type: String,
-
   },
   backlink: {
     type: String,

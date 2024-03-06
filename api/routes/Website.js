@@ -5,26 +5,33 @@ const Signup = require('../models/Signup');
 const moment = require('moment');
 const ReportedWebsite = require('../models/ReportedWebsite');
 
-router.post('/website', async (req, res) => {
+router.post('/addwebsite', async (req, res) => {
   try {
-    const existingWebsite = await Website.findOne({ url: req.body.url });
+    // Check if a document with the exact same URL and backlink combination exists
+    const existingCombination = await Website.findOne({
+      url: req.body.url,
+      backlink: req.body.backlink, // Assuming 'backlink' is the correct field name
+    });
 
-    if (existingWebsite) {
+    if (existingCombination) {
+      // If the exact URL and backlink combination exists, prevent duplication
       return res.status(400).json({
         statusCode: 400,
-        message: `The URL '${req.body.url}' already exists in the database.`,
+        message: `This exact URL and backlink combination already exists in the database.`,
       });
     } else {
-      const countDocuments = await Website.countDocuments({});
+      // Proceed to add the new document since the exact combination does not exist
       const timestamp = Date.now();
-      const randomString = Math.random().toString(36).substr(5, 15);
-      const uniqueId = `${timestamp}${randomString}${countDocuments + 1}`;
+      const randomString = Math.random().toString(36).substr(2, 15);
+      const countDocuments = await Website.countDocuments({});
+      const uniqueId = `${timestamp}-${randomString}-${countDocuments + 1}`;
       const createTime = moment().format('YYYY-MM-DD HH:mm:ss');
       const updateTime = moment().format('YYYY-MM-DD HH:mm:ss');
-      const { url } = req.body;
+      const { url, backlink } = req.body;
 
       const newWebsiteData = new Website({
         url,
+        backlink,
         website_id: uniqueId,
         createAt: createTime,
         updateAt: updateTime,
@@ -35,7 +42,7 @@ router.post('/website', async (req, res) => {
 
       return res.status(200).json({
         statusCode: 200,
-        message: 'URL added successfully.',
+        message: 'URL and backlink combination added successfully.',
         data: savedData,
       });
     }
@@ -318,12 +325,14 @@ router.get('/websites/count/:userId', async (req, res) => {
       status: { $in: ['pending', 'rejected'] },
     });
 
-    const countReportedWebsites = await Website.countDocuments({ user_id: userId, reported: true });
+    // const countReportedWebsites = await Website.countDocuments({ user_id: userId, reported: true });
 
     const countAprovedWebsites = await Website.countDocuments({ user_id: userId, approved: true });
 
     const user = await Signup.findOne({ user_id: userId });
     const countChatedUsers = user ? user.chateduser.length : 0;
+
+    const countReportedWebsites = await ReportedWebsite.countDocuments({ user_id: userId });
 
     return res.status(200).json({
       success: true,
@@ -397,7 +406,7 @@ router.delete('/websites/paid/:id', async (req, res) => {
   }
 });
 
-router.put('/websites/:id', async (req, res) => {
+router.put('/updatewebsites/:id', async (req, res) => {
   try {
     const websiteId = req.params.id;
     const updatedWebsiteData = req.body;
@@ -426,11 +435,11 @@ router.put('/websites/:id', async (req, res) => {
   }
 });
 
-router.get('/websites/:id', async (req, res) => {
+router.get('/websites/:website_id', async (req, res) => {
   try {
-    const websiteId = req.params.id;
+    const websiteId = req.params.website_id;
 
-    const website = await Website.findById(websiteId);
+    const website = await Website.findOne({ website_id: websiteId });
 
     if (!website) {
       return res.status(404).json({

@@ -6,7 +6,7 @@ router.get('/websites-not-matching-user/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const websites = await Website.find({ user_id: { $ne: userId }, status: 'activate' });
+    const websites = await Website.find({ user_id: { $ne: userId }, status: 'activate', reported: false });
 
     res.json({
       success: true,

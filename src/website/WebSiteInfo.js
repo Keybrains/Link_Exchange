@@ -27,6 +27,7 @@ import Page from '../admin/components/Page';
 
 export default function WebSiteInfo() {
   const { state } = useLocation();
+  console.log('state', state)
   const countryCodes = Object.keys(countries);
   const countryNames = countryCodes.map((code) => countries[code].name);
   const languageCodes = iso6391.getAllCodes();
@@ -124,25 +125,29 @@ export default function WebSiteInfo() {
       try {
         const fullCountryName = getCountryFullName(formData.country);
         const fullLanguageName = getLanguageFullName(formData.language);
-
+  
+        // Ensure formData includes a backlink field.
         const dataToSend = {
           ...formData,
           country: fullCountryName,
           language: fullLanguageName,
         };
-
-        await axiosInstance.post('/website/website', dataToSend);
-
+  
+        await axiosInstance.post('/website/addwebsite', dataToSend); // Make sure the URL is correct according to your API endpoint structure.
+  
         navigate('/user/pendingapproval');
       } catch (error) {
         if (axios.isAxiosError(error) && error.response && error.response.status === 400) {
-          toast.error(`The URL is already exists`);
+          // Adjusted error message to reflect the possibility of either URL or URL and backlink combination being a duplicate
+          toast.error(`The URL and backlink combination already exists`);
         } else {
           console.error('Error:', error);
         }
       }
     }
   };
+  
+  
 
   const handlePayment = () => {};
 
@@ -181,6 +186,7 @@ export default function WebSiteInfo() {
     setFormData({ ...formData, linkTime: specificTimeInDays });
     setDaysInput('');
   };
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {

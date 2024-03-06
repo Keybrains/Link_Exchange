@@ -75,12 +75,12 @@ export default function WebsiteDetail() {
         },
       });
 
-      const imagePath = uploadResponse.data.files[0].url;
-      const imageName = imagePath.split('/').pop();
+      const imagePath = uploadResponse.data.files[0].filename;
 
-      await axiosInstance.put(`/website/websites/${websiteId}`, {
-        image: imageName,
+      await axiosInstance.put(`/website/updatewebsites/${websiteId}`, {
+        image: imagePath,
       });
+
       setFileName('');
       setFile(null);
     } catch (error) {

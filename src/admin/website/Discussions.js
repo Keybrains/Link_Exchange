@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBTypography, MDBInputGroup } from 'mdb-react-ui-kit';
 import './Chats.css';
 import { useLocation } from 'react-router-dom';
-import { TextField, Button, Typography } from '@mui/material';
+import { TextField, Button, Typography, Skeleton } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -25,53 +25,52 @@ export default function Discussions() {
   const [chatLoading, chatSetLoading] = useState(false);
   const [view, setView] = useState('user-list');
 
+  const fetchChatedUsers = async () => {
+    try {
+      const response = await axiosInstance.get(`/signup/signup/users/${loggedInUserId}/chatedallusers`);
+      const userDetails = await Promise.all(
+        response.data.chatedUsers.map(async (userId) => {
+          const userResponse = await axiosInstance.get(`/signup/allusers/${userId}`);
+          const unreadMessagesResponse = await axiosInstance.get(
+            `/chatuser/chatuser/unread-messages/${loggedInUserId}/${userId}`
+          );
+
+          const unreadMessagesCount = unreadMessagesResponse.data.unreadMessagesCount || 0;
+
+          setUnreadMessagesCount((prevCounts) => ({
+            ...prevCounts,
+            [userId]: unreadMessagesCount,
+          }));
+
+          return {
+            ...userResponse.data,
+            unreadMessagesCount,
+          };
+        })
+      );
+
+      setChatedUsers(userDetails);
+      setLoading(false);
+
+      if (state && state.user_id) {
+        const selectedUser = state.user_id;
+        setSelectedUser(selectedUser);
+      }
+    } catch (error) {
+      console.error('Error fetching chated users:', error);
+      setLoading(false);
+    }
+  };
+
+  const fetchLoggedInUser = async () => {
+    try {
+      const response = await axiosInstance.get(`/signup/allusers/${loggedInUserId}`);
+      setLoggedInUsername(`${response.data.data.firstname} ${response.data.data.lastname}`);
+    } catch (error) {
+      console.error('Error fetching logged-in user:', error);
+    }
+  };
   useEffect(() => {
-    const fetchChatedUsers = async () => {
-      try {
-        const response = await axiosInstance.get(`/signup/signup/users/${loggedInUserId}/chatedallusers`);
-        const userDetails = await Promise.all(
-          response.data.chatedUsers.map(async (userId) => {
-            const userResponse = await axiosInstance.get(`/signup/allusers/${userId}`);
-            const unreadMessagesResponse = await axiosInstance.get(
-              `/chatuser/chatuser/unread-messages/${loggedInUserId}/${userId}`
-            );
-
-            const unreadMessagesCount = unreadMessagesResponse.data.unreadMessagesCount || 0;
-
-            setUnreadMessagesCount((prevCounts) => ({
-              ...prevCounts,
-              [userId]: unreadMessagesCount,
-            }));
-
-            return {
-              ...userResponse.data,
-              unreadMessagesCount,
-            };
-          })
-        );
-
-        setChatedUsers(userDetails);
-        setLoading(false);
-
-        if (state && state.user_id) {
-          const selectedUser = state.user_id;
-          setSelectedUser(selectedUser);
-        }
-      } catch (error) {
-        console.error('Error fetching chated users:', error);
-        setLoading(false);
-      }
-    };
-
-    const fetchLoggedInUser = async () => {
-      try {
-        const response = await axiosInstance.get(`/signup/allusers/${loggedInUserId}`);
-        setLoggedInUsername(`${response.data.data.firstname} ${response.data.data.lastname}`);
-      } catch (error) {
-        console.error('Error fetching logged-in user:', error);
-      }
-    };
-
     fetchChatedUsers();
     fetchLoggedInUser();
   }, [loggedInUserId]);
@@ -84,6 +83,7 @@ export default function Discussions() {
         fetchUsers(response.data.data);
         setLoading(false);
         scrollToBottom();
+        fetchChatedUsers();
 
         await axiosInstance.put(`/chatuser/chatuser/mark-messages-as-read/${loggedInUserId}/${selectedUser}`);
         await axiosInstance.put(`notification/mark-read/${selectedUser}/${loggedInUserId}`);
@@ -428,6 +428,7 @@ export default function Discussions() {
                                       backdropFilter: 'blur(10px)',
                                       backgroundColor: 'rgba(255, 255, 255, 0.8)',
                                       padding: '10px',
+                                      display: 'flex',
                                     }}
                                   >
                                     <FontAwesomeIcon
@@ -436,17 +437,25 @@ export default function Discussions() {
                                       onClick={handleBackButtonClick}
                                       className="back-to-list-button sticky-top"
                                     />
-                                    <Typography
-                                      variant="h6"
-                                      className="font-weight-bold"
-                                      style={{ borderBottom: '1px solid #ddd' }}
-                                    >
-                                      {`${users[selectedUser]?.firstname?.charAt(0).toUpperCase()}${users[
-                                        selectedUser
-                                      ]?.firstname?.slice(1)} ${users[selectedUser]?.lastname
-                                        ?.charAt(0)
-                                        .toUpperCase()}${users[selectedUser]?.lastname?.slice(1)}` || 'Unknown User'}
-                                    </Typography>
+
+                                    {users[selectedUser] ? (
+                                      <Typography
+                                        variant="h6"
+                                        className="font-weight-bold"
+                                        style={{ borderBottom: '1px solid #ddd' }}
+                                      >
+                                        {`${users[selectedUser]?.firstname?.charAt(0).toUpperCase()}${users[
+                                          selectedUser
+                                        ]?.firstname?.slice(1)} ${users[selectedUser]?.lastname
+                                          ?.charAt(0)
+                                          .toUpperCase()}${users[selectedUser]?.lastname?.slice(1)}` || 'Unknown User'}
+                                      </Typography>
+                                    ) : (
+                                      <>
+                                        <Skeleton variant="text" width={100} style={{ marginRight: '10px' }} />
+                                        <Skeleton variant="text" width={100} />
+                                      </>
+                                    )}
                                   </div>
                                   <hr className="d-md-none" style={{ width: '100%', border: '1px solid #ddd' }} />
                                   {messages.length === 0 ? (

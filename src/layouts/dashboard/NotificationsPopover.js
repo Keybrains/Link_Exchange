@@ -25,7 +25,7 @@ const NotificationsPopover = () => {
 
   useEffect(() => {
     fetchData();
-  }, [loggedInUserId]);
+  },[]);
 
   const handleMarkRead = async (senderId) => {
     try {
